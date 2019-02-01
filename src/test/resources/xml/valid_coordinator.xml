@@ -1,0 +1,21 @@
+<coordinator-app name="WHW_Coverage_2Hrly_Coordinator"
+  frequency="${coord:hours(2)}"
+  start="${COORD_START}" end="${COORD_END}" timezone="UTC"
+  xmlns="uri:oozie:coordinator:0.2">
+  <action>
+    <workflow>
+      <app-path>${wfApplicationPath}</app-path>
+    <configuration>
+        <property>
+            <name>REPORT_DATE</name>
+            <value>${coord:formatTime(coord:dateOffset(coord:nominalTime(),-5, 'HOUR'), 'yyyy-MM-dd')}</value>
+        </property>
+        <property>
+            <name>TARGET_BUCKET</name>
+            <value>${coord:formatTime(coord:dateOffset(coord:nominalTime(), -5,'HOUR'),'HH')}</value>
+        </property>
+       </configuration>
+  </workflow>
+  </action>
+</coordinator-app>
+

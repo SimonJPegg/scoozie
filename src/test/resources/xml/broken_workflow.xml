@@ -1,0 +1,35 @@
+<workflow-app xmlns = "uri:oozie:workflow:0.5" name = "simple-Workflow">
+    <start to = "Create_External_Table" />
+    <action name = "Create_External_Table">
+        <hive xmlns = "uri:oozie:hive-action:0.4">
+            <job-tracker>xyz.com:8088</job-tracker>
+            <name-node>hdfs://rootname</name-node>
+            <script>hdfs_path_of_script/external.hive</script>
+        </hive>
+        <ok to = "Create_orc_Table" />
+        <error to = "kill_job" />
+    </action>
+    <action name = "Create_orc_Table">
+        <hive xmlns = "uri:oozie:hive-action:0.4">
+            <job-tracker>xyz.com:8088</job-tracker>
+            <name-node>hdfs://rootname</name-node>
+            <script>hdfs_path_of_script/orc.hive</script>
+        </hive>
+        <ok to = "Insert_into_Table" />
+        <error to = "kill_job" />
+    </action>
+    <action name = "Insert_into_Table">
+        <hive xmlns = "uri:oozie:hive-action:0.4">
+            <job-tracker>xyz.com:8088</job-tracker
+            <name-node>hdfs://rootname</name-node>
+            <script>hdfs_path_of_script/Copydata.hive</script>
+            <param>database_name</param>
+        </hive>
+        <ok to = "end" />
+        <error to = "kill_job" />
+    </action>
+    <kill name = "kill_job">
+        <message>Job failed</message>
+    </kill>
+    <end name = "end" />
+</workflow-app>
