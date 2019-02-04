@@ -53,4 +53,7 @@ object Decision {
 
   def apply(name: String, default: Node, switch: Switch*): Node =
     Node(new Decision(name, default, immutable.Seq(switch.toSeq: _*)))(None)
+
+  def apply(name: String, default: Node, switches: Seq[Switch]): Node =
+    Node(new Decision(name, default, switches))(None)
 }

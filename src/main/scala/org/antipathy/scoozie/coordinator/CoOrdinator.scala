@@ -34,7 +34,7 @@ case class CoOrdinator(override val name: String,
                      start={start}
                      end={end}
                      timezone={timezone}
-                     xmlns="uri:oozie:coordinator:0.1">
+                     xmlns="uri:oozie:coordinator:0.4">
       <action>
         <workflow>
           <app-path>{workflow.path}</app-path>
@@ -45,5 +45,4 @@ case class CoOrdinator(override val name: String,
         </workflow>
       </action>
     </coordinator-app>
-
 }

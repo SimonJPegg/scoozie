@@ -53,11 +53,7 @@ case class Workflow(
     case None => (Configuration(Seq.empty), Map())
   }
 
-  /**
-    * Validate this workflow produces valid Oozie XML
-    */
-  def validate(): Unit =
-    OozieValidator.validate(formatter.format(this), SchemaType.workflow)
+
 
   /**
     * The XML for this node
@@ -89,7 +85,8 @@ case class Workflow(
         Seq(n.toXML) ++ f.transitionPaths.map(_.toXML) ++
         f.transitionPaths.flatMap(n => buildWorkflowXML(n))
       case d: Decision =>
-        Seq(n.toXML) ++ d.transitionPaths.flatMap(buildWorkflowXML)
+        Seq(n.toXML) ++ d.transitionPaths.map(_.toXML) ++
+          d.transitionPaths.flatMap(n => buildWorkflowXML(n))
       case j: Join =>
         Seq(n.toXML) ++ buildWorkflowXML(j.transitionTo)
       case _: End => Seq.empty

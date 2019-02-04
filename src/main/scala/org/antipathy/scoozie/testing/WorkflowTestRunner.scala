@@ -17,9 +17,6 @@ class WorkflowTestRunner(workflow: Workflow,
                          failingNodes: Seq[String],
                          decisionNodes: Seq[String]) {
 
-  //validate the workflow is ready for testing
-  workflow.validate()
-
   /**
     * Traverse the workflow and print a string representation of its path
     */
