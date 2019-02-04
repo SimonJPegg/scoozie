@@ -1,12 +1,13 @@
 package org.antipathy.scoozie.workflow
 
-import org.antipathy.scoozie.{Nameable, Node, OozieProperties, XmlSerializable}
+import org.antipathy.scoozie.{JobProperties, Nameable, Node, XmlSerializable}
 import org.antipathy.scoozie.configuration.{
   Configuration,
   Credentials,
   YarnConfig
 }
 
+import scala.language.existentials
 import scala.xml.Elem
 import org.antipathy.scoozie.control._
 import org.antipathy.scoozie.validator.OozieValidator
@@ -14,10 +15,12 @@ import org.antipathy.scoozie.formatter.OozieXmlFormatter
 import org.antipathy.scoozie.validator.SchemaType
 
 import scala.collection.immutable._
+import org.antipathy.scoozie.configuration.Credential
 
 /**
   * Oozie workflow definition
   * @param name the name of the workflow
+  * @param path The path to this workflow
   * @param transitions the actions within the workflow
   * @param credentialsOption optional credentials for this workflow
   * @param configurationOption optional configuration for this workflow
@@ -25,12 +28,15 @@ import scala.collection.immutable._
   */
 case class Workflow(
     override val name: String,
+    path: String,
     transitions: Node,
     configurationOption: Option[Configuration] = None,
     yarnConfig: YarnConfig
 )(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
-    with Nameable {
+    with Nameable
+    with JobProperties {
+  import org.antipathy.scoozie.action.SubWorkflowAction
 
   private val formatter = new OozieXmlFormatter(80, 4)
 
@@ -38,7 +44,6 @@ case class Workflow(
     credentialsOption.map(_.withActionProperties(name)) match {
       case Some((credentials, props)) => (credentials, props)
       case None =>
-        import org.antipathy.scoozie.configuration.Credential
         (Credentials(Credential("", "", Seq())), Map())
     }
 
@@ -81,15 +86,16 @@ case class Workflow(
   private[workflow] def buildWorkflowXML(n: Node): Seq[Elem] =
     n.action match {
       case f: Fork =>
-        Seq(n.toXML) ++ f.transitionPaths.flatMap(buildWorkflowXML)
+        Seq(n.toXML) ++ f.transitionPaths.map(_.toXML) ++
+        f.transitionPaths.flatMap(n => buildWorkflowXML(n))
       case d: Decision =>
         Seq(n.toXML) ++ d.transitionPaths.flatMap(buildWorkflowXML)
       case j: Join =>
         Seq(n.toXML) ++ buildWorkflowXML(j.transitionTo)
       case _: End => Seq.empty
       case _ =>
-        val ok: Option[Seq[Elem]] = n._transition.map(buildWorkflowXML)
-        val error: Option[Seq[Elem]] = n._failure.map(buildWorkflowXML)
+        val ok: Option[Seq[Elem]] = n.successTransition.map(buildWorkflowXML)
+        val error: Option[Seq[Elem]] = n.failureTransition.map(buildWorkflowXML)
         (Seq(n.toXML) ++ ok.getOrElse(Seq.empty) ++ error.getOrElse(Seq.empty)).distinct
     }
 
@@ -103,8 +109,8 @@ case class Workflow(
         buildWorkflowProperties(j.transitionTo)
       case _: End => Map()
       case _ =>
-        val ok = n._transition.map(buildWorkflowProperties)
-        val error = n._failure.map(buildWorkflowProperties)
+        val ok = n.successTransition.map(buildWorkflowProperties)
+        val error = n.failureTransition.map(buildWorkflowProperties)
         n.properties ++ ok.getOrElse(Seq.empty) ++ error.getOrElse(Seq.empty)
     }
 
@@ -114,11 +120,20 @@ case class Workflow(
   private def properties: Map[String, String] =
     mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions)
 
-  def jobProperties: String = {
+  override def jobProperties: String = {
     val pattern = "\\w+".r
     properties.flatMap {
-      case (name, value) => pattern.findFirstIn(name).map(p => s"$p=$value")
+      case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
     }.toSeq.sorted.toSet.mkString(System.lineSeparator())
   }
+
+  /**
+    * Convert this workflow into a subworkflow
+    */
+  def toSubWorkFlow(propagateConfiguration: Boolean): Node =
+    SubWorkflowAction(name = this.name,
+                      applicationPath = this.path,
+                      propagateConfiguration = propagateConfiguration,
+                      config = this.yarnConfig)
 
 }

@@ -23,6 +23,11 @@ final class Decision(override val name: String,
   override val properties: Map[String, String] = Map()
 
   /**
+    * The default path for this node
+    */
+  def defaultPath: Node = default
+
+  /**
     * The nodes contained within this fork
     */
   def transitionPaths: Seq[Node] = switches.map(_.node) :+ default

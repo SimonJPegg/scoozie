@@ -85,6 +85,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
     val fork = Fork(name = "mainFork", Seq(sparkAction, hiveAction))
 
     val workflow = Workflow(name = "sampleWorkflow",
+                            path = "",
                             transitions = Start().okTo(fork),
                             configurationOption = None,
                             yarnConfig = yarnConfig)
@@ -127,6 +128,17 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
         |        <ok to="mainJoin"/>
         |        <error to="emailAction"/>
         |    </action>
+        |    <action name="hiveAction" cred="hive-credentials">
+        |        <hive xmlns="uri:oozie:hive-action:0.2">
+        |            <job-tracker>${jobTracker}</job-tracker>
+        |            <name-node>${nameNode}</name-node>
+        |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
+        |            <script>${hiveAction_scriptName}</script>
+        |            <file>${hiveAction_scriptLocation}</file>
+        |        </hive>
+        |        <ok to="mainJoin"/>
+        |        <error to="emailAction"/>
+        |    </action>
         |    <join name="mainJoin" to="shellAction"/>
         |    <action name="shellAction" cred="hive-credentials">
         |        <shell xmlns="uri:oozie:shell-action:0.1">
@@ -151,17 +163,6 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
         |    <kill name="kill">
         |        <message>workflow failed</message>
         |    </kill>
-        |    <action name="hiveAction" cred="hive-credentials">
-        |        <hive xmlns="uri:oozie:hive-action:0.2">
-        |            <job-tracker>${jobTracker}</job-tracker>
-        |            <name-node>${nameNode}</name-node>
-        |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
-        |            <script>${hiveAction_scriptName}</script>
-        |            <file>${hiveAction_scriptLocation}</file>
-        |        </hive>
-        |        <ok to="mainJoin"/>
-        |        <error to="emailAction"/>
-        |    </action>
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )

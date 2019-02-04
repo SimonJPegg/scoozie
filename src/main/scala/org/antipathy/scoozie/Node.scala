@@ -5,32 +5,40 @@ import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.control._
 import scala.xml.Elem
 import scala.collection.immutable.Map
+import org.antipathy.scoozie.exception.TransitionException
 
 /**
   * Wapper class for oozie actions, used to define transitions
   *
   * @param action the inner oozie action
-  * @param _transition the node to transition to on success
-  * @param _failure the node to tranistion to on failure
+  * @param successTransition the node to transition to on success
+  * @param failureTransition the node to tranistion to on failure
   * @param credentialsOption optional credentials for the nodes
   */
 private[scoozie] case class Node(
     action: Action,
-    _transition: Option[Node] = None,
-    _failure: Option[Node] = None
+    successTransition: Option[Node] = None,
+    failureTransition: Option[Node] = None
 )(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
-    with OozieProperties {
+    with OozieProperties
+    with Nameable {
 
   /**
     * The node to transition to on success
     */
-  def okTo(node: Node): Node = this.copy(_transition = Some(node))
+  def okTo(node: Node): Node = this.action match {
+    case _ @(_: Fork | _: Decision | _: End | _: Kill) => this
+    case _                                             => this.copy(successTransition = Some(node))
+  }
 
   /**
     * The node to transition to on failure
     */
-  def errorTo(node: Node): Node = this.copy(_failure = Some(node))
+  def errorTo(node: Node): Node = this.action match {
+    case _ @(_: Fork | _: Decision | _: End | _: Kill | _: Start) => this
+    case _                                                        => this.copy(failureTransition = Some(node))
+  }
 
   /**
     * The XML for this node
@@ -50,26 +58,22 @@ private[scoozie] case class Node(
     * Validate the start element has a transition and build it
     */
   private def buildStartXML: Elem =
-    if (_transition.isEmpty) {
-      throw new IllegalArgumentException(
-        "No node has been defined to start from"
-      )
+    if (successTransition.isEmpty) {
+      throw new TransitionException("No node has been defined to start from")
     } else {
-      <start to={_transition.get.action.name} />
+      <start to={successTransition.get.action.name} />
     }
 
   /**
     * validate a element has transitions and build it
     */
   private def buildActionXML: Elem = {
-    if (_transition.isEmpty) {
-      throw new IllegalArgumentException(
-        s"${action.name} does not have an okTo set"
-      )
+    if (successTransition.isEmpty) {
+      throw new TransitionException(s"${action.name} does not have an okTo set")
     }
 
-    if (_failure.isEmpty) {
-      throw new IllegalArgumentException(
+    if (failureTransition.isEmpty) {
+      throw new TransitionException(
         s"${action.name} does not have an errorTo set"
       )
     }
@@ -77,8 +81,8 @@ private[scoozie] case class Node(
     <action name ={action.name}
       cred={credentialsOption.map(_.credential.name).orNull}>
       {action.toXML}
-      <ok to= {_transition.get.action.name}/>
-      <error to = {_failure.get.action.name}/>
+      <ok to= {successTransition.get.action.name}/>
+      <error to = {failureTransition.get.action.name}/>
     </action>
   }
 
@@ -86,4 +90,9 @@ private[scoozie] case class Node(
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] = action.properties
+
+  /**
+    * The name of the object
+    */
+  override def name: String = action.name
 }

@@ -5,8 +5,10 @@ import org.antipathy.scoozie.action.Action
 import scala.xml.Elem
 import org.antipathy.scoozie.Node
 import scala.xml
+import org.antipathy.scoozie.exception.TransitionException
 
 class ForkSpec extends FlatSpec with Matchers {
+
   behavior of "Fork"
 
   it should "generate valid XML" in {
@@ -34,7 +36,7 @@ class ForkSpec extends FlatSpec with Matchers {
       override val properties: Map[String, String] = Map()
     })(None)
 
-    an[IllegalArgumentException] should be thrownBy {
+    an[TransitionException] should be thrownBy {
       Fork("SomeFork", Seq(oozieNode)).toXML
     }
   }
