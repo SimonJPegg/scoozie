@@ -33,9 +33,7 @@ final class Fork(override val name: String, nodes: Seq[Node]) extends Action {
     */
   override def toXML: Elem = {
     if (transitionPaths.length < 2) {
-      throw new TransitionException(
-        s"Error in Fork($name): must have at least 2 actions"
-      )
+      throw new TransitionException(s"Error in Fork($name): must have at least 2 actions")
     }
 
     val pathsXml = transitionPaths.map(n => <path start={n.action.name} />)

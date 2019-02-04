@@ -49,9 +49,7 @@ final class JavaAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(mainClassProperty -> mainClass,
-        javaJarProperty -> javaJar,
-        javaOptionsProperty -> javaOptions) ++ config.properties ++
+    Map(mainClassProperty -> mainClass, javaJarProperty -> javaJar, javaOptionsProperty -> javaOptions) ++ config.properties ++
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
@@ -91,17 +89,15 @@ final class JavaAction(override val name: String,
 
 object JavaAction {
 
-  def apply(
-      name: String,
-      mainClass: String,
-      javaJar: String,
-      javaOptions: String,
-      commandLineArgs: Seq[String],
-      files: Seq[String],
-      captureOutput: Boolean,
-      config: YarnConfig,
-      prepareOption: Option[Prepare] = None
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String,
+            mainClass: String,
+            javaJar: String,
+            javaOptions: String,
+            commandLineArgs: Seq[String],
+            files: Seq[String],
+            captureOutput: Boolean,
+            config: YarnConfig,
+            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new JavaAction(name,
                      mainClass,

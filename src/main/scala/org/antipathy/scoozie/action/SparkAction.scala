@@ -107,20 +107,18 @@ final class SparkAction(override val name: String,
 
 object SparkAction {
 
-  def apply(
-      name: String,
-      sparkSettings: String,
-      sparkMasterURL: String,
-      sparkMode: String,
-      sparkJobName: String,
-      mainClass: String,
-      sparkJar: String,
-      sparkOptions: String,
-      commandLineArgs: Seq[String],
-      files: Seq[String],
-      prepareOption: Option[Prepare] = None,
-      config: YarnConfig
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String,
+            sparkSettings: String,
+            sparkMasterURL: String,
+            sparkMode: String,
+            sparkJobName: String,
+            mainClass: String,
+            sparkJar: String,
+            sparkOptions: String,
+            commandLineArgs: Seq[String],
+            files: Seq[String],
+            prepareOption: Option[Prepare] = None,
+            config: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new SparkAction(name,
                       sparkSettings,

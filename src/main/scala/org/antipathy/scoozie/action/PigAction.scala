@@ -85,13 +85,11 @@ class PigAction(override val name: String,
 
 object PigAction {
 
-  def apply(
-      name: String,
-      script: String,
-      params: Seq[String],
-      jobXml: Option[String] = None,
-      config: YarnConfig,
-      prepareOption: Option[Prepare] = None
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String,
+            script: String,
+            params: Seq[String],
+            jobXml: Option[String] = None,
+            config: YarnConfig,
+            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(new PigAction(name, script, params, jobXml, config, prepareOption))
 }

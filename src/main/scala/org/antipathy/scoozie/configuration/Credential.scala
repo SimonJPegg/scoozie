@@ -10,10 +10,7 @@ import scala.collection.immutable._
   * @param credentialsType the type of the credential
   * @param properties the credential's properties
   */
-case class Credential(name: String,
-                      credentialsType: String,
-                      properties: Seq[Property])
-    extends XmlSerializable {
+case class Credential(name: String, credentialsType: String, properties: Seq[Property]) extends XmlSerializable {
 
   /**
     * The XML for this node

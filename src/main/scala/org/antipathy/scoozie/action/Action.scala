@@ -5,10 +5,7 @@ import org.antipathy.scoozie.{Nameable, OozieProperties, XmlSerializable}
 /**
   * Base trait for oozie actions
   */
-private[scoozie] trait Action
-    extends XmlSerializable
-    with Nameable
-    with OozieProperties {
+private[scoozie] trait Action extends XmlSerializable with Nameable with OozieProperties {
 
   /**
     * The XML namespace for an action element

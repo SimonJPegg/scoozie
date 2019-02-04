@@ -30,20 +30,10 @@ private[scoozie] class SchemaService {
     */
   private def getValidator(schema: Schema): Validator = {
     val validator: Validator = schema.newValidator
-    validator.setFeature("http://apache.org/xml/features/disallow-doctype-decl",
-                         true)
-    validator.setFeature(
-      "http://xml.org/sax/features/external-general-entities",
-      false
-    )
-    validator.setFeature(
-      "http://xml.org/sax/features/external-parameter-entities",
-      false
-    )
-    validator.setProperty(
-      "http://apache.org/xml/properties/internal/entity-resolver",
-      xmlEntityResolver
-    )
+    validator.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
+    validator.setFeature("http://xml.org/sax/features/external-general-entities", false)
+    validator.setFeature("http://xml.org/sax/features/external-parameter-entities", false)
+    validator.setProperty("http://apache.org/xml/properties/internal/entity-resolver", xmlEntityResolver)
     validator
   }
 
@@ -69,8 +59,7 @@ private[scoozie] class SchemaService {
   private lazy val schemaFactory: SchemaFactory = {
     val factory: SchemaFactory =
       SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI)
-    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl",
-                       true)
+    factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true)
     factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true)
     factory
   }

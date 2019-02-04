@@ -10,9 +10,7 @@ import scala.collection.immutable._
   * @param nameNode name node url
   * @param configuration properties for this action
   */
-case class YarnConfig(jobTracker: String,
-                      nameNode: String,
-                      configuration: Configuration = Configuration(Seq()))
+case class YarnConfig(jobTracker: String, nameNode: String, configuration: Configuration = Configuration(Seq()))
     extends OozieProperties {
 
   /**
@@ -30,8 +28,6 @@ case class YarnConfig(jobTracker: String,
   /**
     * Get the Oozie properties for this object
     */
-  override def properties: Map[String, String] = Map(
-    formatProperty("jobTracker") -> jobTracker,
-    formatProperty("nameNode") -> nameNode
-  )
+  override def properties: Map[String, String] =
+    Map(formatProperty("jobTracker") -> jobTracker, formatProperty("nameNode") -> nameNode)
 }

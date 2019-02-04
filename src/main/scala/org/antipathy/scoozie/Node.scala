@@ -73,9 +73,7 @@ private[scoozie] case class Node(
     }
 
     if (failureTransition.isEmpty) {
-      throw new TransitionException(
-        s"${action.name} does not have an errorTo set"
-      )
+      throw new TransitionException(s"${action.name} does not have an errorTo set")
     }
 
     <action name ={action.name}

@@ -15,9 +15,7 @@ case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
     * @param actionName the name of the action calling this method
     * @return a copy of the action and its properties
     */
-  private[scoozie] def withActionProperties(
-      actionName: String
-  ): (Prepare, Map[String, String]) = {
+  private[scoozie] def withActionProperties(actionName: String): (Prepare, Map[String, String]) = {
     val mappedProps = actions.map {
       case d: Delete =>
         val p = s"${actionName}_prepare_delete"

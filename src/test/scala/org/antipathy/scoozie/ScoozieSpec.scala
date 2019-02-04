@@ -11,6 +11,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
   behavior of "Scoozie"
 
   class TestWorkflow(jobTracker: String, nameNode: String, yarnProperties: Map[String, String]) {
+    import org.antipathy.scoozie.coordinator.CoOrdinator
 
     private implicit val credentials: Option[Credentials] = Scoozie.Config.emptyCredentials
     private val yarnConfig = Scoozie.Config.yarnConfiguration(jobTracker, nameNode, yarnProperties)
@@ -78,7 +79,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
 
     val workflow: Workflow = Scoozie.workflow("ExampleWorkflow", "/path/to/workflow.xml", transitions, None, yarnConfig)
 
-    val coOrdinator = Scoozie.coOrdinator("ExampleCoOrdinator", "startFreq", "start", "end", "timeZome", workflow)
+    val coOrdinator: CoOrdinator = Scoozie.coOrdinator("ExampleCoOrdinator", "startFreq", "start", "end", "timeZome", workflow)
 
     val jobConfig: String = workflow.jobProperties
   }

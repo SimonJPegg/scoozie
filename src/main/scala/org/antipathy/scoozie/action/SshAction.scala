@@ -34,10 +34,7 @@ final class SshAction(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  override val properties: Map[String, String] = Map(
-    hostProperty -> host,
-    commandProperty -> command
-  ) ++ argsProperty
+  override val properties: Map[String, String] = Map(hostProperty -> host, commandProperty -> command) ++ argsProperty
 
   /**
     * The XML for this node
@@ -56,12 +53,8 @@ final class SshAction(override val name: String,
 
 object SshAction {
 
-  def apply(
-      name: String,
-      host: String,
-      command: String,
-      args: Seq[String],
-      captureOutput: Boolean
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String, host: String, command: String, args: Seq[String], captureOutput: Boolean)(
+      implicit credentialsOption: Option[Credentials]
+  ): Node =
     Node(new SshAction(name, host, command, args, captureOutput))
 }

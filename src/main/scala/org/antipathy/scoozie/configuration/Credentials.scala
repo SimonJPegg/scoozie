@@ -9,25 +9,20 @@ import scala.collection.immutable.Map
   * Oozie credentials definition
   * @param credential the credential definitions
   */
-case class Credentials(credential: Credential)
-    extends XmlSerializable
-    with OozieProperties {
+case class Credentials(credential: Credential) extends XmlSerializable with OozieProperties {
 
   /**
     * Copy this configuration substituting the values for property names
     * @param actionName the name of the action calling this method
     * @return a copy of the configuration and its properties
     */
-  private[scoozie] def withActionProperties(
-      actionName: String
-  ): (Credentials, Map[String, String]) = {
+  private[scoozie] def withActionProperties(actionName: String): (Credentials, Map[String, String]) = {
     val mappedProps = credential.properties.zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_credentialProperty$index")
         (Property(name, p), p -> value)
     }
-    (this.copy(credential.copy(properties = mappedProps.map(_._1))),
-     mappedProps.map(_._2).toMap)
+    (this.copy(credential.copy(properties = mappedProps.map(_._1))), mappedProps.map(_._2).toMap)
   }
 
   /**

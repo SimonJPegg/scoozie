@@ -12,9 +12,7 @@ private[scoozie] class NoXMLEntityResolver extends XMLEntityResolver {
   /**
     * Raise an error when DOCTYPE element is found
     */
-  override def resolveEntity(
-      xmlResourceIdentifier: XMLResourceIdentifier
-  ): XMLInputSource =
+  override def resolveEntity(xmlResourceIdentifier: XMLResourceIdentifier): XMLInputSource =
     throw new IOException(
       "DOCTYPE is disallowed when the feature http://apache.org/xml/features/disallow-doctype-decl " +
       "set to true."

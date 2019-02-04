@@ -12,10 +12,7 @@ import scala.collection.immutable._
   * @param switches the switches in the decision node
   * @param default the default action for the decision
   */
-final class Decision(override val name: String,
-                     default: Node,
-                     switches: Seq[Switch])
-    extends Action {
+final class Decision(override val name: String, default: Node, switches: Seq[Switch]) extends Action {
 
   /**
     * Get the Oozie properties for this object

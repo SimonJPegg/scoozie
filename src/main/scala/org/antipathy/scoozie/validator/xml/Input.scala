@@ -6,10 +6,7 @@ import org.w3c.dom.ls.LSInput
 /**
   * Utility class to handle schema import and include statements
   */
-private[scoozie] class Input(var publicId: String,
-                             var systemId: String,
-                             val input: InputStream)
-    extends LSInput {
+private[scoozie] class Input(var publicId: String, var systemId: String, val input: InputStream) extends LSInput {
   private val inputStream = new BufferedInputStream(input)
   private val UTF_8_ENCODING = "UTF-8"
 

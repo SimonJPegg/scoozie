@@ -34,13 +34,10 @@ final class EmailAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(toProperty -> to.mkString(","),
-        subjectProperty -> subject,
-        bodyProperty -> body) ++ (if (cc.nonEmpty) {
-                                    Map(ccProperty -> cc.mkString(","))
-                                  } else {
-                                    Map()
-                                  })
+    Map(toProperty -> to.mkString(","), subjectProperty -> subject, bodyProperty -> body) ++
+    (if (cc.nonEmpty) {
+       Map(ccProperty -> cc.mkString(","))
+     } else { Map() })
 
   /**
     * The XML for this node
@@ -58,12 +55,8 @@ final class EmailAction(override val name: String,
 
 object EmailAction {
 
-  def apply(
-      name: String,
-      to: Seq[String],
-      cc: Seq[String] = Seq.empty[String],
-      subject: String,
-      body: String
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String)(
+      implicit credentialsOption: Option[Credentials]
+  ): Node =
     Node(new EmailAction(name, to, cc, subject, body))
 }

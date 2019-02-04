@@ -30,9 +30,7 @@ final class Hive2Action(override val name: String,
                         prepareOption: Option[Prepare] = None)
     extends Action {
 
-  private val hiveSettingsXMLProperty = formatProperty(
-    s"${name}_hiveSettingsXML"
-  )
+  private val hiveSettingsXMLProperty = formatProperty(s"${name}_hiveSettingsXML")
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
   private val jdbcUrlProperty = formatProperty(s"${name}_jdbcUrl")
@@ -97,17 +95,15 @@ final class Hive2Action(override val name: String,
 
 object Hive2Action {
 
-  def apply(
-      name: String,
-      hiveSettingsXML: String,
-      scriptName: String,
-      scriptLocation: String,
-      parameters: Seq[String],
-      config: YarnConfig,
-      jdbcUrl: String,
-      password: Option[String] = None,
-      prepareOption: Option[Prepare] = None
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String,
+            hiveSettingsXML: String,
+            scriptName: String,
+            scriptLocation: String,
+            parameters: Seq[String],
+            config: YarnConfig,
+            jdbcUrl: String,
+            password: Option[String] = None,
+            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new Hive2Action(name,
                       hiveSettingsXML,

@@ -13,17 +13,13 @@ import org.antipathy.scoozie.action.Action
   * @param failingNodes a list of nodes that should fail in this workflow
   * @param decisionNodes the nodes to visit on a decision
   */
-class WorkflowTestRunner(workflow: Workflow,
-                         failingNodes: Seq[String],
-                         decisionNodes: Seq[String]) {
+class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decisionNodes: Seq[String]) {
 
   /**
     * Traverse the workflow and print a string representation of its path
     */
   def traversalPath: String =
-    buildOutputString(
-      visitNode(workflow.transitions, Visitor(visited = Seq.empty)).visited
-    )
+    buildOutputString(visitNode(workflow.transitions, Visitor(visited = Seq.empty)).visited)
 
   /**
     * Visit the passed in node and its children
@@ -81,9 +77,7 @@ class WorkflowTestRunner(workflow: Workflow,
     } else if (possiblePaths.length == 1) {
       visitNode(possiblePaths.head, visitor)
     } else {
-      throw new TransitionException(
-        s"multiple paths specified for node: ${decision.name}"
-      )
+      throw new TransitionException(s"multiple paths specified for node: ${decision.name}")
     }
   }
 
@@ -98,9 +92,7 @@ class WorkflowTestRunner(workflow: Workflow,
     */
   def visitFork(fork: Fork, visitor: Visitor): Visitor = {
     val childNodes = Seq(fork.transitionPaths: _*)
-    val simpleForkVisitor = visitor.copy(
-      visited = visitor.visited ++ Seq(childNodes.map(n => n.action.name))
-    )
+    val simpleForkVisitor = visitor.copy(visited = visitor.visited ++ Seq(childNodes.map(n => n.action.name)))
     //failures in initial path
     if (childNodes.map(_.action.name).exists(failingNodes.contains(_))) {
       visitNode(childNodes.flatMap(_.failureTransition).head, simpleForkVisitor)
@@ -151,10 +143,7 @@ class WorkflowTestRunner(workflow: Workflow,
 
     (isFailingNode, node.successTransition, node.failureTransition) match {
       case (false, Some(successNode), _) =>
-        visitUntilJoin(
-          successNode,
-          Visitor(thisVisitor.visited, isFailingNode, Some(successNode))
-        )
+        visitUntilJoin(successNode, Visitor(thisVisitor.visited, isFailingNode, Some(successNode)))
       case (true, _, Some(failureNode)) =>
         Visitor(thisVisitor.visited, isFailingNode, Some(failureNode))
       case _ => visitor
@@ -178,10 +167,8 @@ class WorkflowTestRunner(workflow: Workflow,
 
 object WorkflowTestRunner {
 
-  def apply(
-      workflow: Workflow,
-      failingNodes: Seq[String] = Seq.empty[String],
-      decisionNodes: Seq[String] = Seq.empty[String]
-  ): WorkflowTestRunner =
+  def apply(workflow: Workflow,
+            failingNodes: Seq[String] = Seq.empty[String],
+            decisionNodes: Seq[String] = Seq.empty[String]): WorkflowTestRunner =
     new WorkflowTestRunner(workflow, failingNodes, decisionNodes)
 }

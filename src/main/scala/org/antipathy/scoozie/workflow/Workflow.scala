@@ -1,11 +1,7 @@
 package org.antipathy.scoozie.workflow
 
 import org.antipathy.scoozie.{JobProperties, Nameable, Node, XmlSerializable}
-import org.antipathy.scoozie.configuration.{
-  Configuration,
-  Credentials,
-  YarnConfig
-}
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 
 import scala.language.existentials
 import scala.xml.Elem
@@ -26,13 +22,11 @@ import org.antipathy.scoozie.configuration.Credential
   * @param configurationOption optional configuration for this workflow
   * @param yarnConfig The yarn configuration for this workflow
   */
-case class Workflow(
-    override val name: String,
-    path: String,
-    transitions: Node,
-    configurationOption: Option[Configuration] = None,
-    yarnConfig: YarnConfig
-)(implicit credentialsOption: Option[Credentials])
+case class Workflow(override val name: String,
+                    path: String,
+                    transitions: Node,
+                    configurationOption: Option[Configuration] = None,
+                    yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
     with Nameable
     with JobProperties {
@@ -52,8 +46,6 @@ case class Workflow(
       configuration.withActionProperties(name)
     case None => (Configuration(Seq.empty), Map())
   }
-
-
 
   /**
     * The XML for this node
@@ -86,7 +78,7 @@ case class Workflow(
         f.transitionPaths.flatMap(n => buildWorkflowXML(n))
       case d: Decision =>
         Seq(n.toXML) ++ d.transitionPaths.map(_.toXML) ++
-          d.transitionPaths.flatMap(n => buildWorkflowXML(n))
+        d.transitionPaths.flatMap(n => buildWorkflowXML(n))
       case j: Join =>
         Seq(n.toXML) ++ buildWorkflowXML(j.transitionTo)
       case _: End => Seq.empty

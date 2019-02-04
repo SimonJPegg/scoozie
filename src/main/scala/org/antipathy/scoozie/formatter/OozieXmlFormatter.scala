@@ -7,8 +7,7 @@ import org.antipathy.scoozie.XmlSerializable
   * @param width maximum width of any row
   * @param step indentation for each level of the XML
   */
-class OozieXmlFormatter(width: Int, step: Int)
-    extends Formatter[XmlSerializable] {
+class OozieXmlFormatter(width: Int, step: Int) extends Formatter[XmlSerializable] {
 
   /**
     * Method for formatting XML nodes

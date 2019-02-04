@@ -51,10 +51,7 @@ final class ShellAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    config.properties ++ Map(
-      scriptNameProperty -> scriptName,
-      scriptLocationProperty -> scriptLocation
-    ) ++ prepareProperties ++
+    config.properties ++ Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++
     commandLineArgsProperties ++
     envVarsProperties ++
     mappedConfigAndProperties._2
@@ -95,17 +92,15 @@ final class ShellAction(override val name: String,
 
 object ShellAction {
 
-  def apply(
-      name: String,
-      scriptName: String,
-      scriptLocation: String,
-      commandLineArgs: Seq[String],
-      envVars: Seq[String],
-      files: Seq[String],
-      captureOutput: Boolean,
-      config: YarnConfig,
-      prepareOption: Option[Prepare] = None
-  )(implicit credentialsOption: Option[Credentials]): Node =
+  def apply(name: String,
+            scriptName: String,
+            scriptLocation: String,
+            commandLineArgs: Seq[String],
+            envVars: Seq[String],
+            files: Seq[String],
+            captureOutput: Boolean,
+            config: YarnConfig,
+            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new ShellAction(name,
                       scriptName,
