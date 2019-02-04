@@ -168,8 +168,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
       )
     )
 
-    workflow.validate()
-
     workflow.jobProperties should be(
       """sampleWorkflow_property0=workflowpropvalue
         |sparkAction_mainClass=org.antipathy.Main
@@ -297,17 +295,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <ok to="shellAction" />
             <error to="emailAction" />
           </action>
-          <action name="shellAction" cred="hive-credentials">
-            <shell xmlns="uri:oozie:shell-action:0.1">
-              <job-tracker>{"${jobTracker}"}</job-tracker>
-              <name-node>{"${nameNode}"}</name-node>
-              <exec>{"${shellAction_scriptName}"}</exec>
-              <file>{"${shellAction_scriptLocation}#${shellAction_scriptName}"}</file>
-              <capture-output />
-            </shell>
-            <ok to="end" />
-            <error to="emailAction" />
-          </action>
           <action name="emailAction" cred="hive-credentials">
             <email xmlns="uri:oozie:email-action:0.1">
               <to>{"${emailAction_to}"}</to>
@@ -317,9 +304,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <ok to="kill" />
             <error to="kill" />
           </action>
-          <kill name="kill">
-            <message>workflow failed</message>
-          </kill>
           <action name="sparkAction" cred="hive-credentials">
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -335,11 +319,24 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <ok to="shellAction" />
             <error to="emailAction" />
           </action>
+          <action name="shellAction" cred="hive-credentials">
+            <shell xmlns="uri:oozie:shell-action:0.1">
+              <job-tracker>{"${jobTracker}"}</job-tracker>
+              <name-node>{"${nameNode}"}</name-node>
+              <exec>{"${shellAction_scriptName}"}</exec>
+              <file>{"${shellAction_scriptLocation}#${shellAction_scriptName}"}</file>
+              <capture-output />
+            </shell>
+            <ok to="end" />
+            <error to="emailAction" />
+          </action>
+          <kill name="kill">
+            <message>workflow failed</message>
+          </kill>
           <end name="end" />
         </workflow-app>
       )
     )
-    workflow.validate()
 
     workflow.jobProperties should be(
       """sparkAction_mainClass=org.antipathy.Main

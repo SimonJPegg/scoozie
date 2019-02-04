@@ -75,7 +75,7 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
       start="2009-01-02T08:00Z"
       end="2009-01-04T08:00Z"
       timezone="America/Los_Angeles"
-      xmlns="uri:oozie:coordinator:0.1">
+      xmlns="uri:oozie:coordinator:0.4">
         <action>
           <workflow>
             <app-path>/path/to/workflow.xml</app-path>

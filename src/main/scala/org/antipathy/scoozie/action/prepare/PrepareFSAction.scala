@@ -5,7 +5,7 @@ import org.antipathy.scoozie.XmlSerializable
 /**
   * Base trait for workflow preparation Steps
   */
-private[prepare] trait PrepareFSAction extends XmlSerializable {
+private[scoozie] trait PrepareFSAction extends XmlSerializable {
 
   /**
     * The path this action operates on
