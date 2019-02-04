@@ -7,12 +7,14 @@ import org.antipathy.scoozie.control._
 import scala.xml.Elem
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.exception._
 
 class NodeSpec extends FlatSpec with Matchers {
 
   behavior of "Node"
 
   it should "raise an exception when ok to transition not been defined" in {
+
     implicit val credentialsOption: Option[Credentials] = None
 
     val result = EmailAction(name = "email",
@@ -21,7 +23,7 @@ class NodeSpec extends FlatSpec with Matchers {
                              "message subject",
                              "message body")
 
-    an[IllegalArgumentException] should be thrownBy {
+    an[TransitionException] should be thrownBy {
       result.toXML
     }
 
@@ -61,7 +63,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
     val result = sparkAction okTo emailAction
 
-    an[IllegalArgumentException] should be thrownBy {
+    an[TransitionException] should be thrownBy {
       result.toXML
     }
 
@@ -111,7 +113,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
   it should "raise an exception if no transition from start has been defined" in {
 
-    an[IllegalArgumentException] should be thrownBy {
+    an[TransitionException] should be thrownBy {
       Start().toXML
     }
   }

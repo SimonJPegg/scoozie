@@ -1,3 +1,5 @@
+import ReleaseTransformations._
+
 name := "scoozie"
 
 organization := "org.antipathy"
@@ -8,7 +10,7 @@ scalaVersion := "2.12.8"
 
 crossScalaVersions := Seq("2.10.7","2.11.12", scalaVersion.value)
 
-scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked")
+scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feature")
 
 licenses := Seq((
   "Apache License, Version 2.0", 
@@ -60,8 +62,6 @@ sonatypeProfileName := "org.antipathy"
 publishMavenStyle := true
 
 publishArtifact in Test := false
-
-import ReleaseTransformations._
 
 releaseCrossBuild := true 
 

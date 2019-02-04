@@ -8,6 +8,7 @@ import org.antipathy.scoozie.validator.xml.NoXMLEntityResolver
 import org.antipathy.scoozie.validator.SchemaType
 import org.antipathy.scoozie.validator.SchemaType.SchemaType
 import scala.collection.immutable._
+import org.antipathy.scoozie.exception.NoSchemaException
 
 /**
   * Re-implementation of the Oozie SchemaService class
@@ -81,7 +82,7 @@ private[scoozie] class SchemaService {
     case SchemaType.coOrdinator => coordSchema
     case SchemaType.workflow    => wfSchema
     case _ =>
-      throw new RuntimeException("No schema found with name " + schemaName)
+      throw new NoSchemaException("No schema found with name " + schemaName)
   }
 }
 

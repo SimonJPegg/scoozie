@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.coordinator
 import org.antipathy.scoozie.{Nameable, XmlSerializable}
 import org.antipathy.scoozie.configuration.Configuration
+import org.antipathy.scoozie.workflow.Workflow
 
 import scala.xml.Elem
 
@@ -11,7 +12,7 @@ import scala.xml.Elem
   * @param start the CoOrdinator start time
   * @param end the CoOrdinator end time
   * @param timezone the CoOrdinator time-zone
-  * @param workflowPath the workflow application path
+  * @param workflow the workflow to run
   * @param configuration configuration for the workflow
   */
 case class CoOrdinator(override val name: String,
@@ -19,7 +20,7 @@ case class CoOrdinator(override val name: String,
                        start: String,
                        end: String,
                        timezone: String,
-                       workflowPath: String,
+                       workflow: Workflow,
                        configuration: Configuration)
     extends XmlSerializable
     with Nameable {
@@ -36,7 +37,7 @@ case class CoOrdinator(override val name: String,
                      xmlns="uri:oozie:coordinator:0.1">
       <action>
         <workflow>
-          <app-path>{workflowPath}</app-path>
+          <app-path>{workflow.path}</app-path>
           {if (configuration.configProperties.nonEmpty) {
               configuration.toXML
             }

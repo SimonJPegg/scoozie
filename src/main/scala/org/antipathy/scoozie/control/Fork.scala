@@ -4,6 +4,7 @@ import org.antipathy.scoozie.Node
 import org.antipathy.scoozie.action.Action
 import scala.collection.immutable.Map
 import scala.xml.Elem
+import org.antipathy.scoozie.exception.TransitionException
 
 /**
   * Oozie Fork control node
@@ -32,7 +33,7 @@ final class Fork(override val name: String, nodes: Seq[Node]) extends Action {
     */
   override def toXML: Elem = {
     if (transitionPaths.length < 2) {
-      throw new IllegalArgumentException(
+      throw new TransitionException(
         s"Error in Fork($name): must have at least 2 actions"
       )
     }
