@@ -1,8 +1,8 @@
 package org.antipathy.scoozie.coordinator
-import org.antipathy.scoozie.{Nameable, XmlSerializable}
+import org.antipathy.scoozie.{JobProperties, Nameable, XmlSerializable}
 import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.workflow.Workflow
-
+import scala.collection.immutable._
 import scala.xml.Elem
 
 /**
@@ -13,7 +13,7 @@ import scala.xml.Elem
   * @param end the CoOrdinator end time
   * @param timezone the CoOrdinator time-zone
   * @param workflow the workflow to run
-  * @param configuration configuration for the workflow
+  * @param configurationOption optional configuration for the workflow
   */
 case class CoOrdinator(override val name: String,
                        frequency: String,
@@ -21,9 +21,30 @@ case class CoOrdinator(override val name: String,
                        end: String,
                        timezone: String,
                        workflow: Workflow,
-                       configuration: Configuration)
+                       configurationOption: Option[Configuration] = None)
     extends XmlSerializable
-    with Nameable {
+    with Nameable
+    with JobProperties {
+
+  private val (mappedConfig, mappedProperties) = configurationOption match {
+    case Some(configuration) =>
+      configuration.withActionProperties(name)
+    case None =>
+      (Configuration(Seq.empty), Map())
+  }
+
+  /**
+    * Get the job properties
+    */
+  override def jobProperties: String = {
+    val pattern = "\\w+".r
+    mappedProperties.flatMap {
+      case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
+    }.toSeq.sorted.toSet.mkString(System.lineSeparator()) +
+    System.lineSeparator() +
+    workflow.jobProperties
+
+  }
 
   /**
     * The XML for this node
@@ -38,11 +59,12 @@ case class CoOrdinator(override val name: String,
       <action>
         <workflow>
           <app-path>{workflow.path}</app-path>
-          {if (configuration.configProperties.nonEmpty) {
-              configuration.toXML
+          {if (mappedConfig.configProperties.nonEmpty) {
+              mappedConfig.toXML
             }
           }
         </workflow>
       </action>
     </coordinator-app>
+
 }

@@ -28,7 +28,7 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
                              end = "2009-01-04T08:00Z",
                              timezone = "America/Los_Angeles",
                              workflow = workflow,
-                             configuration = Configuration(Seq())).toXML
+                             configurationOption = None).toXML
 
     xml.Utility.trim(result) should be(xml.Utility.trim(<coordinator-app
         name="SomeCoOrd"
@@ -56,8 +56,10 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
-                            configurationOption = None,
-                            yarnConfig = YarnConfig(jobTracker = "", nameNode = ""))
+                            configurationOption = Some(Configuration(
+                              Seq(Property("some", "value"))
+                            )),
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "Namenode"))
 
     val result = CoOrdinator(name = "SomeCoOrd",
                              frequency = "${coord:days(1)}",
@@ -65,11 +67,16 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
                              end = "2009-01-04T08:00Z",
                              timezone = "America/Los_Angeles",
                              workflow = workflow,
-                             configuration = Configuration(
+                             configurationOption = Some(Configuration(
                                Seq(Property("some", "value"))
-                             )).toXML
+                             )))
 
-    xml.Utility.trim(result) should be(xml.Utility.trim(<coordinator-app
+    result.jobProperties should be (
+      """SomeCoOrd_property0=value
+        |sampleWorkflow_property0=value""".stripMargin)
+
+
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<coordinator-app
       name="SomeCoOrd"
       frequency="${coord:days(1)}"
       start="2009-01-02T08:00Z"
@@ -82,7 +89,7 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
             <configuration>
               <property>
                 <name>some</name>
-                <value>value</value>
+                <value>{"${SomeCoOrd_property0}"}</value>
               </property>
             </configuration>
           </workflow>

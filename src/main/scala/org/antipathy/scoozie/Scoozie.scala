@@ -420,7 +420,7 @@ object Scoozie {
   }
 
   /**
-    * Oozie workflow definition
+    * Oozie workflow
     * @param name the name of the workflow
     * @param path The path to this workflow
     * @param transitions the actions within the workflow
@@ -436,14 +436,14 @@ object Scoozie {
     Workflow(name, path, transitions, configurationOption, yarnConfig)
 
   /**
-    * Oozie coOrdinator definition
+    * Oozie coOrdinator
     * @param name the CoOrdinator name
     * @param frequency the CoOrdinator frequency
     * @param start the CoOrdinator start time
     * @param end the CoOrdinator end time
     * @param timezone the CoOrdinator time-zone
     * @param workflow the workflow to run
-    * @param configuration configuration for the workflow
+    * @param configurationOption optional configuration for the workflow
     */
   def coOrdinator(name: String,
                   frequency: String,
@@ -451,12 +451,6 @@ object Scoozie {
                   end: String,
                   timezone: String,
                   workflow: Workflow,
-                  configuration: Configuration = Configuration(Seq.empty)): CoOrdinator =
-    CoOrdinator(name: String,
-                frequency: String,
-                start: String,
-                end: String,
-                timezone: String,
-                workflow: Workflow,
-                configuration: Configuration)
+                  configurationOption: Option[Configuration] = None): CoOrdinator =
+    CoOrdinator(name, frequency, start, end, timezone, workflow, configurationOption)
 }
