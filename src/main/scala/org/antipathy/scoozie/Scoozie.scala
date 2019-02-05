@@ -4,11 +4,12 @@ import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.action.prepare._
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.control._
-import org.antipathy.scoozie.coordinator.CoOrdinator
+import org.antipathy.scoozie.coordinator.{Coordinator => OozieCoordinator}
 import org.antipathy.scoozie.formatter.OozieXmlFormatter
 import org.antipathy.scoozie.testing.WorkflowTestRunner
 import org.antipathy.scoozie.validator.{OozieValidator, SchemaType}
-import org.antipathy.scoozie.workflow.Workflow
+import org.antipathy.scoozie.workflow.{Workflow => OozieWorkFlow}
+import org.antipathy.scoozie.workflow.{Functions => WorkFlowFunctions}
 import scala.collection.immutable._
 
 /**
@@ -380,7 +381,7 @@ object Scoozie {
       * @param failingNodes a list of nodes that should fail in this workflow
       * @param decisionNodes the nodes to visit on a decision
       */
-    def workflowTesterWorkflowTestRunner(workflow: Workflow,
+    def workflowTesterWorkflowTestRunner(workflow: OozieWorkFlow,
                                          failingNodes: Seq[String] = Seq.empty[String],
                                          decisionNodes: Seq[String] = Seq.empty[String]): WorkflowTestRunner = {
       validate(workflow)
@@ -391,14 +392,14 @@ object Scoozie {
       * Validate the passed in workflow
       * @param workflow the workflow to validate
       */
-    def validate(workflow: Workflow): Unit =
+    def validate(workflow: OozieWorkFlow): Unit =
       OozieValidator.validate(Format.format(workflow, 80, 4), SchemaType.workflow)
 
     /**
       * Validate the passed in coordinator
       * @param coOrdinator the coordinator to validate
       */
-    def validate(coOrdinator: CoOrdinator): Unit =
+    def validate(coOrdinator: OozieCoordinator): Unit =
       OozieValidator.validate(Format.format(coOrdinator, 80, 4), SchemaType.coOrdinator)
   }
 
@@ -419,38 +420,144 @@ object Scoozie {
       new OozieXmlFormatter(width, step).format(oozieNode)
   }
 
-  /**
-    * Oozie workflow
-    * @param name the name of the workflow
-    * @param path The path to this workflow
-    * @param transitions the actions within the workflow
-    * @param configurationOption optional configuration for this workflow
-    * @param yarnConfig The yarn configuration for this workflow
-    * @param credentialsOption optional credentials for this workflow
-    */
-  def workflow(name: String,
-               path: String,
-               transitions: Node,
-               configurationOption: Option[Configuration] = None,
-               yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]) =
-    Workflow(name, path, transitions, configurationOption, yarnConfig)
+  object Workflow {
 
-  /**
-    * Oozie coOrdinator
-    * @param name the CoOrdinator name
-    * @param frequency the CoOrdinator frequency
-    * @param start the CoOrdinator start time
-    * @param end the CoOrdinator end time
-    * @param timezone the CoOrdinator time-zone
-    * @param workflow the workflow to run
-    * @param configurationOption optional configuration for the workflow
-    */
-  def coOrdinator(name: String,
-                  frequency: String,
-                  start: String,
-                  end: String,
-                  timezone: String,
-                  workflow: Workflow,
-                  configurationOption: Option[Configuration] = None): CoOrdinator =
-    CoOrdinator(name, frequency, start, end, timezone, workflow, configurationOption)
+    /**
+      * Oozie workflow
+      *
+      * @param name the name of the workflow
+      * @param path The path to this workflow
+      * @param transitions the actions within the workflow
+      * @param configurationOption optional configuration for this workflow
+      * @param yarnConfig The yarn configuration for this workflow
+      * @param credentialsOption optional credentials for this workflow
+      */
+    def workflow(name: String,
+                 path: String,
+                 transitions: Node,
+                 configurationOption: Option[Configuration] = None,
+                 yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): OozieWorkFlow =
+      OozieWorkFlow(name, path, transitions, configurationOption, yarnConfig)
+
+    /**
+      * Oozie workflow functions
+      */
+    object Functions {
+      /**
+        * returns the workflow job ID for the current workflow job.
+        */
+      val id: String = WorkFlowFunctions.id
+
+      /**
+        * returns the workflow application name for the current workflow job.
+        */
+      val name: String = WorkFlowFunctions.name
+
+      /**
+        * returns the workflow application path for the current workflow job.
+        */
+      val appPath: String = WorkFlowFunctions.appPath
+
+      /**
+        * returns the value of the workflow job configuration property for the current workflow job,
+        * or an empty string if undefined.
+        */
+      def conf(name:String): String = WorkFlowFunctions.conf(name)
+
+      /**
+        * returns the user name that started the current workflow job.
+        */
+      val user: String = WorkFlowFunctions.user
+
+      /**
+        * returns the group/ACL for the current workflow job
+        */
+      val group: String = WorkFlowFunctions.group
+
+      /**
+        * returns the callback URL for the current workflow action node, stateVar can be a valid exit
+        * state (=OK= or ERROR ) for the action or a token to be replaced with the exit state by the remote
+        * system executing the task.
+        */
+      def callBack(stateVar: String): String = WorkFlowFunctions.callBack(stateVar)
+
+      /**
+        * returns the transition taken by the specified workflow action node, or an empty
+        * string if the action has not being executed or it has not completed yet.
+        */
+      def transition(nodeName: String): String = WorkFlowFunctions.transition(nodeName)
+
+      /**
+        * returns the name of the last workflow action node that exit with an ERROR exit state, or an empty string
+        * if no a ction has exited with ERROR state in the current workflow job.
+        */
+      val lastErrorNode: String = WorkFlowFunctions.lastErrorNode
+
+      /**
+        * returns the error code for the specified action node, or an empty string
+        * if the action node has not exited with ERROR state.
+        * Each type of action node must define its complete error code list.
+        */
+      def errorCode(nodeName:String): String = WorkFlowFunctions.errorCode(nodeName)
+
+      /**
+        * returns the error message for the specified action node, or an empty string if no
+        * action node has not exited with ERROR state.
+        * The error message can be useful for debugging and notification purposes.
+        */
+      def errorMessage(nodeName:String): String = WorkFlowFunctions.errorMessage(nodeName)
+
+      /**
+        * returns the run number for the current workflow job, normally 0 unless the workflow
+        * job is re-run, in which case indicates the current run.
+        */
+      val run: String = WorkFlowFunctions.run
+
+      /**
+        * This function is only applicable to action nodes that produce output data on completion.
+        * The output data is in a Java Properties format and via this EL function it is available as a Map .
+        */
+      def actionData(nodeName:String): String = WorkFlowFunctions.actionData(nodeName)
+
+      /**
+        * returns the external Id for an action node, or an empty string if the action has
+        * not being executed or it has not completed yet.
+        */
+      def externalActionId(nodeName:String):String = WorkFlowFunctions.externalActionId(nodeName)
+
+      /**
+        * returns the tracker URIfor an action node, or an empty string if the action has
+        * not being executed or it has not completed yet.
+        */
+      def actionTrackerURL(nodeName:String): String = WorkFlowFunctions.actionTrackerURL(nodeName)
+
+      /**
+        * returns the external status for an action node, or an empty string if the action has not
+        * being executed or it has not completed yet.
+        */
+      def actionExternalStatus(nodeName:String): String = WorkFlowFunctions.actionExternalStatus(nodeName)
+    }
+  }
+
+
+  object Coordinator {
+    /**
+      * Oozie coOrdinator
+      * @param name the CoOrdinator name
+      * @param frequency the CoOrdinator frequency
+      * @param start the CoOrdinator start time
+      * @param end the CoOrdinator end time
+      * @param timezone the CoOrdinator time-zone
+      * @param workflow the workflow to run
+      * @param configurationOption optional configuration for the workflow
+      */
+    def coordinator(name: String,
+                    frequency: String,
+                    start: String,
+                    end: String,
+                    timezone: String,
+                    workflow: OozieWorkFlow,
+                    configurationOption: Option[Configuration] = None): OozieCoordinator =
+      OozieCoordinator(name, frequency, start, end, timezone, workflow, configurationOption)
+  }
 }

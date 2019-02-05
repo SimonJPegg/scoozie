@@ -4,6 +4,7 @@ import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.workflow.Workflow
 import scala.collection.immutable._
 import scala.xml.Elem
+import scala.language.existentials
 
 /**
   * Oozie coOrdinator definition
@@ -15,7 +16,7 @@ import scala.xml.Elem
   * @param workflow the workflow to run
   * @param configurationOption optional configuration for the workflow
   */
-case class CoOrdinator(override val name: String,
+case class Coordinator(override val name: String,
                        frequency: String,
                        start: String,
                        end: String,
