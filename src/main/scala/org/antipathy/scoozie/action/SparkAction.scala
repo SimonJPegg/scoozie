@@ -1,12 +1,12 @@
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Arg, YarnConfig}
+import org.antipathy.scoozie.configuration._
+
 import scala.xml.Elem
 import org.antipathy.scoozie.Node
-import org.antipathy.scoozie.configuration.Credentials
+
 import scala.collection.immutable._
-import org.antipathy.scoozie.configuration.File
 
 /**
   * Oozie Spark action definition
@@ -20,7 +20,8 @@ import org.antipathy.scoozie.configuration.File
   * @param sparkOptions options for the spark job
   * @param commandLineArgs command line arguments for the spark job
   * @param prepareOption an optional prepare phase for the action
-  * @param config Yarn configuration for this action
+  * @param configuration additional config for this action
+  * @param yarnConfig Yarn configuration for this action
   */
 final class SparkAction(override val name: String,
                         sparkSettings: String,
@@ -33,7 +34,8 @@ final class SparkAction(override val name: String,
                         commandLineArgs: Seq[String],
                         files: Seq[String],
                         prepareOption: Option[Prepare] = None,
-                        config: YarnConfig)
+                        configuration: Configuration,
+                        yarnConfig: YarnConfig)
     extends Action {
 
   private val sparkSettingsProperty = formatProperty(s"${name}_sparkSettings")
@@ -52,8 +54,7 @@ final class SparkAction(override val name: String,
   private val prepareProperties =
     prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties =
-    config.configuration.withActionProperties(name)
+  private val mappedConfigAndProperties = configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
 
   /**
@@ -72,7 +73,6 @@ final class SparkAction(override val name: String,
         mainClassProperty -> mainClass,
         sparkJarProperty -> sparkJar,
         sparkOptionsProperty -> sparkOptions) ++
-    config.properties ++
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
@@ -83,8 +83,8 @@ final class SparkAction(override val name: String,
     */
   override def toXML: Elem =
     <spark xmlns={xmlns.orNull}>
-      {config.jobTrackerXML}
-      {config.nameNodeXML}
+      {yarnConfig.jobTrackerXML}
+      {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
           prepareOptionMapped.get.toXML
         }
@@ -118,7 +118,8 @@ object SparkAction {
             commandLineArgs: Seq[String],
             files: Seq[String],
             prepareOption: Option[Prepare] = None,
-            config: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
+            configuration: Configuration,
+            yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new SparkAction(name,
                       sparkSettings,
@@ -131,6 +132,7 @@ object SparkAction {
                       commandLineArgs,
                       files,
                       prepareOption,
-                      config)
+                      configuration,
+                      yarnConfig)
     )
 }

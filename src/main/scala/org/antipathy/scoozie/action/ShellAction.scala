@@ -17,7 +17,8 @@ import scala.collection.immutable._
   * @param envVars environment variables for the script
   * @param files files to include with the script
   * @param captureOutput capture output from this action
-  * @param config Yarn configuration for this action
+  * @param configuration additional config for this action
+  * @param yarnConfig Yarn configuration for this action
   * @param prepareOption an optional prepare stage for the action
   */
 final class ShellAction(override val name: String,
@@ -27,7 +28,8 @@ final class ShellAction(override val name: String,
                         envVars: Seq[String],
                         files: Seq[String],
                         captureOutput: Boolean,
-                        config: YarnConfig,
+                        configuration: Configuration,
+                        yarnConfig: YarnConfig,
                         prepareOption: Option[Prepare] = None)
     extends Action {
 
@@ -43,15 +45,14 @@ final class ShellAction(override val name: String,
   private val prepareProperties =
     prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties =
-    config.configuration.withActionProperties(name)
+  private val mappedConfigAndProperties = configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
 
   /**
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    config.properties ++ Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++
+    Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++
     commandLineArgsProperties ++
     envVarsProperties ++
     mappedConfigAndProperties._2
@@ -67,8 +68,8 @@ final class ShellAction(override val name: String,
   override def toXML: Elem = {
     val fileVal = s"$scriptLocationProperty#$scriptNameProperty"
     <shell xmlns={xmlns.orNull}>
-      {config.jobTrackerXML}
-      {config.nameNodeXML}
+      {yarnConfig.jobTrackerXML}
+      {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
           prepareOptionMapped.get.toXML
         }
@@ -99,7 +100,8 @@ object ShellAction {
             envVars: Seq[String],
             files: Seq[String],
             captureOutput: Boolean,
-            config: YarnConfig,
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new ShellAction(name,
@@ -109,7 +111,8 @@ object ShellAction {
                       envVars,
                       files,
                       captureOutput,
-                      config,
+                      configuration,
+                      yarnConfig,
                       prepareOption)
     )
 }

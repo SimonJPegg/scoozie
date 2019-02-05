@@ -6,6 +6,7 @@ import org.antipathy.scoozie.configuration.{Credential, Credentials, Property, Y
 import org.antipathy.scoozie.control._
 import org.antipathy.scoozie.workflow.Workflow
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class OozieXmlFormatterSpec extends FlatSpec with Matchers {
 
@@ -41,7 +42,8 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -58,7 +60,8 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq(),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
 
@@ -68,7 +71,8 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                config = yarnConfig)
+                                configuration = Scoozie.Config.emptyConfiguration,
+                                yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
 

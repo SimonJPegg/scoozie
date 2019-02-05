@@ -5,6 +5,7 @@ import org.antipathy.scoozie.configuration.YarnConfig
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class PigActionSpec extends FlatSpec with Matchers {
 
@@ -17,7 +18,8 @@ class PigActionSpec extends FlatSpec with Matchers {
     val result = PigAction(name = "pigAction",
                            script = "/path/to/script",
                            params = Seq(),
-                           config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                           configuration = Scoozie.Config.emptyConfiguration,
+                           yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -25,9 +27,7 @@ class PigActionSpec extends FlatSpec with Matchers {
           <script>{"${pigAction_script}"}</script>
         </pig>))
 
-    result.properties should be(
-      Map("${pigAction_script}" -> "/path/to/script", "${jobTracker}" -> "jobTracker", "${nameNode}" -> "nameNode")
-    )
+    result.properties should be(Map("${pigAction_script}" -> "/path/to/script"))
   }
 
   it should "generate valid XML with script arguments" in {
@@ -37,7 +37,8 @@ class PigActionSpec extends FlatSpec with Matchers {
     val result = PigAction(name = "pigAction",
                            script = "/path/to/script",
                            params = Seq("one", "two"),
-                           config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                           configuration = Scoozie.Config.emptyConfiguration,
+                           yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -50,11 +51,7 @@ class PigActionSpec extends FlatSpec with Matchers {
         </pig>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${jobTracker}" -> "jobTracker",
-          "${pigAction_param0}" -> "one",
-          "${pigAction_script}" -> "/path/to/script",
-          "${pigAction_param1}" -> "two")
+      Map("${pigAction_param0}" -> "one", "${pigAction_script}" -> "/path/to/script", "${pigAction_param1}" -> "two")
     )
   }
 }

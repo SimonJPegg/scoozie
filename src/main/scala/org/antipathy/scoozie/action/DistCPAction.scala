@@ -32,7 +32,6 @@ class DistCPAction(override val name: String,
   private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
   private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties = yarnConfig.configuration.withActionProperties(name)
 
   /**
     * The XML namespace for an action element
@@ -46,8 +45,7 @@ class DistCPAction(override val name: String,
   Map(javaOptionsProperty -> javaOptions) ++
   argumentsProperties ++
   configurationProperties._2 ++
-  prepareProperties ++
-  mappedConfigAndProperties._2
+  prepareProperties
 
   /**
     * The XML for this node

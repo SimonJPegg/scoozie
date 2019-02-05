@@ -16,11 +16,11 @@ class DistCPActionSpec extends FlatSpec with Matchers {
 
     val result = Scoozie.Action
       .distCP("distCP",
-              Seq("/some/path1", "/some/path2"),
-              "-DskipTests=true",
               Scoozie.Config.emptyConfiguration,
               Scoozie.Config.yarnConfiguration("someJobTracker", "SomeNameNode", Scoozie.Config.emptyConfiguration),
-              Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))))
+              Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
+              Seq("/some/path1", "/some/path2"),
+              "-DskipTests=true")
       .action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<distcp xmlns="uri:oozie:distcp-action:0.2">
@@ -54,11 +54,11 @@ class DistCPActionSpec extends FlatSpec with Matchers {
 
     val result = Scoozie.Action
       .distCP("distCP",
-              Seq("/some/path1", "/some/path2"),
-              "-DskipTests=true",
               Scoozie.Config.configuration(additionalconfig),
               Scoozie.Config.yarnConfiguration("someJobTracker", "SomeNameNode", Scoozie.Config.emptyConfiguration),
-              Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))))
+              Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
+              Seq("/some/path1", "/some/path2"),
+              "-DskipTests=true")
       .action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<distcp xmlns="uri:oozie:distcp-action:0.2">

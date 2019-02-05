@@ -1,10 +1,9 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.configuration.YarnConfig
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.Node
 
 import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Credentials
 import scala.collection.immutable._
 
 /**
@@ -12,17 +11,18 @@ import scala.collection.immutable._
   * @param name the name of the action
   * @param applicationPath The path to the workflow
   * @param propagateConfiguration should the parent workflow properties be used
-  * @param config Yarn config
+  * @param configuration configuration to provide to the action
+  * @param yarnConfig the yarn configuration
   */
 final class SubWorkflowAction(override val name: String,
                               applicationPath: String,
                               propagateConfiguration: Boolean,
-                              config: YarnConfig)
+                              configuration: Configuration,
+                              yarnConfig: YarnConfig)
     extends Action {
 
   private val applicationPathProperty = formatProperty(s"${name}_applicationPath")
-  private val mappedConfigAndProperties =
-    config.configuration.withActionProperties(name)
+  private val mappedConfigAndProperties = configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
 
   /**
@@ -55,8 +55,10 @@ final class SubWorkflowAction(override val name: String,
 
 object SubWorkflowAction {
 
-  def apply(name: String, applicationPath: String, propagateConfiguration: Boolean, config: YarnConfig)(
-      implicit credentialsOption: Option[Credentials]
-  ): Node =
-    Node(new SubWorkflowAction(name, applicationPath, propagateConfiguration, config))
+  def apply(name: String,
+            applicationPath: String,
+            propagateConfiguration: Boolean,
+            configuration: Configuration,
+            yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
+    Node(new SubWorkflowAction(name, applicationPath, propagateConfiguration, configuration, yarnConfig))
 }
