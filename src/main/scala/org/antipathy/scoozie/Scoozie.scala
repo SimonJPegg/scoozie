@@ -37,6 +37,23 @@ object Scoozie {
       Decision(name, default, Seq(switch.toSeq: _*))
 
     /**
+      * DistCP action definition
+      * @param name the name of the action
+      * @param arguments arguments to the DistCP action
+      * @param javaOptions java options to pass to the action
+      * @param configuration additional configuration to pass to the action
+      * @param yarnConfig the yarn configuration
+      * @param prepareOption optional preparation step
+      */
+    def distCP(name: String,
+               arguments: Seq[String],
+               javaOptions: String,
+               configuration: Configuration,
+               yarnConfig: YarnConfig,
+               prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+      DistCPAction(name, arguments, javaOptions, configuration, yarnConfig, prepareOption)
+
+    /**
       * Email action
       * @param name the name of the action
       * @param to the to recipient list
@@ -46,13 +63,13 @@ object Scoozie {
       */
     def email(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String)(
         implicit credentialsOption: Option[Credentials]
-    ) =
+    ): Node =
       EmailAction(name, to, cc, subject, body)
 
     /**
       * oozie end control node
       */
-    def end = End()
+    def end: Node = End()
 
     /**
       * Oozie Fork control node
@@ -108,7 +125,7 @@ object Scoozie {
               config: YarnConfig,
               jdbcUrl: String,
               password: Option[String] = None,
-              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]) =
+              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       Hive2Action(name,
                   hiveSettingsXML,
                   scriptName,
@@ -259,7 +276,7 @@ object Scoozie {
     /**
       * oozie Start control node
       */
-    def start = Start()
+    def start: Node = Start()
 
     /**
       * Oozie sub-workflow action definition
@@ -279,7 +296,7 @@ object Scoozie {
       * @param node the node to switch to
       * @param predicate the predicate for switching to the node
       */
-    def switch(node: Node, predicate: String) = Switch(node, predicate)
+    def switch(node: Node, predicate: String): Switch = Switch(node, predicate)
   }
 
   /**
@@ -337,14 +354,14 @@ object Scoozie {
       * @param path the path to delete
       * @return a delete preparation step
       */
-    def delete(path: String) = Delete(path)
+    def delete(path: String): Delete = Delete(path)
 
     /**
       * Create a make directory preparation step
       * @param path the path to create
       * @return a make directory preparation step
       */
-    def makeDirectory(path: String) = MakeDir(path)
+    def makeDirectory(path: String): MakeDir = MakeDir(path)
 
     /**
       * Create an action preparation step
@@ -387,6 +404,11 @@ object Scoozie {
       }.toSeq: _*))
 
     /**
+      * Empty Oozie configuration for a workflow or an action
+      */
+    def emptyConfiguration: Configuration = Configuration(Seq.empty)
+
+    /**
       * Create the credentials for an oozie workflow
       * @param name the name of the credential
       * @param credentialsType the type of the credential
@@ -410,7 +432,7 @@ object Scoozie {
       * @param configuration additional yarn configuration options
       * @return a yarn configuration
       */
-    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration = Configuration(Seq())) =
+    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration) =
       YarnConfig(jobTracker, nameNode, configuration)
 
     /**

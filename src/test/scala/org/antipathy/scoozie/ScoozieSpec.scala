@@ -99,129 +99,129 @@ class ScoozieSpec extends FlatSpec with Matchers {
   it should "allow the creation of an oozie workflow" in {
     val testWorkflow = new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
 
-    Scoozie.Format.format(testWorkflow.workflow, 80, 4) should be(
-      """<workflow-app name="ExampleWorkflow" xmlns="uri:oozie:workflow:0.4">
-        |    <global>
-        |        <job-tracker>${jobTracker}</job-tracker>
-        |        <name-node>${nameNode}</name-node>
-        |    </global>
-        |    <start to="sparkOrShell"/>
-        |    <decision name="sparkOrShell">
-        |        <switch>
-        |            <case to="doAShellThing">${someVar}</case>
-        |            <default to="doASparkThing"/>
-        |        </switch>
-        |    </decision>
-        |    <action name="doAShellThing">
-        |        <shell xmlns="uri:oozie:shell-action:0.1">
-        |            <job-tracker>${jobTracker}</job-tracker>
-        |            <name-node>${nameNode}</name-node>
-        |            <configuration>
-        |                <property>
-        |                    <name>prop1</name>
-        |                    <value>${doAShellThing_property0}</value>
-        |                </property>
-        |                <property>
-        |                    <name>prop2</name>
-        |                    <value>${doAShellThing_property1}</value>
-        |                </property>
-        |            </configuration>
-        |            <exec>${doAShellThing_scriptName}</exec>
-        |            <file>${doAShellThing_scriptLocation}#${doAShellThing_scriptName}</file>
-        |            <capture-output/>
-        |        </shell>
-        |        <ok to="mainFork"/>
-        |        <error to="alertFailure"/>
-        |    </action>
-        |    <action name="doASparkThing">
-        |        <spark xmlns="uri:oozie:spark-action:1.0">
-        |            <job-tracker>${jobTracker}</job-tracker>
-        |            <name-node>${nameNode}</name-node>
-        |            <job-xml>${doASparkThing_sparkSettings}</job-xml>
-        |            <configuration>
-        |                <property>
-        |                    <name>prop1</name>
-        |                    <value>${doASparkThing_property0}</value>
-        |                </property>
-        |                <property>
-        |                    <name>prop2</name>
-        |                    <value>${doASparkThing_property1}</value>
-        |                </property>
-        |            </configuration>
-        |            <master>${doASparkThing_sparkMasterURL}</master>
-        |            <mode>${doASparkThing_sparkMode}</mode>
-        |            <name>${doASparkThing_sparkJobName}</name>
-        |            <class>${doASparkThing_mainClass}</class>
-        |            <jar>${doASparkThing_sparkJar}</jar>
-        |            <spark-opts>${doASparkThing_sparkOptions}</spark-opts>
-        |        </spark>
-        |        <ok to="mainFork"/>
-        |        <error to="alertFailure"/>
-        |    </action>
-        |    <fork name="mainFork">
-        |        <path start="doAJavaThing"/>
-        |        <path start="doAHiveThing"/>
-        |    </fork>
-        |    <action name="doAJavaThing">
-        |        <java>
-        |            <job-tracker>${jobTracker}</job-tracker>
-        |            <name-node>${nameNode}</name-node>
-        |            <prepare>
-        |                <delete path="doAJavaThing_prepare_delete"/>
-        |            </prepare>
-        |            <configuration>
-        |                <property>
-        |                    <name>prop1</name>
-        |                    <value>${doAJavaThing_property0}</value>
-        |                </property>
-        |                <property>
-        |                    <name>prop2</name>
-        |                    <value>${doAJavaThing_property1}</value>
-        |                </property>
-        |            </configuration>
-        |            <main-class>${doAJavaThing_mainClass}</main-class>
-        |            <java-opts>${doAJavaThing_javaOptions}</java-opts>
-        |            <file>${doAJavaThing_javaJar}</file>
-        |        </java>
-        |        <ok to="mainJoin"/>
-        |        <error to="alertFailure"/>
-        |    </action>
-        |    <action name="doAHiveThing">
-        |        <hive xmlns="uri:oozie:hive-action:0.2">
-        |            <job-tracker>${jobTracker}</job-tracker>
-        |            <name-node>${nameNode}</name-node>
-        |            <job-xml>${doAHiveThing_hiveSettingsXML}</job-xml>
-        |            <configuration>
-        |                <property>
-        |                    <name>prop1</name>
-        |                    <value>${doAHiveThing_property0}</value>
-        |                </property>
-        |                <property>
-        |                    <name>prop2</name>
-        |                    <value>${doAHiveThing_property1}</value>
-        |                </property>
-        |            </configuration>
-        |            <script>${doAHiveThing_scriptName}</script>
-        |            <file>${doAHiveThing_scriptLocation}</file>
-        |        </hive>
-        |        <ok to="mainJoin"/>
-        |        <error to="alertFailure"/>
-        |    </action>
-        |    <join name="mainJoin" to="end"/>
-        |    <action name="alertFailure">
-        |        <email xmlns="uri:oozie:email-action:0.1">
-        |            <to>${alertFailure_to}</to>
-        |            <subject>${alertFailure_subject}</subject>
-        |            <body>${alertFailure_body}</body>
-        |        </email>
-        |        <ok to="kill"/>
-        |        <error to="kill"/>
-        |    </action>
-        |    <kill name="kill">
-        |        <message>Workflow failed</message>
-        |    </kill>
-        |    <end name="end"/>
-        |</workflow-app>""".stripMargin
+    xml.Utility.trim(testWorkflow.workflow.toXML) should be(
+      xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="ExampleWorkflow">
+          <global>
+            <job-tracker>{"${jobTracker}"}</job-tracker>
+            <name-node>{"${nameNode}"}</name-node>
+          </global>
+          <start to="sparkOrShell" />
+          <decision name="sparkOrShell">
+            <switch>
+              <case to="doAShellThing">{"${someVar}"}</case>
+              <default to="doASparkThing" />
+            </switch>
+          </decision>
+          <action name="doAShellThing">
+            <shell xmlns="uri:oozie:shell-action:0.1">
+              <job-tracker>{"${jobTracker}"}</job-tracker>
+              <name-node>{"${nameNode}"}</name-node>
+              <configuration>
+                <property>
+                  <name>prop1</name>
+                  <value>{"${doAShellThing_property0}"}</value>
+                </property>
+                <property>
+                  <name>prop2</name>
+                  <value>{"${doAShellThing_property1}"}</value>
+                </property>
+              </configuration>
+              <exec>{"${doAShellThing_scriptName}"}</exec>
+              <file>{"${doAShellThing_scriptLocation}#${doAShellThing_scriptName}"}</file>
+              <capture-output />
+            </shell>
+            <ok to="mainFork" />
+            <error to="alertFailure" />
+          </action>
+          <action name="doASparkThing">
+            <spark xmlns="uri:oozie:spark-action:1.0">
+              <job-tracker>{"${jobTracker}"}</job-tracker>
+              <name-node>{"${nameNode}"}</name-node>
+              <job-xml>{"${doASparkThing_sparkSettings}"}</job-xml>
+              <configuration>
+                <property>
+                  <name>prop1</name>
+                  <value>{"${doASparkThing_property0}"}</value>
+                </property>
+                <property>
+                  <name>prop2</name>
+                  <value>{"${doASparkThing_property1}"}</value>
+                </property>
+              </configuration>
+              <master>{"${doASparkThing_sparkMasterURL}"}</master>
+              <mode>{"${doASparkThing_sparkMode}"}</mode>
+              <name>{"${doASparkThing_sparkJobName}"}</name>
+              <class>{"${doASparkThing_mainClass}"}</class>
+              <jar>{"${doASparkThing_sparkJar}"}</jar>
+              <spark-opts>{"${doASparkThing_sparkOptions}"}</spark-opts>
+            </spark>
+            <ok to="mainFork" />
+            <error to="alertFailure" />
+          </action>
+          <fork name="mainFork">
+            <path start="doAJavaThing" />
+            <path start="doAHiveThing" />
+          </fork>
+          <action name="doAJavaThing">
+            <java>
+              <job-tracker>{"${jobTracker}"}</job-tracker>
+              <name-node>{"${nameNode}"}</name-node>
+              <prepare>
+                <delete path="${doAJavaThing_prepare_delete}" />
+              </prepare>
+              <configuration>
+                <property>
+                  <name>prop1</name>
+                  <value>{"${doAJavaThing_property0}"}</value>
+                </property>
+                <property>
+                  <name>prop2</name>
+                  <value>{"${doAJavaThing_property1}"}</value>
+                </property>
+              </configuration>
+              <main-class>{"${doAJavaThing_mainClass}"}</main-class>
+              <java-opts>{"${doAJavaThing_javaOptions}"}</java-opts>
+              <file>{"${doAJavaThing_javaJar}"}</file>
+            </java>
+            <ok to="mainJoin" />
+            <error to="alertFailure" />
+          </action>
+          <action name="doAHiveThing">
+            <hive xmlns="uri:oozie:hive-action:0.2">
+              <job-tracker>{"${jobTracker}"}</job-tracker>
+              <name-node>{"${nameNode}"}</name-node>
+              <job-xml>{"${doAHiveThing_hiveSettingsXML}"}</job-xml>
+              <configuration>
+                <property>
+                  <name>prop1</name>
+                  <value>{"${doAHiveThing_property0}"}</value>
+                </property>
+                <property>
+                  <name>prop2</name>
+                  <value>{"${doAHiveThing_property1}"}</value>
+                </property>
+              </configuration>
+              <script>{"${doAHiveThing_scriptName}"}</script>
+              <file>{"${doAHiveThing_scriptLocation}"}</file>
+            </hive>
+            <ok to="mainJoin" />
+            <error to="alertFailure" />
+          </action>
+          <join name="mainJoin" to="end" />
+          <action name="alertFailure">
+            <email xmlns="uri:oozie:email-action:0.1">
+              <to>{"${alertFailure_to}"}</to>
+              <subject>{"${alertFailure_subject}"}</subject>
+              <body>{"${alertFailure_body}"}</body>
+            </email>
+            <ok to="kill" />
+            <error to="kill" />
+          </action>
+          <kill name="kill">
+            <message>Workflow failed</message>
+          </kill>
+          <end name="end" />
+        </workflow-app>)
     )
 
     testWorkflow.jobConfig should be("""ExampleCoOrdinator_property0=value1

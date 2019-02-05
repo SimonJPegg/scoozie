@@ -19,10 +19,10 @@ case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
   private[scoozie] def withActionProperties(actionName: String): (Prepare, Map[String, String]) = {
     val mappedProps = actions.map {
       case d: Delete =>
-        val p = s"${actionName}_prepare_delete"
+        val p = "${" + s"${actionName}_prepare_delete" + "}"
         (Delete(p), p -> d.path)
       case m: MakeDir =>
-        val p = s"${actionName}_prepare_makedir"
+        val p = "${" + s"${actionName}_prepare_makedir" + "}"
         (MakeDir(p), p -> m.path)
     }
     (this.copy(mappedProps.map(_._1)), mappedProps.map(_._2).toMap)
