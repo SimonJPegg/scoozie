@@ -347,12 +347,15 @@ object Scoozie {
       * @param name the name of the action
       * @param applicationPath The path to the workflow
       * @param propagateConfiguration should the parent workflow properties be used
-      * @param config Yarn config
+      * @param configuration configuration to provide to the action
+      * @param yarnConfig the yarn configuration
       */
-    def subWorkflow(name: String, applicationPath: String, propagateConfiguration: Boolean, config: YarnConfig)(
-        implicit credentialsOption: Option[Credentials]
-    ): Node =
-      SubWorkflowAction(name, applicationPath, propagateConfiguration, config)
+    def subWorkflow(name: String,
+                    applicationPath: String,
+                    propagateConfiguration: Boolean,
+                    configuration: Configuration,
+                    yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
+      SubWorkflowAction(name, applicationPath, propagateConfiguration, configuration, yarnConfig)
 
     /**
       * Ooozie decision node switch

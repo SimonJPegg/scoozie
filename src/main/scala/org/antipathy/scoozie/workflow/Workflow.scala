@@ -2,14 +2,13 @@ package org.antipathy.scoozie.workflow
 
 import org.antipathy.scoozie.{JobProperties, Nameable, Node, XmlSerializable}
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
-
 import scala.language.existentials
 import scala.xml.Elem
 import org.antipathy.scoozie.control._
-import org.antipathy.scoozie.formatter.OozieXmlFormatter
-import org.antipathy.scoozie.action.SubWorkflowAction
 import scala.collection.immutable._
 import org.antipathy.scoozie.configuration.Credential
+import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action.SubWorkflowAction
 
 /**
   * Oozie workflow definition
@@ -115,8 +114,17 @@ case class Workflow(override val name: String,
     * Convert this workflow into a subworkflow
     */
   def toSubWorkFlow(propagateConfiguration: Boolean): Node =
-    SubWorkflowAction(name = this.name,
-                      applicationPath = this.path,
-                      propagateConfiguration = propagateConfiguration,
-                      config = this.yarnConfig)
+    if (propagateConfiguration) {
+      SubWorkflowAction(name = this.name,
+                        applicationPath = this.path,
+                        propagateConfiguration = propagateConfiguration,
+                        configuration = Scoozie.Config.emptyConfiguration,
+                        yarnConfig = yarnConfig)
+    } else {
+      SubWorkflowAction(name = this.name,
+                        applicationPath = this.path,
+                        propagateConfiguration = propagateConfiguration,
+                        configuration = this.configurationOption.getOrElse(Scoozie.Config.emptyConfiguration),
+                        yarnConfig = yarnConfig)
+    }
 }

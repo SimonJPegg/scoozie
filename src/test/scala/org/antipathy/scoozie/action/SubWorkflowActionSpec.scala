@@ -16,10 +16,8 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
     val result = SubWorkflowAction(name = "SomeAction",
                                    applicationPath = "/path/to/workflow.xml",
                                    propagateConfiguration = true,
-                                   config =
-                                     YarnConfig(jobTracker = "jobTracker",
-                                                nameNode = "nameNode",
-                                                configuration = Configuration(Seq(Property("some", "value"))))).action
+                                   configuration = Configuration(Seq(Property("some", "value"))),
+                                   yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sub-workflow>
         <app-path>{"${SomeAction_applicationPath}"}</app-path>
@@ -43,10 +41,8 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
     val result = SubWorkflowAction(name = "SomeAction",
                                    applicationPath = "/path/to/workflow.xml",
                                    propagateConfiguration = false,
-                                   config =
-                                     YarnConfig(jobTracker = "jobTracker",
-                                                nameNode = "nameNode",
-                                                configuration = Configuration(Seq(Property("some", "value"))))).action
+                                   configuration = Configuration(Seq(Property("some", "value"))),
+                                   yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sub-workflow>
         <app-path>{"${SomeAction_applicationPath}"}</app-path>
