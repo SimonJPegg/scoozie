@@ -119,5 +119,4 @@ case class Workflow(override val name: String,
                       applicationPath = this.path,
                       propagateConfiguration = propagateConfiguration,
                       config = this.yarnConfig)
-
 }

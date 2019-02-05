@@ -7,7 +7,7 @@ import scala.collection.immutable._
 import org.antipathy.scoozie.control.Start
 import org.antipathy.scoozie.workflow.Workflow
 
-class CoOrdinatorSpec extends FlatSpec with Matchers {
+class CoordinatorSpec extends FlatSpec with Matchers {
 
 
   behavior of "CoOrdinator"
@@ -22,7 +22,7 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
                             configurationOption = None,
                             yarnConfig = YarnConfig(jobTracker = "", nameNode = ""))
 
-    val result = CoOrdinator(name = "SomeCoOrd",
+    val result = Coordinator(name = "SomeCoOrd",
                              frequency = "${coord:days(1)}",
                              start = "2009-01-02T08:00Z",
                              end = "2009-01-04T08:00Z",
@@ -61,7 +61,7 @@ class CoOrdinatorSpec extends FlatSpec with Matchers {
                             )),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "Namenode"))
 
-    val result = CoOrdinator(name = "SomeCoOrd",
+    val result = Coordinator(name = "SomeCoOrd",
                              frequency = "${coord:days(1)}",
                              start = "2009-01-02T08:00Z",
                              end = "2009-01-04T08:00Z",
