@@ -46,11 +46,11 @@ object Scoozie {
       * @param prepareOption optional preparation step
       */
     def distCP(name: String,
-               arguments: Seq[String],
-               javaOptions: String,
                configuration: Configuration,
                yarnConfig: YarnConfig,
-               prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+               prepareOption: Option[ActionPrepare] = None,
+               arguments: Seq[String],
+               javaOptions: String)(implicit credentialsOption: Option[Credentials]): Node =
       DistCPAction(name, arguments, javaOptions, configuration, yarnConfig, prepareOption)
 
     /**
@@ -98,13 +98,13 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def hive(name: String,
+             configuration: Configuration,
+             yarnConfig: YarnConfig,
+             prepareOption: Option[ActionPrepare] = None,
              hiveSettingsXML: String,
              scriptName: String,
              scriptLocation: String,
-             parameters: Seq[String],
-             configuration: Configuration,
-             yarnConfig: YarnConfig,
-             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+             parameters: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
       HiveAction(name,
                  hiveSettingsXML,
                  scriptName,
@@ -128,15 +128,15 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def hive2(name: String,
+              configuration: Configuration,
+              yarnConfig: YarnConfig,
+              prepareOption: Option[ActionPrepare] = None,
               hiveSettingsXML: String,
               scriptName: String,
               scriptLocation: String,
               parameters: Seq[String],
-              configuration: Configuration,
-              yarnConfig: YarnConfig,
               jdbcUrl: String,
-              password: Option[String] = None,
-              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+              password: Option[String] = None)(implicit credentialsOption: Option[Credentials]): Node =
       Hive2Action(name,
                   hiveSettingsXML,
                   scriptName,
@@ -162,15 +162,15 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def java(name: String,
+             configuration: Configuration,
+             yarnConfig: YarnConfig,
+             prepareOption: Option[ActionPrepare] = None,
              mainClass: String,
              javaJar: String,
              javaOptions: String,
              commandLineArgs: Seq[String],
              files: Seq[String],
-             captureOutput: Boolean,
-             configuration: Configuration,
-             yarnConfig: YarnConfig,
-             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+             captureOutput: Boolean)(implicit credentialsOption: Option[Credentials]): Node =
       JavaAction(name,
                  mainClass,
                  javaJar,
@@ -205,12 +205,12 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def pig(name: String,
-            script: String,
-            params: Seq[String],
-            jobXml: Option[String] = None,
             configuration: Configuration,
             yarnConfig: YarnConfig,
-            prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+            prepareOption: Option[ActionPrepare] = None,
+            script: String,
+            params: Seq[String],
+            jobXml: Option[String] = None)(implicit credentialsOption: Option[Credentials]): Node =
       PigAction(name, script, params, jobXml, configuration, yarnConfig, prepareOption)
 
     /**
@@ -227,15 +227,15 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def shell(name: String,
+              configuration: Configuration,
+              yarnConfig: YarnConfig,
+              prepareOption: Option[ActionPrepare] = None,
               scriptName: String,
               scriptLocation: String,
               commandLineArgs: Seq[String],
               envVars: Seq[String],
               files: Seq[String],
-              captureOutput: Boolean,
-              configuration: Configuration,
-              yarnConfig: YarnConfig,
-              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+              captureOutput: Boolean)(implicit credentialsOption: Option[Credentials]): Node =
       ShellAction(name,
                   scriptName,
                   scriptLocation,
@@ -263,6 +263,9 @@ object Scoozie {
       * @param yarnConfig Yarn configuration for this action
       */
     def spark(name: String,
+              configuration: Configuration,
+              yarnConfig: YarnConfig,
+              prepareOption: Option[ActionPrepare] = None,
               sparkSettings: String,
               sparkMasterURL: String,
               sparkMode: String,
@@ -271,10 +274,7 @@ object Scoozie {
               sparkJar: String,
               sparkOptions: String,
               commandLineArgs: Seq[String],
-              files: Seq[String],
-              prepareOption: Option[ActionPrepare] = None,
-              configuration: Configuration,
-              yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
+              files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
       SparkAction(name,
                   sparkSettings,
                   sparkMasterURL,
@@ -299,11 +299,11 @@ object Scoozie {
       * @param prepareOption an optional prepare step
       */
     def sqoopAction(name: String,
-                    command: String,
-                    files: Seq[String],
                     configuration: Configuration,
                     yarnConfig: YarnConfig,
-                    prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+                    prepareOption: Option[ActionPrepare] = None,
+                    command: String,
+                    files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
       SqoopAction(name, Some(command), Seq.empty, files, configuration, yarnConfig, prepareOption)
 
     /**
@@ -316,11 +316,11 @@ object Scoozie {
       * @param prepareOption an optional prepare step
       */
     def sqoopAction(name: String,
-                    args: Seq[String],
-                    files: Seq[String],
                     configuration: Configuration,
                     yarnConfig: YarnConfig,
-                    prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+                    prepareOption: Option[ActionPrepare] = None,
+                    args: Seq[String],
+                    files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
       SqoopAction(name, None, args, files, configuration, yarnConfig, prepareOption)
 
     /**
@@ -351,10 +351,11 @@ object Scoozie {
       * @param yarnConfig the yarn configuration
       */
     def subWorkflow(name: String,
+                    configuration: Configuration,
+                    yarnConfig: YarnConfig,
                     applicationPath: String,
                     propagateConfiguration: Boolean,
-                    configuration: Configuration,
-                    yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
+    )(implicit credentialsOption: Option[Credentials]): Node =
       SubWorkflowAction(name, applicationPath, propagateConfiguration, configuration, yarnConfig)
 
     /**
