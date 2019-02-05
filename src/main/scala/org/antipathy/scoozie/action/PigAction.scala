@@ -1,11 +1,11 @@
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.YarnConfig
-import org.antipathy.scoozie.configuration.Argument
+import org.antipathy.scoozie.configuration.{Argument, Configuration, Credentials, YarnConfig}
+
 import scala.xml.Elem
 import org.antipathy.scoozie.Node
-import org.antipathy.scoozie.configuration.Credentials
+
 import scala.collection.immutable._
 
 /**
@@ -14,14 +14,16 @@ import scala.collection.immutable._
   * @param script the location of the pig script
   * @param params arguments to the script
   * @param jobXml optional job.xml for the script
-  * @param config Yarn configuration for this action
+  * @param configuration additional config for this action
+  * @param yarnConfig Yarn configuration for this action
   * @param prepareOption an optional prepare stage for the action
   */
 class PigAction(override val name: String,
                 script: String,
                 params: Seq[String],
                 jobXml: Option[String] = None,
-                config: YarnConfig,
+                configuration: Configuration,
+                yarnConfig: YarnConfig,
                 prepareOption: Option[Prepare] = None)
     extends Action {
 
@@ -30,7 +32,7 @@ class PigAction(override val name: String,
   private val jobXmlProperty =
     buildStringOptionProperty(name, "jobXml", jobXml)
   private val mappedConfigAndProperties =
-    config.configuration.withActionProperties(name)
+    configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
@@ -42,7 +44,7 @@ class PigAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(scriptProperty -> script) ++ config.properties ++
+    Map(scriptProperty -> script) ++
     paramsProperties ++
     jobXmlProperty ++
     prepareProperties ++
@@ -58,8 +60,8 @@ class PigAction(override val name: String,
     */
   override def toXML: Elem =
     <pig>
-      {config.jobTrackerXML}
-      {config.nameNodeXML}
+      {yarnConfig.jobTrackerXML}
+      {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
           prepareOptionMapped.get.toXML
         }
@@ -89,7 +91,8 @@ object PigAction {
             script: String,
             params: Seq[String],
             jobXml: Option[String] = None,
-            config: YarnConfig,
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
-    Node(new PigAction(name, script, params, jobXml, config, prepareOption))
+    Node(new PigAction(name, script, params, jobXml, configuration, yarnConfig, prepareOption))
 }

@@ -195,21 +195,23 @@ object Scoozie {
     def kill(message: String): Node = Kill(message)
 
     /**
-      * Oozie Java action
+      * Oozie Java action definition
       * @param name the name of the action
       * @param script the location of the pig script
       * @param params arguments to the script
       * @param jobXml optional job.xml for the script
-      * @param config Yarn configuration for this action
+      * @param configuration additional config for this action
+      * @param yarnConfig Yarn configuration for this action
       * @param prepareOption an optional prepare stage for the action
       */
     def pig(name: String,
             script: String,
             params: Seq[String],
             jobXml: Option[String] = None,
-            config: YarnConfig,
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
-      PigAction(name, script, params, jobXml, config, prepareOption)
+      PigAction(name, script, params, jobXml, configuration, yarnConfig, prepareOption)
 
     /**
       *
