@@ -93,7 +93,8 @@ object Scoozie {
       * @param scriptName the name of the hive script
       * @param scriptLocation the path to the hive script
       * @param parameters a collection of parameters to the hive script
-      * @param config Yarn configuration for this action
+      * @param configuration additional config for this action
+      * @param yarnConfig Yarn configuration for this action
       * @param prepareOption an optional prepare stage for the action
       */
     def hive(name: String,
@@ -101,9 +102,17 @@ object Scoozie {
              scriptName: String,
              scriptLocation: String,
              parameters: Seq[String],
-             config: YarnConfig,
+             configuration: Configuration,
+             yarnConfig: YarnConfig,
              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
-      HiveAction(name, hiveSettingsXML, scriptName, scriptLocation, parameters, config, prepareOption)
+      HiveAction(name,
+                 hiveSettingsXML,
+                 scriptName,
+                 scriptLocation,
+                 parameters,
+                 configuration,
+                 yarnConfig,
+                 prepareOption)
 
     /**
       * Oozie Hive action definition

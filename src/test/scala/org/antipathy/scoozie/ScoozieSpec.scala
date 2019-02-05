@@ -51,7 +51,8 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                                  scriptLocation = "/path/to/someScript.hql",
                                                  parameters = Seq(),
                                                  prepareOption = None,
-                                                 config = yarnConfig)
+                                                 configuration = Scoozie.Config.emptyConfiguration,
+                                                 yarnConfig = yarnConfig)
 
     private val javaAction = Scoozie.Action.java(name = "doAJavaThing",
                                                  mainClass = "org.antipathy.Main",
@@ -191,16 +192,6 @@ class ScoozieSpec extends FlatSpec with Matchers {
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
               <job-xml>{"${doAHiveThing_hiveSettingsXML}"}</job-xml>
-              <configuration>
-                <property>
-                  <name>prop1</name>
-                  <value>{"${doAHiveThing_property0}"}</value>
-                </property>
-                <property>
-                  <name>prop2</name>
-                  <value>{"${doAHiveThing_property1}"}</value>
-                </property>
-              </configuration>
               <script>{"${doAHiveThing_scriptName}"}</script>
               <file>{"${doAHiveThing_scriptLocation}"}</file>
             </hive>
@@ -239,7 +230,6 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                        |doASparkThing_property1=value2
                                        |doAShellThing_property1=value2
                                        |doAHiveThing_scriptLocation=/path/to/someScript.hql
-                                       |doAHiveThing_property1=value2
                                        |doAShellThing_scriptName=script.sh
                                        |doASparkThing_sparkJobName=JobName
                                        |doAJavaThing_property0=value1
@@ -253,8 +243,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                        |doASparkThing_sparkSettings=/path/to/spark/settings
                                        |doAHiveThing_scriptName=someScript.hql
                                        |doAShellThing_scriptLocation=/path/to/script.sh
-                                       |doAShellThing_property0=value1
-                                       |doAHiveThing_property0=value1""".stripMargin)
+                                       |doAShellThing_property0=value1""".stripMargin)
   }
 
   it should "allow validation of an oozie workflow" in {

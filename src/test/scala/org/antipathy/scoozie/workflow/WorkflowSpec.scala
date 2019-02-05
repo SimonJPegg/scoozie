@@ -6,6 +6,7 @@ import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.control._
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class WorkflowSpec extends FlatSpec with Matchers {
 
@@ -68,7 +69,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                config = yarnConfig)
+                                configuration = Scoozie.Config.emptyConfiguration,
+                                yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
 
@@ -236,7 +238,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                config = yarnConfig)
+                                configuration = Scoozie.Config.emptyConfiguration,
+                                yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
 

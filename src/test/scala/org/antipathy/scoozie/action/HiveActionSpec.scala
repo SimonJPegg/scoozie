@@ -5,6 +5,7 @@ import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class HiveActionSpec extends FlatSpec with Matchers {
 
@@ -20,7 +21,8 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                            configuration = Scoozie.Config.emptyConfiguration,
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -49,7 +51,8 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq("tableName=\"SomeTable\"", "date=\"2019-01-13\""),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                            configuration = Scoozie.Config.emptyConfiguration,
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -82,12 +85,10 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq(),
                             prepareOption = None,
-                            config =
-                              YarnConfig(jobTracker = "jobTracker",
-                                         nameNode = "nameNode",
-                                         configuration = Configuration(
-                                           Seq(Property("someProp1", "someValue2"), Property("someProp2", "someValue2"))
-                                         ))).action
+                            configuration = Configuration(
+                              Seq(Property("someProp1", "someValue2"), Property("someProp2", "someValue2"))
+                            ),
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
             <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -128,12 +129,10 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq("tableName=\"SomeTable\"", "date=\"2019-01-13\""),
                             prepareOption = None,
-                            config =
-                              YarnConfig(jobTracker = "jobTracker",
-                                         nameNode = "nameNode",
-                                         configuration = Configuration(
-                                           Seq(Property("someProp1", "someValue2"), Property("someProp2", "someValue2"))
-                                         ))).action
+                            configuration = Configuration(
+                              Seq(Property("someProp1", "someValue2"), Property("someProp2", "someValue2"))
+                            ),
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
