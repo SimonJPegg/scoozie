@@ -112,7 +112,8 @@ object Scoozie {
       * @param scriptName the name of the hive script
       * @param scriptLocation the path to the hive script
       * @param parameters a collection of parameters to the hive script
-      * @param config Yarn configuration for this action
+      * @param configuration additional config for this action
+      * @param yarnConfig Yarn configuration for this action
       * @param jdbcUrl The JDBC URL for the Hive Server 2
       * @param password Password of the current user (non-kerberos environments)
       * @param prepareOption an optional prepare stage for the action
@@ -122,7 +123,8 @@ object Scoozie {
               scriptName: String,
               scriptLocation: String,
               parameters: Seq[String],
-              config: YarnConfig,
+              configuration: Configuration,
+              yarnConfig: YarnConfig,
               jdbcUrl: String,
               password: Option[String] = None,
               prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
@@ -131,7 +133,8 @@ object Scoozie {
                   scriptName,
                   scriptLocation,
                   parameters,
-                  config,
+                  configuration,
+                  yarnConfig,
                   jdbcUrl,
                   password,
                   prepareOption)

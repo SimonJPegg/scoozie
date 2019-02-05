@@ -5,6 +5,7 @@ import org.antipathy.scoozie.configuration.YarnConfig
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class Hive2ActionSpec extends FlatSpec with Matchers {
 
@@ -19,7 +20,8 @@ class Hive2ActionSpec extends FlatSpec with Matchers {
                              scriptName = "scriptName.hql",
                              scriptLocation = "/path/to/criptName.hql",
                              parameters = Seq("one", "two"),
-                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
+                             configuration = Scoozie.Config.emptyConfiguration,
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
                              jdbcUrl = "jdbcUrl").action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive2 xmlns="uri:oozie:hive2-action:0.1">

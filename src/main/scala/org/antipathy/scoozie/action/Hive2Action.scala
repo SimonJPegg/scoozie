@@ -1,10 +1,11 @@
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.YarnConfig
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
+
 import scala.xml.Elem
 import org.antipathy.scoozie.Node
-import org.antipathy.scoozie.configuration.Credentials
+
 import scala.collection.immutable._
 
 /**
@@ -14,7 +15,8 @@ import scala.collection.immutable._
   * @param scriptName the name of the hive script
   * @param scriptLocation the path to the hive script
   * @param parameters a collection of parameters to the hive script
-  * @param config Yarn configuration for this action
+  * @param configuration additional config for this action
+  * @param yarnConfig Yarn configuration for this action
   * @param jdbcUrl The JDBC URL for the Hive Server 2
   * @param password Password of the current user (non-kerberos environments)
   * @param prepareOption an optional prepare stage for the action
@@ -24,7 +26,8 @@ final class Hive2Action(override val name: String,
                         scriptName: String,
                         scriptLocation: String,
                         parameters: Seq[String],
-                        config: YarnConfig,
+                        configuration: Configuration,
+                        yarnConfig: YarnConfig,
                         jdbcUrl: String,
                         password: Option[String] = None,
                         prepareOption: Option[Prepare] = None)
@@ -43,8 +46,7 @@ final class Hive2Action(override val name: String,
   private val prepareProperties =
     prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties =
-    config.configuration.withActionProperties(name)
+  private val mappedConfigAndProperties = configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
 
   /**
@@ -56,7 +58,7 @@ final class Hive2Action(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    config.properties ++ Map(
+    yarnConfig.properties ++ Map(
       hiveSettingsXMLProperty -> hiveSettingsXML,
       scriptNameProperty -> scriptName,
       scriptLocationProperty -> scriptLocation,
@@ -68,8 +70,8 @@ final class Hive2Action(override val name: String,
     */
   override def toXML: Elem =
     <hive2 xmlns={xmlns.orNull}>
-      {config.jobTrackerXML}
-      {config.nameNodeXML}
+      {yarnConfig.jobTrackerXML}
+      {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
           prepareOptionMapped.get.toXML
         }
@@ -100,7 +102,8 @@ object Hive2Action {
             scriptName: String,
             scriptLocation: String,
             parameters: Seq[String],
-            config: YarnConfig,
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
             jdbcUrl: String,
             password: Option[String] = None,
             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
@@ -110,7 +113,8 @@ object Hive2Action {
                       scriptName,
                       scriptLocation,
                       parameters,
-                      config,
+                      configuration,
+                      yarnConfig,
                       jdbcUrl,
                       password,
                       prepareOption)
