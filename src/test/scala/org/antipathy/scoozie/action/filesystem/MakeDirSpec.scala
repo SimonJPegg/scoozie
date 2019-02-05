@@ -1,4 +1,4 @@
-package org.antipathy.scoozie.action.prepare
+package org.antipathy.scoozie.action.filesystem
 
 import org.scalatest.{FlatSpec, Matchers}
 import scala.xml

@@ -71,7 +71,7 @@ final class Hive2Action(override val name: String,
       {config.jobTrackerXML}
       {config.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.map(_.toXML)
+          prepareOptionMapped.get.toXML
         }
       }
       <job-xml>{hiveSettingsXMLProperty}</job-xml>

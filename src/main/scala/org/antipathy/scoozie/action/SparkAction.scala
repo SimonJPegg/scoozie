@@ -86,7 +86,7 @@ final class SparkAction(override val name: String,
       {config.jobTrackerXML}
       {config.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.map(_.toXML)
+          prepareOptionMapped.get.toXML
         }
       }
       <job-xml>{sparkSettingsProperty}</job-xml>

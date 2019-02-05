@@ -1,7 +1,8 @@
 package org.antipathy.scoozie
 
 import org.antipathy.scoozie.action._
-import org.antipathy.scoozie.action.prepare._
+import org.antipathy.scoozie.action.prepare.{Prepare => ActionPrepare}
+import org.antipathy.scoozie.action.prepare.PrepareFSAction
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.control._
 import org.antipathy.scoozie.coordinator.Coordinator
@@ -11,6 +12,7 @@ import org.antipathy.scoozie.testing.WorkflowTestRunner
 import org.antipathy.scoozie.validator.{OozieValidator, SchemaType}
 import org.antipathy.scoozie.workflow.Workflow
 import scala.collection.immutable._
+import org.antipathy.scoozie.action.filesystem._
 
 /**
   * Entry class for Scoozie.
@@ -35,6 +37,23 @@ object Scoozie {
       Decision(name, default, Seq(switch.toSeq: _*))
 
     /**
+      * DistCP action definition
+      * @param name the name of the action
+      * @param arguments arguments to the DistCP action
+      * @param javaOptions java options to pass to the action
+      * @param configuration additional configuration to pass to the action
+      * @param yarnConfig the yarn configuration
+      * @param prepareOption optional preparation step
+      */
+    def distCP(name: String,
+               arguments: Seq[String],
+               javaOptions: String,
+               configuration: Configuration,
+               yarnConfig: YarnConfig,
+               prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+      DistCPAction(name, arguments, javaOptions, configuration, yarnConfig, prepareOption)
+
+    /**
       * Email action
       * @param name the name of the action
       * @param to the to recipient list
@@ -44,13 +63,13 @@ object Scoozie {
       */
     def email(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String)(
         implicit credentialsOption: Option[Credentials]
-    ) =
+    ): Node =
       EmailAction(name, to, cc, subject, body)
 
     /**
       * oozie end control node
       */
-    def end = End()
+    def end: Node = End()
 
     /**
       * Oozie Fork control node
@@ -58,6 +77,14 @@ object Scoozie {
       * @param nodes the nodes within the fork
       */
     def fork(name: String, nodes: Seq[Node]): Node = Fork(name, nodes)
+
+    /**
+      * Oozie filesystem action
+      * @param name the name of the action
+      * @param actions the actions to perform
+      */
+    def fs(name: String, action: FileSystemAction*)(implicit credentialsOption: Option[Credentials]): Node =
+      FsAction(name, action)
 
     /**
       * Oozie Hive action
@@ -75,7 +102,7 @@ object Scoozie {
              scriptLocation: String,
              parameters: Seq[String],
              config: YarnConfig,
-             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       HiveAction(name, hiveSettingsXML, scriptName, scriptLocation, parameters, config, prepareOption)
 
     /**
@@ -98,7 +125,7 @@ object Scoozie {
               config: YarnConfig,
               jdbcUrl: String,
               password: Option[String] = None,
-              prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]) =
+              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       Hive2Action(name,
                   hiveSettingsXML,
                   scriptName,
@@ -129,7 +156,7 @@ object Scoozie {
              files: Seq[String],
              captureOutput: Boolean,
              config: YarnConfig,
-             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       JavaAction(name, mainClass, javaJar, javaOptions, commandLineArgs, files, captureOutput, config, prepareOption)
 
     /**
@@ -158,7 +185,7 @@ object Scoozie {
             params: Seq[String],
             jobXml: Option[String] = None,
             config: YarnConfig,
-            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+            prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       PigAction(name, script, params, jobXml, config, prepareOption)
 
     /**
@@ -182,7 +209,7 @@ object Scoozie {
               files: Seq[String],
               captureOutput: Boolean,
               config: YarnConfig,
-              prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       ShellAction(name,
                   scriptName,
                   scriptLocation,
@@ -217,7 +244,7 @@ object Scoozie {
               sparkOptions: String,
               commandLineArgs: Seq[String],
               files: Seq[String],
-              prepareOption: Option[Prepare] = None,
+              prepareOption: Option[ActionPrepare] = None,
               config: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
       SparkAction(name,
                   sparkSettings,
@@ -231,6 +258,40 @@ object Scoozie {
                   files,
                   prepareOption,
                   config)
+
+    /**
+      * Oozie Sqoop action definition
+      * @param name the name of the action
+      * @param command the sqoop command
+      * @param files files to include with the action
+      * @param configuration configuration to provide to the action
+      * @param yarnConfig the yarn configuration
+      * @param prepareOption an optional prepare step
+      */
+    def sqoopAction(name: String,
+                    command: String,
+                    files: Seq[String],
+                    configuration: Configuration,
+                    yarnConfig: YarnConfig,
+                    prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+      SqoopAction(name, Some(command), Seq.empty, files, configuration, yarnConfig, prepareOption)
+
+    /**
+      * Oozie Sqoop action definition
+      * @param name the name of the action
+      * @param args arguments to specify to sqoop (ignored if command is specified)
+      * @param files files to include with the action
+      * @param configuration configuration to provide to the action
+      * @param yarnConfig the yarn configuration
+      * @param prepareOption an optional prepare step
+      */
+    def sqoopAction(name: String,
+                    args: Seq[String],
+                    files: Seq[String],
+                    configuration: Configuration,
+                    yarnConfig: YarnConfig,
+                    prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+      SqoopAction(name, None, args, files, configuration, yarnConfig, prepareOption)
 
     /**
       * Oozie SSH action
@@ -249,7 +310,7 @@ object Scoozie {
     /**
       * oozie Start control node
       */
-    def start = Start()
+    def start: Node = Start()
 
     /**
       * Oozie sub-workflow action definition
@@ -269,35 +330,80 @@ object Scoozie {
       * @param node the node to switch to
       * @param predicate the predicate for switching to the node
       */
-    def switch(node: Node, predicate: String) = Switch(node, predicate)
+    def switch(node: Node, predicate: String): Switch = Switch(node, predicate)
+  }
+
+  /**
+    * Oozie filesystem operations
+    */
+  object FileSystem {
+
+    /**
+      * Create an ozzie chmod step
+      *
+      * @param path the path to operate on
+      * @param permissions the permissions to set
+      * @param dirFiles should the operation be recursive
+      */
+    def chmod(path: String, permissions: String, dirFiles: String): Chmod = Chmod(path, permissions, dirFiles)
+
+    /**
+      * Create a delete step
+      *
+      * @param path the path to delete
+      * @return a delete step
+      */
+    def delete(path: String): Delete = Delete(path)
+
+    /**
+      * Create a make directory step
+      * @param path the path to create
+      * @return a make directory step
+      */
+    def makeDirectory(path: String): MakeDir = MakeDir(path)
+
+    /**
+      * Create an ozzie move step
+      * @param srcPath the path to move from
+      * @param targetPath the path to move to
+      */
+    def move(srcPath: String, targetPath: String): Move = Move(srcPath, targetPath)
+
+    /**
+      * Create a touch step
+      * @param path the path to touch
+      * @return a touch step
+      */
+    def touchz(path: String): Touchz = Touchz(path)
   }
 
   /**
     * Action preparation methods
     */
-  object Prep {
+  object Prepare {
 
     /**
       * Create a delete preparation step
+      *
       * @param path the path to delete
       * @return a delete preparation step
       */
-    def delete(path: String) = Delete(path)
+    def delete(path: String): Delete = Delete(path)
 
     /**
       * Create a make directory preparation step
       * @param path the path to create
       * @return a make directory preparation step
       */
-    def makeDirectory(path: String) = MakeDir(path)
+    def makeDirectory(path: String): MakeDir = MakeDir(path)
 
     /**
       * Create an action preparation step
       * @param actions the preparation actions
       * @return an action preparation step
       */
-    def prepare(actions: Seq[PrepareFSAction]): Option[Prepare] =
-      Some(Prepare(actions))
+    def prepare(actions: Seq[PrepareFSAction]): Option[ActionPrepare] =
+      Some(ActionPrepare(actions))
   }
 
   /**
@@ -332,6 +438,11 @@ object Scoozie {
       }.toSeq: _*))
 
     /**
+      * Empty Oozie configuration for a workflow or an action
+      */
+    def emptyConfiguration: Configuration = Configuration(Seq.empty)
+
+    /**
       * Create the credentials for an oozie workflow
       * @param name the name of the credential
       * @param credentialsType the type of the credential
@@ -355,7 +466,7 @@ object Scoozie {
       * @param configuration additional yarn configuration options
       * @return a yarn configuration
       */
-    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration = Configuration(Seq())) =
+    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration = emptyConfiguration) =
       YarnConfig(jobTracker, nameNode, configuration)
 
     /**
