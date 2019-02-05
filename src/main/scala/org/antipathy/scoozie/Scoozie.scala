@@ -260,6 +260,40 @@ object Scoozie {
                   config)
 
     /**
+      * Oozie Sqoop action definition
+      * @param name the name of the action
+      * @param command the sqoop command
+      * @param files files to include with the action
+      * @param configuration configuration to provide to the action
+      * @param yarnConfig the yarn configuration
+      * @param prepareOption an optional prepare step
+      */
+    def sqoopAction(name: String,
+                    command: String,
+                    files: Seq[String],
+                    configuration: Configuration,
+                    yarnConfig: YarnConfig,
+                    prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+      SqoopAction(name, Some(command), Seq.empty, files, configuration, yarnConfig, prepareOption)
+
+    /**
+      * Oozie Sqoop action definition
+      * @param name the name of the action
+      * @param args arguments to specify to sqoop (ignored if command is specified)
+      * @param files files to include with the action
+      * @param configuration configuration to provide to the action
+      * @param yarnConfig the yarn configuration
+      * @param prepareOption an optional prepare step
+      */
+    def sqoopAction(name: String,
+                    args: Seq[String],
+                    files: Seq[String],
+                    configuration: Configuration,
+                    yarnConfig: YarnConfig,
+                    prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+      SqoopAction(name, None, args, files, configuration, yarnConfig, prepareOption)
+
+    /**
       * Oozie SSH action
       *
       * @param name The name of the action
@@ -432,7 +466,7 @@ object Scoozie {
       * @param configuration additional yarn configuration options
       * @return a yarn configuration
       */
-    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration) =
+    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration = emptyConfiguration) =
       YarnConfig(jobTracker, nameNode, configuration)
 
     /**

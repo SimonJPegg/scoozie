@@ -1,10 +1,10 @@
 
 Still to complete:
-* Remaining action types
-* support additional action versions
-* support for forks within forks
+* Fix configuration
 * file output
-* deployment support
 * add readme
+* deployment support
+* support for forks within forks
+
 
 
