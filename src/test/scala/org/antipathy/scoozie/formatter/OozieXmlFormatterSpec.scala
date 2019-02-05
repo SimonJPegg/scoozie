@@ -60,7 +60,8 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq(),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
 

@@ -5,6 +5,7 @@ import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class SparkActionSpec extends FlatSpec with Matchers {
 
@@ -25,7 +26,8 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq(),
                              files = Seq(),
                              prepareOption = None,
-                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                             configuration = Scoozie.Config.emptyConfiguration,
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -40,9 +42,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
         </spark>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${SomeAction_sparkMode}" -> "mode",
-          "${jobTracker}" -> "jobTracker",
+      Map("${SomeAction_sparkMode}" -> "mode",
           "${SomeAction_sparkMasterURL}" -> "masterURL",
           "${SomeAction_sparkJobName}" -> "JobName",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
@@ -66,7 +66,8 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
                              prepareOption = None,
-                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                             configuration = Scoozie.Config.emptyConfiguration,
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -84,9 +85,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
         </spark>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${SomeAction_sparkMode}" -> "mode",
-          "${jobTracker}" -> "jobTracker",
+      Map("${SomeAction_sparkMode}" -> "mode",
           "${SomeAction_commandLineArg0}" -> "one",
           "${SomeAction_sparkMasterURL}" -> "masterURL",
           "${SomeAction_commandLineArg2}" -> "three",
@@ -112,12 +111,11 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
                              files = Seq(),
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode",
-                                                 configuration = Configuration(
-                                                   Seq(Property(name = "SomeProp1", "SomeValue1"),
-                                                       Property(name = "SomeProp2", "SomeValue2"))
-                                                 ))).action
+                             configuration = Configuration(
+                               Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                   Property(name = "SomeProp2", "SomeValue2"))
+                             ),
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -142,9 +140,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
 
     result.properties should be(
       Map("${SomeAction_property1}" -> "SomeValue2",
-          "${nameNode}" -> "nameNode",
           "${SomeAction_sparkMode}" -> "mode",
-          "${jobTracker}" -> "jobTracker",
           "${SomeAction_sparkMasterURL}" -> "masterURL",
           "${SomeAction_sparkJobName}" -> "JobName",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
@@ -169,12 +165,11 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
                              prepareOption = None,
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode",
-                                                 configuration = Configuration(
-                                                   Seq(Property(name = "SomeProp1", "SomeValue1"),
-                                                       Property(name = "SomeProp2", "SomeValue2"))
-                                                 ))).action
+                             configuration = Configuration(
+                               Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                   Property(name = "SomeProp2", "SomeValue2"))
+                             ),
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -202,9 +197,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
 
     result.properties should be(
       Map("${SomeAction_property1}" -> "SomeValue2",
-          "${nameNode}" -> "nameNode",
           "${SomeAction_sparkMode}" -> "mode",
-          "${jobTracker}" -> "jobTracker",
           "${SomeAction_commandLineArg0}" -> "one",
           "${SomeAction_sparkMasterURL}" -> "masterURL",
           "${SomeAction_commandLineArg2}" -> "three",

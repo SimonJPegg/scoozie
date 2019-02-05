@@ -43,12 +43,11 @@ class NodeSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config = YarnConfig(jobTracker = "jobTracker",
-                                                      nameNode = "nameNode",
-                                                      configuration = Configuration(
-                                                        Seq(Property(name = "SomeProp1", "SomeValue1"),
-                                                            Property(name = "SomeProp2", "SomeValue2"))
-                                                      )))
+                                  configuration = Configuration(
+                                    Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                        Property(name = "SomeProp2", "SomeValue2"))
+                                  ),
+                                  yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"))
 
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
@@ -159,12 +158,11 @@ class NodeSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config = YarnConfig(jobTracker = "jobTracker",
-                                                      nameNode = "nameNode",
-                                                      configuration = Configuration(
-                                                        Seq(Property(name = "SomeProp1", "SomeValue1"),
-                                                            Property(name = "SomeProp2", "SomeValue2"))
-                                                      )))
+                                  configuration = Configuration(
+                                    Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                        Property(name = "SomeProp2", "SomeValue2"))
+                                  ),
+                                  yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"))
 
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
@@ -224,12 +222,11 @@ class NodeSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config = YarnConfig(jobTracker = "jobTracker",
-                                                      nameNode = "nameNode",
-                                                      configuration = Configuration(
-                                                        Seq(Property(name = "SomeProp1", "SomeValue1"),
-                                                            Property(name = "SomeProp2", "SomeValue2"))
-                                                      )))
+                                  configuration = Configuration(
+                                    Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                        Property(name = "SomeProp2", "SomeValue2"))
+                                  ),
+                                  yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"))
 
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),

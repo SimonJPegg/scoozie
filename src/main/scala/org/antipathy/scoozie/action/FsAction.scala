@@ -4,6 +4,7 @@ import org.antipathy.scoozie.action.filesystem._
 import scala.xml.Elem
 import org.antipathy.scoozie.Node
 import org.antipathy.scoozie.configuration.Credentials
+import org.antipathy.scoozie.exception.UnknownActionException
 
 /**
   * Oozie filesystem action definition
@@ -31,6 +32,8 @@ class FsAction(override val name: String, actions: Seq[FileSystemAction]) extend
     case (Touchz(path), index) =>
       val p = s"${name}_touchzPath$index"
       (Touchz(p), Map(p -> path))
+    case unknown =>
+      throw new UnknownActionException(s"${unknown.getClass.getSimpleName} is not an expected FileSystem operation")
   }
 
   /**

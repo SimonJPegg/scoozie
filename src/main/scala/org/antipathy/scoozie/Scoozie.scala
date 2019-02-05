@@ -81,7 +81,7 @@ object Scoozie {
     /**
       * Oozie filesystem action
       * @param name the name of the action
-      * @param actions the actions to perform
+      * @param action the actions to perform
       */
     def fs(name: String, action: FileSystemAction*)(implicit credentialsOption: Option[Credentials]): Node =
       FsAction(name, action)
@@ -259,7 +259,8 @@ object Scoozie {
       * @param sparkOptions options for the spark job
       * @param commandLineArgs command line arguments for the spark job
       * @param prepareOption an optional prepare phase for the action
-      * @param config Yarn configuration for this action
+      * @param configuration additional config for this action
+      * @param yarnConfig Yarn configuration for this action
       */
     def spark(name: String,
               sparkSettings: String,
@@ -272,7 +273,8 @@ object Scoozie {
               commandLineArgs: Seq[String],
               files: Seq[String],
               prepareOption: Option[ActionPrepare] = None,
-              config: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
+              configuration: Configuration,
+              yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
       SparkAction(name,
                   sparkSettings,
                   sparkMasterURL,
@@ -284,7 +286,8 @@ object Scoozie {
                   commandLineArgs,
                   files,
                   prepareOption,
-                  config)
+                  configuration,
+                  yarnConfig)
 
     /**
       * Oozie Sqoop action definition
