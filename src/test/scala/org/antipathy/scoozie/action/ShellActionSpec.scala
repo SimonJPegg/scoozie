@@ -5,6 +5,7 @@ import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class ShellActionSpec extends FlatSpec with Matchers {
 
@@ -21,7 +22,8 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              envVars = Seq(),
                              files = Seq(),
                              captureOutput = false,
-                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                             configuration = Scoozie.Config.emptyConfiguration,
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -46,7 +48,8 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              envVars = Seq(),
                              captureOutput = false,
                              files = Seq(),
-                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                             configuration = Scoozie.Config.emptyConfiguration,
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -58,9 +61,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
         </shell>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${SomeAction_commandLineArgs1}" -> "two",
-          "${jobTracker}" -> "jobTracker",
+      Map("${SomeAction_commandLineArgs1}" -> "two",
           "${SomeAction_scriptLocation}" -> "/path/to/script.sh",
           "${SomeAction_scriptName}" -> "script.sh",
           "${SomeAction_commandLineArgs0}" -> "one")
@@ -78,9 +79,8 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq(),
                              envVars = Seq(),
                              captureOutput = false,
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode",
-                                                 configuration = Configuration(Seq(Property("name", "value"))))).action
+                             configuration = Configuration(Seq(Property("name", "value"))),
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -96,9 +96,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
         </shell>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${jobTracker}" -> "jobTracker",
-          "${SomeAction_scriptLocation}" -> "/path/to/script.sh",
+      Map("${SomeAction_scriptLocation}" -> "/path/to/script.sh",
           "${SomeAction_scriptName}" -> "script.sh",
           "${SomeAction_property0}" -> "value")
     )
@@ -115,9 +113,8 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq("one", "two"),
                              envVars = Seq("user=me"),
                              captureOutput = false,
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode",
-                                                 configuration = Configuration(Seq(Property("name", "value"))))).action
+                             configuration = Configuration(Seq(Property("name", "value"))),
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -136,9 +133,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
         </shell>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${SomeAction_commandLineArgs1}" -> "two",
-          "${jobTracker}" -> "jobTracker",
+      Map("${SomeAction_commandLineArgs1}" -> "two",
           "${SomeAction_scriptLocation}" -> "/path/to/script.sh",
           "${SomeAction_scriptName}" -> "script.sh",
           "${SomeAction_property0}" -> "value",
@@ -158,7 +153,8 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              envVars = Seq(),
                              files = Seq(),
                              captureOutput = true,
-                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                             configuration = Scoozie.Config.emptyConfiguration,
+                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -169,10 +165,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
         </shell>))
 
     result.properties should be(
-      Map("${jobTracker}" -> "jobTracker",
-          "${nameNode}" -> "nameNode",
-          "${SomeAction_scriptName}" -> "script.sh",
-          "${SomeAction_scriptLocation}" -> "/path/to/script.sh")
+      Map("${SomeAction_scriptName}" -> "script.sh", "${SomeAction_scriptLocation}" -> "/path/to/script.sh")
     )
   }
 

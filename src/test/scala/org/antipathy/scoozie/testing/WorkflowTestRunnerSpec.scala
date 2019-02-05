@@ -37,7 +37,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -77,7 +78,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -118,7 +120,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -190,7 +193,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -261,7 +265,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -364,7 +369,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 
@@ -467,7 +473,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  config = yarnConfig)
+                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
 

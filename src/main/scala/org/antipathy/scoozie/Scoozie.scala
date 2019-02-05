@@ -222,8 +222,8 @@ object Scoozie {
       * @param commandLineArgs command line arguments for script
       * @param envVars environment variables for the script
       * @param files files to include with the script
-      * @param captureOutput capture output from this action
-      * @param config Yarn configuration for this action
+      * @param configuration additional config for this action
+      * @param yarnConfig Yarn configuration for this action
       * @param prepareOption an optional prepare stage for the action
       */
     def shell(name: String,
@@ -233,7 +233,8 @@ object Scoozie {
               envVars: Seq[String],
               files: Seq[String],
               captureOutput: Boolean,
-              config: YarnConfig,
+              configuration: Configuration,
+              yarnConfig: YarnConfig,
               prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       ShellAction(name,
                   scriptName,
@@ -242,7 +243,8 @@ object Scoozie {
                   envVars,
                   files,
                   captureOutput,
-                  config,
+                  configuration,
+                  yarnConfig,
                   prepareOption)
 
     /**
