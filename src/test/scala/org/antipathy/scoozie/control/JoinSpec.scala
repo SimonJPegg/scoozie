@@ -20,9 +20,7 @@ class JoinSpec extends FlatSpec with Matchers {
 
     val result = Join("SomeJoin", oozieNode).action.toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<join name="SomeJoin" to="SomeNode" />)
-    )
+    xml.Utility.trim(result) should be(xml.Utility.trim(<join name="SomeJoin" to="SomeNode" />))
   }
 
 }

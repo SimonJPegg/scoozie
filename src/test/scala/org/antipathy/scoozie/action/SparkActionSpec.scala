@@ -1,11 +1,7 @@
 package org.antipathy.scoozie.action
 
 import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{
-  Configuration,
-  Property,
-  YarnConfig
-}
+import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
@@ -29,11 +25,9 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq(),
                              files = Seq(),
                              prepareOption = None,
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode")).action
+                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
@@ -43,8 +37,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           <class>{"${SomeAction_mainClass}"}</class>
           <jar>{"${SomeAction_sparkJar}"}</jar>
           <spark-opts>{"${SomeAction_sparkOptions}"}</spark-opts>
-        </spark>)
-    )
+        </spark>))
 
     result.properties should be(
       Map("${nameNode}" -> "nameNode",
@@ -73,11 +66,9 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
                              prepareOption = None,
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode")).action
+                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
@@ -90,8 +81,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           <arg>{"${SomeAction_commandLineArg0}"}</arg>
           <arg>{"${SomeAction_commandLineArg1}"}</arg>
           <arg>{"${SomeAction_commandLineArg2}"}</arg>
-        </spark>)
-    )
+        </spark>))
 
     result.properties should be(
       Map("${nameNode}" -> "nameNode",
@@ -125,16 +115,11 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              config = YarnConfig(jobTracker = "jobTracker",
                                                  nameNode = "nameNode",
                                                  configuration = Configuration(
-                                                   Seq(Property(name =
-                                                                  "SomeProp1",
-                                                                "SomeValue1"),
-                                                       Property(name =
-                                                                  "SomeProp2",
-                                                                "SomeValue2"))
+                                                   Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                                       Property(name = "SomeProp2", "SomeValue2"))
                                                  ))).action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
@@ -153,8 +138,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           <class>{"${SomeAction_mainClass}"}</class>
           <jar>{"${SomeAction_sparkJar}"}</jar>
           <spark-opts>{"${SomeAction_sparkOptions}"}</spark-opts>
-        </spark>)
-    )
+        </spark>))
 
     result.properties should be(
       Map("${SomeAction_property1}" -> "SomeValue2",
@@ -188,16 +172,11 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              config = YarnConfig(jobTracker = "jobTracker",
                                                  nameNode = "nameNode",
                                                  configuration = Configuration(
-                                                   Seq(Property(name =
-                                                                  "SomeProp1",
-                                                                "SomeValue1"),
-                                                       Property(name =
-                                                                  "SomeProp2",
-                                                                "SomeValue2"))
+                                                   Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                                       Property(name = "SomeProp2", "SomeValue2"))
                                                  ))).action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
@@ -219,8 +198,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           <spark-opts>{"${SomeAction_sparkOptions}"}</spark-opts>
           <arg>{"${SomeAction_commandLineArg0}"}</arg>
           <arg>{"${SomeAction_commandLineArg1}"}</arg>
-          <arg>{"${SomeAction_commandLineArg2}"}</arg></spark>)
-    )
+          <arg>{"${SomeAction_commandLineArg2}"}</arg></spark>))
 
     result.properties should be(
       Map("${SomeAction_property1}" -> "SomeValue2",

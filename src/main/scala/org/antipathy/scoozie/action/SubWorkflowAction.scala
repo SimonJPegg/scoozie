@@ -20,9 +20,7 @@ final class SubWorkflowAction(override val name: String,
                               config: YarnConfig)
     extends Action {
 
-  private val applicationPathProperty = formatProperty(
-    s"${name}_applicationPath"
-  )
+  private val applicationPathProperty = formatProperty(s"${name}_applicationPath")
   private val mappedConfigAndProperties =
     config.configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
@@ -35,9 +33,8 @@ final class SubWorkflowAction(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  override val properties: Map[String, String] = Map(
-    applicationPathProperty -> applicationPath
-  ) ++ mappedConfigAndProperties._2
+  override val properties
+    : Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedConfigAndProperties._2
 
   /**
     * The XML for this node
@@ -58,16 +55,8 @@ final class SubWorkflowAction(override val name: String,
 
 object SubWorkflowAction {
 
-  def apply(
-      name: String,
-      applicationPath: String,
-      propagateConfiguration: Boolean,
-      config: YarnConfig
-  )(implicit credentialsOption: Option[Credentials]): Node =
-    Node(
-      new SubWorkflowAction(name,
-                            applicationPath,
-                            propagateConfiguration,
-                            config)
-    )
+  def apply(name: String, applicationPath: String, propagateConfiguration: Boolean, config: YarnConfig)(
+      implicit credentialsOption: Option[Credentials]
+  ): Node =
+    Node(new SubWorkflowAction(name, applicationPath, propagateConfiguration, config))
 }

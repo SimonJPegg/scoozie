@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.{Nameable, OozieProperties, XmlSerializable}
@@ -12,3 +13,4 @@ private[scoozie] trait Action extends XmlSerializable with Nameable with OoziePr
     */
   def xmlns: Option[String]
 }
+// $COVERAGE-ON$

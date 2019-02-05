@@ -13,27 +13,19 @@ class SshActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
 
-    val result = SshAction(name = "ssh",
-                           host = "user@host",
-                           command = "ls",
-                           args = Seq("-l", "-a"),
-                           captureOutput = true).action
+    val result =
+      SshAction(name = "ssh", host = "user@host", command = "ls", args = Seq("-l", "-a"), captureOutput = true).action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<ssh xmlns="uri:oozie:ssh-action:0.2">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<ssh xmlns="uri:oozie:ssh-action:0.2">
           <host>{"${ssh_host}"}</host>
           <command>{"${ssh_command}"}</command>
           <args>{"${ssh_arg0}"}</args>
           <args>{"${ssh_arg1}"}</args>
           <capture-output/>
-        </ssh>)
-    )
+        </ssh>))
 
     result.properties should be(
-      Map("${ssh_host}" -> "user@host",
-          "${ssh_command}" -> "ls",
-          "${ssh_arg0}" -> "-l",
-          "${ssh_arg1}" -> "-a")
+      Map("${ssh_host}" -> "user@host", "${ssh_command}" -> "ls", "${ssh_arg0}" -> "-l", "${ssh_arg1}" -> "-a")
     )
   }
 }

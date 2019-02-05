@@ -22,9 +22,7 @@ class SwitchSpec extends FlatSpec with Matchers {
     val predicateValue = "${SomePredicate}"
     val result = Switch(oozieNode, "SomePredicate").toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<case to="SomeNode">{predicateValue}</case>)
-    )
+    xml.Utility.trim(result) should be(xml.Utility.trim(<case to="SomeNode">{predicateValue}</case>))
   }
 
 }

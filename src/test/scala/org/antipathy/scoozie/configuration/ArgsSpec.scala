@@ -10,9 +10,7 @@ class ArgsSpec extends FlatSpec with Matchers {
   it should "generate valid XML" in {
     val result =
       Args("someValue").toXML
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<args>someValue</args>)
-    )
+    xml.Utility.trim(result) should be(xml.Utility.trim(<args>someValue</args>))
   }
 
 }

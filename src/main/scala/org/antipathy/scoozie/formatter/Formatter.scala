@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.formatter
 
 /**
@@ -14,3 +15,4 @@ trait Formatter[T] {
     */
   def format(t: T): String
 }
+// $COVERAGE-ON$

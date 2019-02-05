@@ -43,17 +43,12 @@ class NodeSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config =
-                                    YarnConfig(jobTracker = "jobTracker",
-                                               nameNode = "nameNode",
-                                               configuration = Configuration(
-                                                 Seq(Property(name =
-                                                                "SomeProp1",
-                                                              "SomeValue1"),
-                                                     Property(name =
-                                                                "SomeProp2",
-                                                              "SomeValue2"))
-                                               )))
+                                  config = YarnConfig(jobTracker = "jobTracker",
+                                                      nameNode = "nameNode",
+                                                      configuration = Configuration(
+                                                        Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                                            Property(name = "SomeProp2", "SomeValue2"))
+                                                      )))
 
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
@@ -84,15 +79,13 @@ class NodeSpec extends FlatSpec with Matchers {
                           Switch(oozieNode, "somePredicate"),
                           Switch(oozieNode, "somePredicate")).toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<decision name="SomeDecision">
+    xml.Utility.trim(result) should be(xml.Utility.trim(<decision name="SomeDecision">
       <switch>
         <case to="SomeNode">{predicateValue}</case>
         <case to="SomeNode">{predicateValue}</case>
         <default to="SomeNode"/>
       </switch>
-    </decision>)
-    )
+    </decision>))
   }
 
   it should "generate correct xml for Start" in {
@@ -106,9 +99,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
     val result = Start() okTo emailAction
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<start to="email"/>)
-    )
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<start to="email"/>))
   }
 
   it should "raise an exception if no transition from start has been defined" in {
@@ -123,11 +114,9 @@ class NodeSpec extends FlatSpec with Matchers {
     xml.Utility.trim(result) should be(xml.Utility.trim(<end name="end" />))
   }
   it should "generate correct xml for kill" in {
-    xml.Utility.trim(Kill("Killed!").toXML) should be(
-      xml.Utility.trim(<kill name="kill">
+    xml.Utility.trim(Kill("Killed!").toXML) should be(xml.Utility.trim(<kill name="kill">
         <message>Killed!</message>
-      </kill>)
-    )
+      </kill>))
   }
   it should "generate correct xml for fork" in {
     val oozieNode = Node(new Action {
@@ -154,9 +143,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
     val result = Join("SomeJoin", oozieNode).action.toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<join name="SomeJoin" to="SomeNode" />)
-    )
+    xml.Utility.trim(result) should be(xml.Utility.trim(<join name="SomeJoin" to="SomeNode" />))
   }
   it should "generate correct xml for an action with no credentials" in {
     implicit val credentialsOption: Option[Credentials] = None
@@ -172,17 +159,12 @@ class NodeSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config =
-                                    YarnConfig(jobTracker = "jobTracker",
-                                               nameNode = "nameNode",
-                                               configuration = Configuration(
-                                                 Seq(Property(name =
-                                                                "SomeProp1",
-                                                              "SomeValue1"),
-                                                     Property(name =
-                                                                "SomeProp2",
-                                                              "SomeValue2"))
-                                               )))
+                                  config = YarnConfig(jobTracker = "jobTracker",
+                                                      nameNode = "nameNode",
+                                                      configuration = Configuration(
+                                                        Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                                            Property(name = "SomeProp2", "SomeValue2"))
+                                                      )))
 
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
@@ -192,8 +174,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
     val result = (sparkAction okTo emailAction errorTo emailAction).toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<action name="SomeAction">
+    xml.Utility.trim(result) should be(xml.Utility.trim(<action name="SomeAction">
           <spark xmlns="uri:oozie:spark-action:1.0">
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -220,8 +201,7 @@ class NodeSpec extends FlatSpec with Matchers {
           </spark>
           <ok to="email"/>
           <error to="email"/>
-        </action>)
-    )
+        </action>))
   }
 
   it should "generate correct xml for an action with credentials" in {
@@ -229,10 +209,7 @@ class NodeSpec extends FlatSpec with Matchers {
       Credentials(
         Credential(name = "hive-credentials",
                    credentialsType = "hive",
-                   properties = Seq(
-                     Property("hive2.jdbc.url",
-                              "jdbc:hive2://hiveserver2;ssl=true;")
-                   ))
+                   properties = Seq(Property("hive2.jdbc.url", "jdbc:hive2://hiveserver2;ssl=true;")))
       )
     )
 
@@ -247,17 +224,12 @@ class NodeSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
                                   prepareOption = None,
-                                  config =
-                                    YarnConfig(jobTracker = "jobTracker",
-                                               nameNode = "nameNode",
-                                               configuration = Configuration(
-                                                 Seq(Property(name =
-                                                                "SomeProp1",
-                                                              "SomeValue1"),
-                                                     Property(name =
-                                                                "SomeProp2",
-                                                              "SomeValue2"))
-                                               )))
+                                  config = YarnConfig(jobTracker = "jobTracker",
+                                                      nameNode = "nameNode",
+                                                      configuration = Configuration(
+                                                        Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                                            Property(name = "SomeProp2", "SomeValue2"))
+                                                      )))
 
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
@@ -267,8 +239,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
     val result = (sparkAction okTo emailAction errorTo emailAction).toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<action name="SomeAction" cred="hive-credentials">
+    xml.Utility.trim(result) should be(xml.Utility.trim(<action name="SomeAction" cred="hive-credentials">
           <spark xmlns="uri:oozie:spark-action:1.0">
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -295,7 +266,6 @@ class NodeSpec extends FlatSpec with Matchers {
           </spark>
           <ok to="email"/>
           <error to="email"/>
-        </action>)
-    )
+        </action>))
   }
 }

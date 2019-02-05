@@ -27,14 +27,12 @@ class DecisionSpec extends FlatSpec with Matchers {
                           Switch(oozieNode, "somePredicate"),
                           Switch(oozieNode, "somePredicate")).action.toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<decision name="SomeDecision">
+    xml.Utility.trim(result) should be(xml.Utility.trim(<decision name="SomeDecision">
       <switch>
         <case to="SomeNode">{predicateValue}</case>
         <case to="SomeNode">{predicateValue}</case>
         <default to="SomeNode"/>
       </switch>
-    </decision>)
-    )
+    </decision>))
   }
 }

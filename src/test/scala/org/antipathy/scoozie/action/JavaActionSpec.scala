@@ -1,11 +1,7 @@
 package org.antipathy.scoozie.action
 
 import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{
-  Configuration,
-  Property,
-  YarnConfig
-}
+import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
@@ -24,8 +20,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker",
-                                                nameNode = "nameNode")).action
+                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -55,8 +50,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker",
-                                                nameNode = "nameNode")).action
+                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -92,10 +86,8 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             config = YarnConfig(
                               jobTracker = "jobTracker",
                               nameNode = "nameNode",
-                              configuration = Configuration(
-                                Seq(Property("SomeName1", "SomeVal1"),
-                                    Property("SomeName2", "SomeVal2"))
-                              )
+                              configuration =
+                                Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2")))
                             )).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
@@ -140,10 +132,8 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             config = YarnConfig(
                               jobTracker = "jobTracker",
                               nameNode = "nameNode",
-                              configuration = Configuration(
-                                Seq(Property("SomeName1", "SomeVal1"),
-                                    Property("SomeName2", "SomeVal2"))
-                              )
+                              configuration =
+                                Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2")))
                             )).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
@@ -189,8 +179,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = true,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker",
-                                                nameNode = "nameNode")).action
+                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>

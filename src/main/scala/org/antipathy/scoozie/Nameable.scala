@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie
 
 /**
@@ -10,3 +11,4 @@ private[scoozie] trait Nameable {
     */
   def name: String
 }
+// $COVERAGE-ON$

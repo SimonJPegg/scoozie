@@ -10,36 +10,36 @@ class WorkflowFunctionsSpec extends FlatSpec with Matchers {
 
     val nodeName = "SomeNode"
 
-    WorkflowFunctions.id should be( "${wf:id()}")
+    WorkflowFunctions.id should be("${wf:id()}")
 
-    WorkflowFunctions.name should be( "${wf:name()}")
+    WorkflowFunctions.name should be("${wf:name()}")
 
-    WorkflowFunctions.appPath should be( "${wf:appPath()}")
+    WorkflowFunctions.appPath should be("${wf:appPath()}")
 
-    WorkflowFunctions.conf(nodeName) should be( "${wf:conf("+nodeName+")}")
+    WorkflowFunctions.conf(nodeName) should be("${wf:conf(" + nodeName + ")}")
 
-    WorkflowFunctions.user should be( "${wf:user()}")
+    WorkflowFunctions.user should be("${wf:user()}")
 
-    WorkflowFunctions.group should be( "${wf:group()}")
+    WorkflowFunctions.group should be("${wf:group()}")
 
-    WorkflowFunctions.callBack(nodeName) should be( "${wf:callback("+nodeName+")}")
+    WorkflowFunctions.callBack(nodeName) should be("${wf:callback(" + nodeName + ")}")
 
-    WorkflowFunctions.transition(nodeName) should be( "${wf:transition("+nodeName+")}")
+    WorkflowFunctions.transition(nodeName) should be("${wf:transition(" + nodeName + ")}")
 
-    WorkflowFunctions.lastErrorNode should be( "${wf:lastErrorNode()}")
+    WorkflowFunctions.lastErrorNode should be("${wf:lastErrorNode()}")
 
-    WorkflowFunctions.errorCode(nodeName) should be( "${wf:errorCode("+nodeName+")}")
+    WorkflowFunctions.errorCode(nodeName) should be("${wf:errorCode(" + nodeName + ")}")
 
-    WorkflowFunctions.errorMessage(nodeName) should be( "${wf:errorMessage("+nodeName+")}")
+    WorkflowFunctions.errorMessage(nodeName) should be("${wf:errorMessage(" + nodeName + ")}")
 
-    WorkflowFunctions.run should be( "${wf:run()}")
+    WorkflowFunctions.run should be("${wf:run()}")
 
-    WorkflowFunctions.actionData(nodeName) should be( "${wf:actionData("+nodeName+")}")
+    WorkflowFunctions.actionData(nodeName) should be("${wf:actionData(" + nodeName + ")}")
 
-    WorkflowFunctions.externalActionId(nodeName) should be( "${wf:actionExternalId("+nodeName+")}")
+    WorkflowFunctions.externalActionId(nodeName) should be("${wf:actionExternalId(" + nodeName + ")}")
 
-    WorkflowFunctions.actionTrackerURL(nodeName) should be( "${wf:actionTrackerUri("+nodeName+")}")
+    WorkflowFunctions.actionTrackerURL(nodeName) should be("${wf:actionTrackerUri(" + nodeName + ")}")
 
-    WorkflowFunctions.actionExternalStatus(nodeName) should be( "${wf:actionExternalStatus("+nodeName+")}")
+    WorkflowFunctions.actionExternalStatus(nodeName) should be("${wf:actionExternalStatus(" + nodeName + ")}")
   }
 }

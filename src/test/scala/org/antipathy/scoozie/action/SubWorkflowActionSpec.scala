@@ -1,11 +1,7 @@
 package org.antipathy.scoozie.action
 
 import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{
-  Configuration,
-  Property,
-  YarnConfig
-}
+import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
@@ -20,13 +16,10 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
     val result = SubWorkflowAction(name = "SomeAction",
                                    applicationPath = "/path/to/workflow.xml",
                                    propagateConfiguration = true,
-                                   config = YarnConfig(
-                                     jobTracker = "jobTracker",
-                                     nameNode = "nameNode",
-                                     configuration = Configuration(
-                                       Seq(Property("some", "value"))
-                                     )
-                                   )).action
+                                   config =
+                                     YarnConfig(jobTracker = "jobTracker",
+                                                nameNode = "nameNode",
+                                                configuration = Configuration(Seq(Property("some", "value"))))).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sub-workflow>
         <app-path>{"${SomeAction_applicationPath}"}</app-path>
@@ -40,8 +33,7 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
       </sub-workflow>))
 
     result.properties should be(
-      Map("${SomeAction_applicationPath}" -> "/path/to/workflow.xml",
-          "${SomeAction_property0}" -> "value")
+      Map("${SomeAction_applicationPath}" -> "/path/to/workflow.xml", "${SomeAction_property0}" -> "value")
     )
   }
 
@@ -51,13 +43,10 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
     val result = SubWorkflowAction(name = "SomeAction",
                                    applicationPath = "/path/to/workflow.xml",
                                    propagateConfiguration = false,
-                                   config = YarnConfig(
-                                     jobTracker = "jobTracker",
-                                     nameNode = "nameNode",
-                                     configuration = Configuration(
-                                       Seq(Property("some", "value"))
-                                     )
-                                   )).action
+                                   config =
+                                     YarnConfig(jobTracker = "jobTracker",
+                                                nameNode = "nameNode",
+                                                configuration = Configuration(Seq(Property("some", "value"))))).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sub-workflow>
         <app-path>{"${SomeAction_applicationPath}"}</app-path>
@@ -70,8 +59,7 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
       </sub-workflow>))
 
     result.properties should be(
-      Map("${SomeAction_applicationPath}" -> "/path/to/workflow.xml",
-          "${SomeAction_property0}" -> "value")
+      Map("${SomeAction_applicationPath}" -> "/path/to/workflow.xml", "${SomeAction_property0}" -> "value")
     )
   }
 }

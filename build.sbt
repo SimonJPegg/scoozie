@@ -34,14 +34,14 @@ scmInfo := Some(
     Some("git@github.com:SimonJPegg/scoozie.git")
   ))
 
-libraryDependencies := Seq(
+libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.8" % "compile",
   "commons-io" % "commons-io" % "2.6" % "compile",
   "xerces" % "xercesImpl" % "2.11.0" % "compile",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
-libraryDependencies := {
+libraryDependencies ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMajor)) if scalaMajor >= 11 =>
       libraryDependencies.value ++ Seq(
@@ -84,3 +84,10 @@ releaseProcess := Seq[ReleaseStep](
 
 releaseCrossBuild := true
 
+coverageEnabled := true
+coverageMinimum := 70
+coverageFailOnMinimum := true
+coverageOutputHTML := true
+coverageOutputXML := false
+
+scalafmtOnCompile := true

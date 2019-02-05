@@ -18,13 +18,11 @@ class EmailActionSpec extends FlatSpec with Matchers {
                              subject = "message subject",
                              body = "message body").action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
           <to>{"${email_to}"}</to>
           <subject>{"${email_subject}"}</subject>
           <body>{"${email_body}"}</body>
-        </email>)
-    )
+        </email>))
 
     result.properties should be(
       Map("${email_to}" -> "a@a.com,b@b.com",
@@ -43,14 +41,12 @@ class EmailActionSpec extends FlatSpec with Matchers {
                              "message subject",
                              "message body").action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
           <to>{"${email_to}"}</to>
           <cc>{"${email_cc}"}</cc>
           <subject>{"${email_subject}"}</subject>
           <body>{"${email_body}"}</body>
-        </email>)
-    )
+        </email>))
 
     result.properties should be(
       Map("${email_to}" -> "a@a.com,b@b.com",

@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.action.prepare
 
 import org.antipathy.scoozie.XmlSerializable
@@ -12,3 +13,4 @@ private[scoozie] trait PrepareFSAction extends XmlSerializable {
     */
   def path: String
 }
+// $COVERAGE-ON$

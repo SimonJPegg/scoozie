@@ -14,12 +14,10 @@ class PigActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
 
-    val result = PigAction(
-      name = "pigAction",
-      script = "/path/to/script",
-      params = Seq(),
-      config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")
-    ).action
+    val result = PigAction(name = "pigAction",
+                           script = "/path/to/script",
+                           params = Seq(),
+                           config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -28,9 +26,7 @@ class PigActionSpec extends FlatSpec with Matchers {
         </pig>))
 
     result.properties should be(
-      Map("${pigAction_script}" -> "/path/to/script",
-          "${jobTracker}" -> "jobTracker",
-          "${nameNode}" -> "nameNode")
+      Map("${pigAction_script}" -> "/path/to/script", "${jobTracker}" -> "jobTracker", "${nameNode}" -> "nameNode")
     )
   }
 
@@ -38,12 +34,10 @@ class PigActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
 
-    val result = PigAction(
-      name = "pigAction",
-      script = "/path/to/script",
-      params = Seq("one", "two"),
-      config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")
-    ).action
+    val result = PigAction(name = "pigAction",
+                           script = "/path/to/script",
+                           params = Seq("one", "two"),
+                           config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>

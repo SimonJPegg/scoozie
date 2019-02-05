@@ -10,9 +10,7 @@ class MakeDirSpec extends FlatSpec with Matchers {
   it should "generate valid XML" in {
     val result = MakeDir("/Some/Path").toXML
 
-    xml.Utility.trim(result) should be(
-      xml.Utility.trim(<mkdir path="/Some/Path" />)
-    )
+    xml.Utility.trim(result) should be(xml.Utility.trim(<mkdir path="/Some/Path" />))
   }
 
 }

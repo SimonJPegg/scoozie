@@ -77,19 +77,12 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
-                            configurationOption = Some(
-                              Configuration(
-                                Seq(
-                                  Property(name = "workflowprop",
-                                           value = "workflowpropvalue")
-                                )
-                              )
-                            ),
+                            configurationOption =
+                              Some(Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue")))),
                             yarnConfig = yarnConfig)
 
     xml.Utility.trim(workflow.toXML) should be(
-      xml.Utility.trim(
-        <workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
+      xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -164,31 +157,28 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <message>workflow failed</message>
           </kill>
           <end name="end" />
-        </workflow-app>
-      )
+        </workflow-app>)
     )
 
-    workflow.jobProperties should be(
-      """sampleWorkflow_property0=workflowpropvalue
-        |sparkAction_mainClass=org.antipathy.Main
-        |hiveAction_hiveSettingsXML=/path/to/settings.xml
-        |sampleWorkflow_credentialProperty0=value
-        |sparkAction_sparkSettings=/path/to/spark/settings
-        |emailAction_to=a@a.com,b@b.com
-        |sparkAction_sparkMasterURL=masterURL
-        |shellAction_scriptLocation=/path/to/script.sh
-        |shellAction_scriptName=script.sh
-        |sparkAction_sparkJobName=JobName
-        |sparkAction_sparkOptions=spark options
-        |nameNode=nameNode
-        |sparkAction_sparkMode=mode
-        |sparkAction_sparkJar=/path/to/jar
-        |emailAction_body=message body
-        |jobTracker=jobTracker
-        |hiveAction_scriptName=someScript.hql
-        |hiveAction_scriptLocation=/path/to/someScript.hql
-        |emailAction_subject=message subject""".stripMargin
-    )
+    workflow.jobProperties should be("""sampleWorkflow_property0=workflowpropvalue
+                                       |sparkAction_mainClass=org.antipathy.Main
+                                       |hiveAction_hiveSettingsXML=/path/to/settings.xml
+                                       |sampleWorkflow_credentialProperty0=value
+                                       |sparkAction_sparkSettings=/path/to/spark/settings
+                                       |emailAction_to=a@a.com,b@b.com
+                                       |sparkAction_sparkMasterURL=masterURL
+                                       |shellAction_scriptLocation=/path/to/script.sh
+                                       |shellAction_scriptName=script.sh
+                                       |sparkAction_sparkJobName=JobName
+                                       |sparkAction_sparkOptions=spark options
+                                       |nameNode=nameNode
+                                       |sparkAction_sparkMode=mode
+                                       |sparkAction_sparkJar=/path/to/jar
+                                       |emailAction_body=message body
+                                       |jobTracker=jobTracker
+                                       |hiveAction_scriptName=someScript.hql
+                                       |hiveAction_scriptLocation=/path/to/someScript.hql
+                                       |emailAction_subject=message subject""".stripMargin)
 
   }
 
@@ -250,10 +240,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
       .okTo(shellAction)
       .errorTo(emailAction)
 
-    val decision = Decision("doAThing",
-                            sparkAction,
-                            Switch(hiveAction, "somePredicate"),
-                            Switch(emailAction, "somePredicate"))
+    val decision =
+      Decision("doAThing", sparkAction, Switch(hiveAction, "somePredicate"), Switch(emailAction, "somePredicate"))
 
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
@@ -262,8 +250,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                             yarnConfig = yarnConfig)
 
     xml.Utility.trim(workflow.toXML) should be(
-      xml.Utility.trim(
-        <workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
+      xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -334,30 +321,27 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <message>workflow failed</message>
           </kill>
           <end name="end" />
-        </workflow-app>
-      )
+        </workflow-app>)
     )
 
-    workflow.jobProperties should be(
-      """sparkAction_mainClass=org.antipathy.Main
-          |hiveAction_hiveSettingsXML=/path/to/settings.xml
-          |sampleWorkflow_credentialProperty0=value
-          |sparkAction_sparkSettings=/path/to/spark/settings
-          |emailAction_to=a@a.com,b@b.com
-          |sparkAction_sparkMasterURL=masterURL
-          |shellAction_scriptLocation=/path/to/script.sh
-          |shellAction_scriptName=script.sh
-          |sparkAction_sparkJobName=JobName
-          |sparkAction_sparkOptions=spark options
-          |nameNode=nameNode
-          |sparkAction_sparkMode=mode
-          |sparkAction_sparkJar=/path/to/jar
-          |emailAction_body=message body
-          |jobTracker=jobTracker
-          |hiveAction_scriptName=someScript.hql
-          |hiveAction_scriptLocation=/path/to/someScript.hql
-          |emailAction_subject=message subject""".stripMargin
-      )
+    workflow.jobProperties should be("""sparkAction_mainClass=org.antipathy.Main
+                                       |hiveAction_hiveSettingsXML=/path/to/settings.xml
+                                       |sampleWorkflow_credentialProperty0=value
+                                       |sparkAction_sparkSettings=/path/to/spark/settings
+                                       |emailAction_to=a@a.com,b@b.com
+                                       |sparkAction_sparkMasterURL=masterURL
+                                       |shellAction_scriptLocation=/path/to/script.sh
+                                       |shellAction_scriptName=script.sh
+                                       |sparkAction_sparkJobName=JobName
+                                       |sparkAction_sparkOptions=spark options
+                                       |nameNode=nameNode
+                                       |sparkAction_sparkMode=mode
+                                       |sparkAction_sparkJar=/path/to/jar
+                                       |emailAction_body=message body
+                                       |jobTracker=jobTracker
+                                       |hiveAction_scriptName=someScript.hql
+                                       |hiveAction_scriptLocation=/path/to/someScript.hql
+                                       |emailAction_subject=message subject""".stripMargin)
   }
 
 }

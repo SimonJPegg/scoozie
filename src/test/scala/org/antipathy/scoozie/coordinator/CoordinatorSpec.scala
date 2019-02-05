@@ -1,14 +1,13 @@
 package org.antipathy.scoozie.coordinator
 
 import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{Configuration, Property, Credentials, YarnConfig}
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
 import scala.xml
 import scala.collection.immutable._
 import org.antipathy.scoozie.control.Start
 import org.antipathy.scoozie.workflow.Workflow
 
 class CoordinatorSpec extends FlatSpec with Matchers {
-
 
   behavior of "CoOrdinator"
 
@@ -50,15 +49,12 @@ class CoordinatorSpec extends FlatSpec with Matchers {
     import org.antipathy.scoozie.control.Start
     import org.antipathy.scoozie.workflow.Workflow
 
-
     implicit val credentialsOption: Option[Credentials] = None
 
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
-                            configurationOption = Some(Configuration(
-                              Seq(Property("some", "value"))
-                            )),
+                            configurationOption = Some(Configuration(Seq(Property("some", "value")))),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "Namenode"))
 
     val result = Coordinator(name = "SomeCoOrd",
@@ -67,14 +63,10 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                              end = "2009-01-04T08:00Z",
                              timezone = "America/Los_Angeles",
                              workflow = workflow,
-                             configurationOption = Some(Configuration(
-                               Seq(Property("some", "value"))
-                             )))
+                             configurationOption = Some(Configuration(Seq(Property("some", "value")))))
 
-    result.jobProperties should be (
-      """SomeCoOrd_property0=value
-        |sampleWorkflow_property0=value""".stripMargin)
-
+    result.jobProperties should be("""SomeCoOrd_property0=value
+                                     |sampleWorkflow_property0=value""".stripMargin)
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<coordinator-app
       name="SomeCoOrd"

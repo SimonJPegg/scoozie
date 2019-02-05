@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie
 
 import scala.xml.Elem
@@ -12,3 +13,4 @@ private[scoozie] trait XmlSerializable {
     */
   def toXML: Elem
 }
+// $COVERAGE-ON$

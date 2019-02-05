@@ -19,12 +19,10 @@ class Hive2ActionSpec extends FlatSpec with Matchers {
                              scriptName = "scriptName.hql",
                              scriptLocation = "/path/to/criptName.hql",
                              parameters = Seq("one", "two"),
-                             config = YarnConfig(jobTracker = "jobTracker",
-                                                 nameNode = "nameNode"),
+                             config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
                              jdbcUrl = "jdbcUrl").action
 
-    xml.Utility.trim(result.toXML) should be(
-      xml.Utility.trim(<hive2 xmlns="uri:oozie:hive2-action:0.1">
+    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive2 xmlns="uri:oozie:hive2-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${hive2Action_hiveSettingsXML}"}</job-xml>
@@ -33,8 +31,7 @@ class Hive2ActionSpec extends FlatSpec with Matchers {
           <param>{"${hive2Action_parameter0}"}</param>
           <param>{"${hive2Action_parameter1}"}</param>
           <file>{"${hive2Action_scriptLocation}"}</file>
-        </hive2>)
-    )
+        </hive2>))
 
     result.properties should be(
       Map("${nameNode}" -> "nameNode",
