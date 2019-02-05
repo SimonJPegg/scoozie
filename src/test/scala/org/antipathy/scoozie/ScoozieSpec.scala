@@ -60,7 +60,8 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                                  commandLineArgs = Seq(),
                                                  captureOutput = false,
                                                  files = Seq(),
-                                                 prepareOption = None,
+                                                 prepareOption =
+                                                   Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
                                                  config = yarnConfig)
 
     private val start = Scoozie.Action.start
@@ -165,6 +166,9 @@ class ScoozieSpec extends FlatSpec with Matchers {
         |        <java>
         |            <job-tracker>${jobTracker}</job-tracker>
         |            <name-node>${nameNode}</name-node>
+        |            <prepare>
+        |                <delete path="doAJavaThing_prepare_delete"/>
+        |            </prepare>
         |            <configuration>
         |                <property>
         |                    <name>prop1</name>
@@ -231,6 +235,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                        |doAJavaThing_property1=value2
                                        |doASparkThing_sparkOptions=spark options
                                        |nameNode=nameservice1
+                                       |doAJavaThing_prepare_delete=/some/path
                                        |doASparkThing_property1=value2
                                        |doAShellThing_property1=value2
                                        |doAHiveThing_scriptLocation=/path/to/someScript.hql

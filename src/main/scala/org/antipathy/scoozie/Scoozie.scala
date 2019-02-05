@@ -1,7 +1,8 @@
 package org.antipathy.scoozie
 
 import org.antipathy.scoozie.action._
-import org.antipathy.scoozie.action.prepare._
+import org.antipathy.scoozie.action.prepare.{Prepare => ActionPrepare}
+import org.antipathy.scoozie.action.prepare.PrepareFSAction
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.control._
 import org.antipathy.scoozie.coordinator.Coordinator
@@ -11,6 +12,7 @@ import org.antipathy.scoozie.testing.WorkflowTestRunner
 import org.antipathy.scoozie.validator.{OozieValidator, SchemaType}
 import org.antipathy.scoozie.workflow.Workflow
 import scala.collection.immutable._
+import org.antipathy.scoozie.action.filesystem._
 
 /**
   * Entry class for Scoozie.
@@ -60,6 +62,14 @@ object Scoozie {
     def fork(name: String, nodes: Seq[Node]): Node = Fork(name, nodes)
 
     /**
+      * Oozie filesystem action
+      * @param name the name of the action
+      * @param actions the actions to perform
+      */
+    def fs(name: String, action: FileSystemAction*)(implicit credentialsOption: Option[Credentials]): Node =
+      FsAction(name, action)
+
+    /**
       * Oozie Hive action
       * @param name the name of the action
       * @param hiveSettingsXML the path to the hive settings XML
@@ -75,7 +85,7 @@ object Scoozie {
              scriptLocation: String,
              parameters: Seq[String],
              config: YarnConfig,
-             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       HiveAction(name, hiveSettingsXML, scriptName, scriptLocation, parameters, config, prepareOption)
 
     /**
@@ -98,7 +108,7 @@ object Scoozie {
               config: YarnConfig,
               jdbcUrl: String,
               password: Option[String] = None,
-              prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]) =
+              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]) =
       Hive2Action(name,
                   hiveSettingsXML,
                   scriptName,
@@ -129,7 +139,7 @@ object Scoozie {
              files: Seq[String],
              captureOutput: Boolean,
              config: YarnConfig,
-             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+             prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       JavaAction(name, mainClass, javaJar, javaOptions, commandLineArgs, files, captureOutput, config, prepareOption)
 
     /**
@@ -158,7 +168,7 @@ object Scoozie {
             params: Seq[String],
             jobXml: Option[String] = None,
             config: YarnConfig,
-            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+            prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       PigAction(name, script, params, jobXml, config, prepareOption)
 
     /**
@@ -182,7 +192,7 @@ object Scoozie {
               files: Seq[String],
               captureOutput: Boolean,
               config: YarnConfig,
-              prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
       ShellAction(name,
                   scriptName,
                   scriptLocation,
@@ -217,7 +227,7 @@ object Scoozie {
               sparkOptions: String,
               commandLineArgs: Seq[String],
               files: Seq[String],
-              prepareOption: Option[Prepare] = None,
+              prepareOption: Option[ActionPrepare] = None,
               config: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
       SparkAction(name,
                   sparkSettings,
@@ -273,12 +283,57 @@ object Scoozie {
   }
 
   /**
+    * Oozie filesystem operations
+    */
+  object FileSystem {
+
+    /**
+      * Create an ozzie chmod step
+      *
+      * @param path the path to operate on
+      * @param permissions the permissions to set
+      * @param dirFiles should the operation be recursive
+      */
+    def chmod(path: String, permissions: String, dirFiles: String): Chmod = Chmod(path, permissions, dirFiles)
+
+    /**
+      * Create a delete step
+      *
+      * @param path the path to delete
+      * @return a delete step
+      */
+    def delete(path: String): Delete = Delete(path)
+
+    /**
+      * Create a make directory step
+      * @param path the path to create
+      * @return a make directory step
+      */
+    def makeDirectory(path: String): MakeDir = MakeDir(path)
+
+    /**
+      * Create an ozzie move step
+      * @param srcPath the path to move from
+      * @param targetPath the path to move to
+      */
+    def move(srcPath: String, targetPath: String): Move = Move(srcPath, targetPath)
+
+    /**
+      * Create a touch step
+      * @param path the path to touch
+      * @return a touch step
+      */
+    def touchz(path: String): Touchz = Touchz(path)
+  }
+
+  /**
     * Action preparation methods
     */
-  object Prep {
+  object Prepare {
 
     /**
       * Create a delete preparation step
+      *
       * @param path the path to delete
       * @return a delete preparation step
       */
@@ -296,8 +351,8 @@ object Scoozie {
       * @param actions the preparation actions
       * @return an action preparation step
       */
-    def prepare(actions: Seq[PrepareFSAction]): Option[Prepare] =
-      Some(Prepare(actions))
+    def prepare(actions: Seq[PrepareFSAction]): Option[ActionPrepare] =
+      Some(ActionPrepare(actions))
   }
 
   /**

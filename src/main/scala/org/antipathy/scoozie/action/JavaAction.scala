@@ -68,7 +68,7 @@ final class JavaAction(override val name: String,
         {config.jobTrackerXML}
         {config.nameNodeXML}
         {if (prepareOptionMapped.isDefined) {
-            prepareOptionMapped.map(_.toXML)
+            prepareOptionMapped.get.toXML
           }
         }
         {if (mappedConfig.configProperties.nonEmpty) {
