@@ -77,17 +77,20 @@ class ScoozieSpec extends FlatSpec with Matchers {
       start okTo decision
     }
 
-    val workflow: Workflow = Scoozie.workflow("ExampleWorkflow", "/path/to/workflow.xml", transitions, None, yarnConfig)
+    val workflow: Workflow = Scoozie.workflow(name = "ExampleWorkflow", path = "/path/to/workflow.xml",
+      transitions = transitions, configurationOption = None, yarnConfig = yarnConfig)
 
-    val coOrdinator: CoOrdinator = Scoozie.coOrdinator("ExampleCoOrdinator", "startFreq", "start", "end", "timeZome", workflow)
+    val coOrdinator: CoOrdinator = Scoozie.coOrdinator(name = "ExampleCoOrdinator", frequency = "startFreq",
+      start = "start", end = "end", timezone = "timeZome", workflow = workflow, configurationOption =
+        Some(Scoozie.Config.configuration(yarnProperties)))
 
-    val jobConfig: String = workflow.jobProperties
+    val jobConfig: String = coOrdinator.jobProperties
   }
 
   it should "allow the creation of an oozie workflow" in {
     val testWorkflow = new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
 
-    val result = Scoozie.Format.format(testWorkflow.workflow, 80, 4) should be(
+    Scoozie.Format.format(testWorkflow.workflow, 80, 4) should be(
       """<workflow-app name="ExampleWorkflow" xmlns="uri:oozie:workflow:0.4">
         |    <global>
         |        <job-tracker>${jobTracker}</job-tracker>
@@ -208,6 +211,37 @@ class ScoozieSpec extends FlatSpec with Matchers {
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )
+
+    testWorkflow.jobConfig should be ("""ExampleCoOrdinator_property0=value1
+                                        |ExampleCoOrdinator_property1=value2
+                                        |alertFailure_body=message body
+                                        |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
+                                        |jobTracker=yarn
+                                        |doAJavaThing_javaOptions=java options
+                                        |alertFailure_to=a@a.com,b@b.com
+                                        |doASparkThing_property0=value1
+                                        |doAJavaThing_property1=value2
+                                        |doASparkThing_sparkOptions=spark options
+                                        |nameNode=nameservice1
+                                        |doASparkThing_property1=value2
+                                        |doAShellThing_property1=value2
+                                        |doAHiveThing_scriptLocation=/path/to/someScript.hql
+                                        |doAHiveThing_property1=value2
+                                        |doAShellThing_scriptName=script.sh
+                                        |doASparkThing_sparkJobName=JobName
+                                        |doAJavaThing_property0=value1
+                                        |doASparkThing_sparkMasterURL=masterURL
+                                        |alertFailure_subject=message subject
+                                        |doASparkThing_sparkMode=mode
+                                        |doASparkThing_mainClass=org.antipathy.Main
+                                        |doASparkThing_sparkJar=/path/to/jar
+                                        |doAJavaThing_mainClass=org.antipathy.Main
+                                        |doAJavaThing_javaJar=/path/to/jar
+                                        |doASparkThing_sparkSettings=/path/to/spark/settings
+                                        |doAHiveThing_scriptName=someScript.hql
+                                        |doAShellThing_scriptLocation=/path/to/script.sh
+                                        |doAShellThing_property0=value1
+                                        |doAHiveThing_property0=value1""".stripMargin)
   }
 
   it should "allow validation of an oozie workflow" in {
@@ -246,6 +280,15 @@ class ScoozieSpec extends FlatSpec with Matchers {
           <action>
             <workflow>
               <app-path>/path/to/workflow.xml</app-path>
+              <configuration>
+                <property><name>prop1</name>
+                  <value>{"${ExampleCoOrdinator_property0}"}</value>
+                </property>
+                <property>
+                  <name>prop2</name>
+                  <value>{"${ExampleCoOrdinator_property1}"}</value>
+                </property>
+              </configuration>
             </workflow>
           </action>
         </coordinator-app>

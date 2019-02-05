@@ -6,10 +6,8 @@ import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConf
 import scala.language.existentials
 import scala.xml.Elem
 import org.antipathy.scoozie.control._
-import org.antipathy.scoozie.validator.OozieValidator
 import org.antipathy.scoozie.formatter.OozieXmlFormatter
-import org.antipathy.scoozie.validator.SchemaType
-
+import org.antipathy.scoozie.action.SubWorkflowAction
 import scala.collection.immutable._
 import org.antipathy.scoozie.configuration.Credential
 
@@ -30,9 +28,6 @@ case class Workflow(override val name: String,
     extends XmlSerializable
     with Nameable
     with JobProperties {
-  import org.antipathy.scoozie.action.SubWorkflowAction
-
-  private val formatter = new OozieXmlFormatter(80, 4)
 
   private val (mappedCredentials, mappedCredProps) =
     credentialsOption.map(_.withActionProperties(name)) match {
