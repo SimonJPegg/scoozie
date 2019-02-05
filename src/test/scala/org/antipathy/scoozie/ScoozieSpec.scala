@@ -77,10 +77,10 @@ class ScoozieSpec extends FlatSpec with Matchers {
       start okTo decision
     }
 
-    val workflow: Workflow = Scoozie.Workflow.workflow(name = "ExampleWorkflow", path = "/path/to/workflow.xml",
+    val workflow: Workflow = Scoozie.workflow(name = "ExampleWorkflow", path = "/path/to/workflow.xml",
       transitions = transitions, configurationOption = None, yarnConfig = yarnConfig)
 
-    val coOrdinator: Coordinator = Scoozie.Coordinator.coordinator(name = "ExampleCoOrdinator", frequency = "startFreq",
+    val coOrdinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator", frequency = "startFreq",
       start = "start", end = "end", timezone = "timeZome", workflow = workflow, configurationOption =
         Some(Scoozie.Config.configuration(yarnProperties)))
 
