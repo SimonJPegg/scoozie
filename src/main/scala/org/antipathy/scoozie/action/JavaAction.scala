@@ -1,10 +1,11 @@
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Arg, File, YarnConfig}
+import org.antipathy.scoozie.configuration._
+
 import scala.xml.Elem
 import org.antipathy.scoozie.Node
-import org.antipathy.scoozie.configuration.Credentials
+
 import scala.collection.immutable._
 
 /**
@@ -16,7 +17,8 @@ import scala.collection.immutable._
   * @param commandLineArgs command line arguments for the java job
   * @param files files to include with the application
   * @param captureOutput capture output from this action
-  * @param config Yarn configuration for this action
+  * @param configuration additional config for this action
+  * @param yarnConfig Yarn configuration for this action
   * @param prepareOption an optional prepare stage for the action
   */
 final class JavaAction(override val name: String,
@@ -26,7 +28,8 @@ final class JavaAction(override val name: String,
                        commandLineArgs: Seq[String],
                        files: Seq[String],
                        captureOutput: Boolean,
-                       config: YarnConfig,
+                       configuration: Configuration,
+                       yarnConfig: YarnConfig,
                        prepareOption: Option[Prepare] = None)
     extends Action {
 
@@ -41,15 +44,14 @@ final class JavaAction(override val name: String,
   private val prepareProperties =
     prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties =
-    config.configuration.withActionProperties(name)
+  private val mappedConfigAndProperties = configuration.withActionProperties(name)
   private val mappedConfig = mappedConfigAndProperties._1
 
   /**
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(mainClassProperty -> mainClass, javaJarProperty -> javaJar, javaOptionsProperty -> javaOptions) ++ config.properties ++
+    Map(mainClassProperty -> mainClass, javaJarProperty -> javaJar, javaOptionsProperty -> javaOptions) ++
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
@@ -65,8 +67,8 @@ final class JavaAction(override val name: String,
     */
   override def toXML: Elem =
     <java>
-        {config.jobTrackerXML}
-        {config.nameNodeXML}
+        {yarnConfig.jobTrackerXML}
+        {yarnConfig.nameNodeXML}
         {if (prepareOptionMapped.isDefined) {
             prepareOptionMapped.get.toXML
           }
@@ -96,7 +98,8 @@ object JavaAction {
             commandLineArgs: Seq[String],
             files: Seq[String],
             captureOutput: Boolean,
-            config: YarnConfig,
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new JavaAction(name,
@@ -106,7 +109,8 @@ object JavaAction {
                      commandLineArgs,
                      files,
                      captureOutput,
-                     config,
+                     configuration,
+                     yarnConfig,
                      prepareOption)
     )
 }

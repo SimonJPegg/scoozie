@@ -63,7 +63,8 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                                  files = Seq(),
                                                  prepareOption =
                                                    Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
-                                                 config = yarnConfig)
+                                                 configuration = Scoozie.Config.emptyConfiguration,
+                                                 yarnConfig = yarnConfig)
 
     private val start = Scoozie.Action.start
 
@@ -170,16 +171,6 @@ class ScoozieSpec extends FlatSpec with Matchers {
               <prepare>
                 <delete path="${doAJavaThing_prepare_delete}" />
               </prepare>
-              <configuration>
-                <property>
-                  <name>prop1</name>
-                  <value>{"${doAJavaThing_property0}"}</value>
-                </property>
-                <property>
-                  <name>prop2</name>
-                  <value>{"${doAJavaThing_property1}"}</value>
-                </property>
-              </configuration>
               <main-class>{"${doAJavaThing_mainClass}"}</main-class>
               <java-opts>{"${doAJavaThing_javaOptions}"}</java-opts>
               <file>{"${doAJavaThing_javaJar}"}</file>
@@ -223,7 +214,6 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                        |doAJavaThing_javaOptions=java options
                                        |alertFailure_to=a@a.com,b@b.com
                                        |doASparkThing_property0=value1
-                                       |doAJavaThing_property1=value2
                                        |doASparkThing_sparkOptions=spark options
                                        |nameNode=nameservice1
                                        |doAJavaThing_prepare_delete=/some/path
@@ -232,7 +222,6 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                        |doAHiveThing_scriptLocation=/path/to/someScript.hql
                                        |doAShellThing_scriptName=script.sh
                                        |doASparkThing_sparkJobName=JobName
-                                       |doAJavaThing_property0=value1
                                        |doASparkThing_sparkMasterURL=masterURL
                                        |alertFailure_subject=message subject
                                        |doASparkThing_sparkMode=mode

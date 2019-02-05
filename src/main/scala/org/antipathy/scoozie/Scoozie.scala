@@ -157,7 +157,8 @@ object Scoozie {
       * @param commandLineArgs command line arguments for the java job
       * @param files files to include with the application
       * @param captureOutput capture output from this action
-      * @param config Yarn configuration for this action
+      * @param configuration additional config for this action
+      * @param yarnConfig Yarn configuration for this action
       * @param prepareOption an optional prepare stage for the action
       */
     def java(name: String,
@@ -167,9 +168,19 @@ object Scoozie {
              commandLineArgs: Seq[String],
              files: Seq[String],
              captureOutput: Boolean,
-             config: YarnConfig,
+             configuration: Configuration,
+             yarnConfig: YarnConfig,
              prepareOption: Option[ActionPrepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
-      JavaAction(name, mainClass, javaJar, javaOptions, commandLineArgs, files, captureOutput, config, prepareOption)
+      JavaAction(name,
+                 mainClass,
+                 javaJar,
+                 javaOptions,
+                 commandLineArgs,
+                 files,
+                 captureOutput,
+                 configuration,
+                 yarnConfig,
+                 prepareOption)
 
     /**
       * Oozie join control node

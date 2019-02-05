@@ -5,12 +5,14 @@ import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
 import scala.xml
 import scala.collection.immutable._
+import org.antipathy.scoozie.Scoozie
 
 class JavaActionSpec extends FlatSpec with Matchers {
 
   behavior of "JavaAction"
 
   it should "generate valid XML with no config and no args" in {
+
     implicit val credentialsOption: Option[Credentials] = None
     val result = JavaAction(name = "SomeAction",
                             mainClass = "org.antipathy.Main",
@@ -20,7 +22,8 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                            configuration = Scoozie.Config.emptyConfiguration,
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -31,9 +34,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
       </java>))
 
     result.properties should be(
-      Map("${jobTracker}" -> "jobTracker",
-          "${nameNode}" -> "nameNode",
-          "${SomeAction_mainClass}" -> "org.antipathy.Main",
+      Map("${SomeAction_mainClass}" -> "org.antipathy.Main",
           "${SomeAction_javaJar}" -> "/path/to/jar",
           "${SomeAction_javaOptions}" -> "java options")
     )
@@ -50,7 +51,8 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                            configuration = Scoozie.Config.emptyConfiguration,
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -63,9 +65,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
       </java>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${jobTracker}" -> "jobTracker",
-          "${SomeAction_commandLineArg0}" -> "one",
+      Map("${SomeAction_commandLineArg0}" -> "one",
           "${SomeAction_javaJar}" -> "/path/to/jar",
           "${SomeAction_javaOptions}" -> "java options",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
@@ -83,12 +83,9 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(
-                              jobTracker = "jobTracker",
-                              nameNode = "nameNode",
-                              configuration =
-                                Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2")))
-                            )).action
+                            configuration =
+                              Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2"))),
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -110,8 +107,6 @@ class JavaActionSpec extends FlatSpec with Matchers {
 
     result.properties should be(
       Map("${SomeAction_property1}" -> "SomeVal2",
-          "${nameNode}" -> "nameNode",
-          "${jobTracker}" -> "jobTracker",
           "${SomeAction_javaJar}" -> "/path/to/jar",
           "${SomeAction_javaOptions}" -> "java options",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
@@ -129,12 +124,9 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(
-                              jobTracker = "jobTracker",
-                              nameNode = "nameNode",
-                              configuration =
-                                Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2")))
-                            )).action
+                            configuration =
+                              Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2"))),
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -158,8 +150,6 @@ class JavaActionSpec extends FlatSpec with Matchers {
 
     result.properties should be(
       Map("${SomeAction_property1}" -> "SomeVal2",
-          "${nameNode}" -> "nameNode",
-          "${jobTracker}" -> "jobTracker",
           "${SomeAction_commandLineArg0}" -> "one",
           "${SomeAction_javaJar}" -> "/path/to/jar",
           "${SomeAction_javaOptions}" -> "java options",
@@ -179,7 +169,8 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = true,
                             files = Seq(),
                             prepareOption = None,
-                            config = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                            configuration = Scoozie.Config.emptyConfiguration,
+                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
@@ -191,9 +182,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
       </java>))
 
     result.properties should be(
-      Map("${nameNode}" -> "nameNode",
-          "${jobTracker}" -> "jobTracker",
-          "${SomeAction_javaJar}" -> "/path/to/jar",
+      Map("${SomeAction_javaJar}" -> "/path/to/jar",
           "${SomeAction_javaOptions}" -> "java options",
           "${SomeAction_mainClass}" -> "org.antipathy.Main")
     )
