@@ -620,5 +620,50 @@ object Scoozie {
         */
       def toConfigurationStr(variable: String): String = BasicFunctions.toConfigurationStr(variable)
     }
+
+    /**
+      * oozie coordinator functions
+      */
+    object Coordinator {
+
+      /**
+        * Oozie time frequency in minutes
+        */
+      def minutes(i: Int): String = CoordinatorFunctions.minutes(i)
+
+      /**
+        * Oozie time frequency in hours
+        */
+      def hours(i: Int): String = CoordinatorFunctions.hours(i)
+
+      /**
+        * Oozie time frequency in days
+        */
+      def days(i: Int): String = CoordinatorFunctions.days(i)
+
+      /**
+        * Oozie time frequency in days
+        * identical to the `days` function except that it shifts the first occurrence to the end of the day
+        * for the specified timezone before computing the interval in minutes
+        */
+      def endOfDays(i: Int): String = CoordinatorFunctions.endOfDays(i)
+
+      /**
+        * Oozie time frequency in months
+        */
+      def months(i: Int): String = CoordinatorFunctions.months(i)
+
+      /**
+        * Oozie time frequency in months
+        * identical to the `months` function except that it shifts the first occurrence to the end of the month
+        * for the specified timezone before computing the interval in minutes
+        */
+      def endOfMonths(i: Int): String = CoordinatorFunctions.endOfMonths(i)
+
+      /**
+        * Oozie time frequency in cron format
+        */
+      def cron(string: String): String = CoordinatorFunctions.cron(string)
+    }
   }
 }

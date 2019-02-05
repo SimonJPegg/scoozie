@@ -1,5 +1,8 @@
 package org.antipathy.scoozie.functions
 
+/**
+  * Oozie workflow functions
+  */
 object WorkflowFunctions {
 
   /**
