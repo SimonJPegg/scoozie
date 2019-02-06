@@ -3,7 +3,6 @@ package org.antipathy.scoozie.action
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
 
@@ -22,10 +21,10 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Config.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <main-class>{"${SomeAction_mainClass}"}</main-class>
@@ -51,10 +50,10 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = false,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Config.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <main-class>{"${SomeAction_mainClass}"}</main-class>
@@ -87,7 +86,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                               Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2"))),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <configuration>
@@ -128,7 +127,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                               Configuration(Seq(Property("SomeName1", "SomeVal1"), Property("SomeName2", "SomeVal2"))),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <configuration>
@@ -169,10 +168,10 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             captureOutput = true,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Config.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<java>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <main-class>{"${SomeAction_mainClass}"}</main-class>

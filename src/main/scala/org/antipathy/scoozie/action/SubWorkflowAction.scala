@@ -1,8 +1,6 @@
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
-import org.antipathy.scoozie.Node
-
 import scala.xml.Elem
 import scala.collection.immutable._
 

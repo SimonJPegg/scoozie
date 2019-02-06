@@ -1,9 +1,9 @@
 package org.antipathy.scoozie.action.prepare
 
-import org.antipathy.scoozie.XmlSerializable
 import scala.xml.Elem
 import scala.collection.immutable.Map
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
+import org.antipathy.scoozie.xml.XmlSerializable
 
 /**
   * Ooize actions prepare definition

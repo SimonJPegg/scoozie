@@ -1,7 +1,7 @@
 // $COVERAGE-OFF$
 package org.antipathy.scoozie.action.prepare
 
-import org.antipathy.scoozie.XmlSerializable
+import org.antipathy.scoozie.xml.XmlSerializable
 
 /**
   * Base trait for workflow preparation Steps

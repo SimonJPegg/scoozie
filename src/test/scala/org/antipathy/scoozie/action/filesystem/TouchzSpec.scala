@@ -1,6 +1,5 @@
 package org.antipathy.scoozie.action.filesystem
 
-import scala.xml
 import org.scalatest.{FlatSpec, Matchers}
 
 class TouchzSpec extends FlatSpec with Matchers {
@@ -10,7 +9,7 @@ class TouchzSpec extends FlatSpec with Matchers {
   it should "generate valid XML" in {
     val result = Touchz("/Some/Path").toXML
 
-    xml.Utility.trim(result) should be(xml.Utility.trim(<touchz path="/Some/Path" />))
+    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<touchz path="/Some/Path" />))
   }
 
 }

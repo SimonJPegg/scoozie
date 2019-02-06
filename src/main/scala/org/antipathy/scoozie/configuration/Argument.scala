@@ -1,6 +1,6 @@
 package org.antipathy.scoozie.configuration
 
-import org.antipathy.scoozie.XmlSerializable
+import org.antipathy.scoozie.xml.XmlSerializable
 import scala.xml.Elem
 
 /**

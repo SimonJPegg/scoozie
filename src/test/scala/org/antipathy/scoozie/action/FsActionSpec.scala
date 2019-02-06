@@ -2,7 +2,6 @@ package org.antipathy.scoozie.action
 
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.Scoozie
-import scala.xml
 import org.antipathy.scoozie.configuration.Credentials
 
 class FsActionSpec extends FlatSpec with Matchers {
@@ -11,7 +10,7 @@ class FsActionSpec extends FlatSpec with Matchers {
 
   it should "generate valid XML" in {
 
-    implicit val credentials: Option[Credentials] = Scoozie.Config.emptyCredentials
+    implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
 
     val actions = Seq(Scoozie.FileSystem.chmod("chmod1Path", "somepermissions1", "false"),
                       Scoozie.FileSystem.delete("someDeletePath"),
@@ -20,9 +19,9 @@ class FsActionSpec extends FlatSpec with Matchers {
                       Scoozie.FileSystem.touchz("someTouchPath"),
                       Scoozie.FileSystem.chmod("chmod2Path", "somepermissions2", "true"),
     )
-    val result = Scoozie.Action.fs("fsAction", actions: _*).action
+    val result = Scoozie.Actions.fs("fsAction", actions: _*).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<fs>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<fs>
         <chmod path="fsAction_chmodPath0" permissions="fsAction_chmodPermissions0" dir-files="fsAction_chmodDirFiles0"/>
         <delete path="fsAction_deletePath1"/>
         <mkdir path="fsAction_mkDirPath2"/>

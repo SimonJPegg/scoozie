@@ -1,6 +1,6 @@
 package org.antipathy.scoozie.testing
 
-import org.antipathy.scoozie.Node
+import org.antipathy.scoozie.action.Node
 import scala.collection.immutable.Seq
 
 /**

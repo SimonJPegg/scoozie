@@ -3,7 +3,6 @@ package org.antipathy.scoozie.action
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.YarnConfig
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
 
@@ -18,10 +17,10 @@ class PigActionSpec extends FlatSpec with Matchers {
     val result = PigAction(name = "pigAction",
                            script = "/path/to/script",
                            params = Seq(),
-                           configuration = Scoozie.Config.emptyConfiguration,
+                           configuration = Scoozie.Configuration.emptyConfiguration,
                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<pig>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <script>{"${pigAction_script}"}</script>
@@ -37,10 +36,10 @@ class PigActionSpec extends FlatSpec with Matchers {
     val result = PigAction(name = "pigAction",
                            script = "/path/to/script",
                            params = Seq("one", "two"),
-                           configuration = Scoozie.Config.emptyConfiguration,
+                           configuration = Scoozie.Configuration.emptyConfiguration,
                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<pig>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <script>{"${pigAction_script}"}</script>

@@ -3,7 +3,6 @@ package org.antipathy.scoozie.action
 import scala.xml.Elem
 import org.antipathy.scoozie.configuration.Args
 import scala.collection.immutable._
-import org.antipathy.scoozie.Node
 import org.antipathy.scoozie.configuration.Credentials
 
 /**

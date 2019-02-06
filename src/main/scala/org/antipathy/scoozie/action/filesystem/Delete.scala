@@ -1,6 +1,6 @@
 package org.antipathy.scoozie.action.filesystem
-import org.antipathy.scoozie.action.prepare.PrepareFSAction
 
+import org.antipathy.scoozie.action.prepare.PrepareFSAction
 import scala.xml.Elem
 
 /**

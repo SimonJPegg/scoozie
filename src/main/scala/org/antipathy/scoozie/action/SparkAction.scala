@@ -2,10 +2,7 @@ package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.configuration._
-
 import scala.xml.Elem
-import org.antipathy.scoozie.Node
-
 import scala.collection.immutable._
 
 /**

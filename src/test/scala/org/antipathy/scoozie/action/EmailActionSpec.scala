@@ -2,7 +2,6 @@ package org.antipathy.scoozie.action
 
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 
 class EmailActionSpec extends FlatSpec with Matchers {
@@ -18,7 +17,7 @@ class EmailActionSpec extends FlatSpec with Matchers {
                              subject = "message subject",
                              body = "message body").action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
           <to>{"${email_to}"}</to>
           <subject>{"${email_subject}"}</subject>
           <body>{"${email_body}"}</body>
@@ -41,7 +40,7 @@ class EmailActionSpec extends FlatSpec with Matchers {
                              "message subject",
                              "message body").action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
           <to>{"${email_to}"}</to>
           <cc>{"${email_cc}"}</cc>
           <subject>{"${email_subject}"}</subject>

@@ -1,7 +1,8 @@
 // $COVERAGE-OFF$
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.{Nameable, OozieProperties, XmlSerializable}
+import org.antipathy.scoozie.properties.OozieProperties
+import org.antipathy.scoozie.xml.XmlSerializable
 
 /**
   * Base trait for oozie actions

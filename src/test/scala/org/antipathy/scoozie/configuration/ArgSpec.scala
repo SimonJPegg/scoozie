@@ -1,7 +1,6 @@
 package org.antipathy.scoozie.configuration
 
 import org.scalatest.{FlatSpec, Matchers}
-import scala.xml
 
 class ArgSpec extends FlatSpec with Matchers {
 
@@ -10,7 +9,7 @@ class ArgSpec extends FlatSpec with Matchers {
   it should "generate valid XML" in {
     val result =
       Arg("someValue").toXML
-    xml.Utility.trim(result) should be(xml.Utility.trim(<arg>someValue</arg>))
+    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<arg>someValue</arg>))
   }
 
 }

@@ -4,7 +4,6 @@ import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.configuration.Credentials
 import scala.collection.immutable._
-import scala.xml
 
 class SqoopActionSpec extends FlatSpec with Matchers {
 
@@ -12,18 +11,18 @@ class SqoopActionSpec extends FlatSpec with Matchers {
 
   it should "generate valid XML with a command" in {
 
-    implicit val credentials: Option[Credentials] = Scoozie.Config.emptyCredentials
+    implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
 
-    val result = Scoozie.Action
+    val result = Scoozie.Actions
       .sqoopAction(name = "sqoopAction",
                    command = "sqoopCommand",
                    files = Seq("one", "two"),
-                   configuration = Scoozie.Config.configuration(Map("key" -> "value")),
-                   yarnConfig = Scoozie.Config.yarnConfiguration("someJT", "someNN"),
+                   configuration = Scoozie.Configuration.configuration(Map("key" -> "value")),
+                   yarnConfig = Scoozie.Configuration.yarnConfiguration("someJT", "someNN"),
                    prepareOption = None)
       .action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sqoop xmlns="uri:oozie:sqoop-action:0.3">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<sqoop xmlns="uri:oozie:sqoop-action:0.3">
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <configuration>
@@ -47,18 +46,18 @@ class SqoopActionSpec extends FlatSpec with Matchers {
 
   it should "generate valid XML with arguments" in {
 
-    implicit val credentials: Option[Credentials] = Scoozie.Config.emptyCredentials
+    implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
 
-    val result = Scoozie.Action
+    val result = Scoozie.Actions
       .sqoopAction(name = "sqoopAction",
                    args = Seq("arg1", "arg2"),
                    files = Seq("one", "two"),
-                   configuration = Scoozie.Config.configuration(Map("key" -> "value")),
-                   yarnConfig = Scoozie.Config.yarnConfiguration("someJT", "someNN"),
+                   configuration = Scoozie.Configuration.configuration(Map("key" -> "value")),
+                   yarnConfig = Scoozie.Configuration.yarnConfiguration("someJT", "someNN"),
                    prepareOption = None)
       .action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sqoop xmlns="uri:oozie:sqoop-action:0.3">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<sqoop xmlns="uri:oozie:sqoop-action:0.3">
       <job-tracker>{"${jobTracker}"}</job-tracker>
       <name-node>{"${nameNode}"}</name-node>
       <configuration>
