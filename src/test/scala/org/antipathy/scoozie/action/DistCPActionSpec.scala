@@ -4,7 +4,6 @@ import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.configuration.Credentials
 import scala.collection.immutable._
-import scala.xml
 
 class DistCPActionSpec extends FlatSpec with Matchers {
 
@@ -12,18 +11,18 @@ class DistCPActionSpec extends FlatSpec with Matchers {
 
   it should "generate valid XML" in {
 
-    implicit val credentials: Option[Credentials] = Scoozie.Config.emptyCredentials
+    implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
 
-    val result = Scoozie.Action
+    val result = Scoozie.Actions
       .distCP("distCP",
-              Scoozie.Config.emptyConfiguration,
-              Scoozie.Config.yarnConfiguration("someJobTracker", "SomeNameNode", Scoozie.Config.emptyConfiguration),
+              Scoozie.Configuration.emptyConfiguration,
+              Scoozie.Configuration.yarnConfiguration("someJobTracker", "SomeNameNode"),
               Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
               Seq("/some/path1", "/some/path2"),
               "-DskipTests=true")
       .action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<distcp xmlns="uri:oozie:distcp-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<distcp xmlns="uri:oozie:distcp-action:0.2">
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <prepare>
@@ -44,7 +43,7 @@ class DistCPActionSpec extends FlatSpec with Matchers {
 
   it should "generate valid XML with config" in {
 
-    implicit val credentials: Option[Credentials] = Scoozie.Config.emptyCredentials
+    implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
 
     val additionalconfig = Map("somekey1" -> "somevalue1",
                                "somekey2" -> "somevalue2",
@@ -52,16 +51,16 @@ class DistCPActionSpec extends FlatSpec with Matchers {
                                "somekey4" -> "somevalue4",
     )
 
-    val result = Scoozie.Action
+    val result = Scoozie.Actions
       .distCP("distCP",
-              Scoozie.Config.configuration(additionalconfig),
-              Scoozie.Config.yarnConfiguration("someJobTracker", "SomeNameNode", Scoozie.Config.emptyConfiguration),
+              Scoozie.Configuration.configuration(additionalconfig),
+              Scoozie.Configuration.yarnConfiguration("someJobTracker", "SomeNameNode"),
               Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
               Seq("/some/path1", "/some/path2"),
               "-DskipTests=true")
       .action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<distcp xmlns="uri:oozie:distcp-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<distcp xmlns="uri:oozie:distcp-action:0.2">
         <job-tracker>{"${jobTracker}"}</job-tracker>
         <name-node>{"${nameNode}"}</name-node>
         <prepare>

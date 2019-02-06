@@ -2,7 +2,6 @@ package org.antipathy.scoozie.action
 
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 
 class SshActionSpec extends FlatSpec with Matchers {
@@ -16,7 +15,7 @@ class SshActionSpec extends FlatSpec with Matchers {
     val result =
       SshAction(name = "ssh", host = "user@host", command = "ls", args = Seq("-l", "-a"), captureOutput = true).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<ssh xmlns="uri:oozie:ssh-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<ssh xmlns="uri:oozie:ssh-action:0.2">
           <host>{"${ssh_host}"}</host>
           <command>{"${ssh_command}"}</command>
           <args>{"${ssh_arg0}"}</args>

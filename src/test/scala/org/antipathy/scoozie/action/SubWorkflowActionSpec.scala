@@ -3,7 +3,6 @@ package org.antipathy.scoozie.action
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 
 class SubWorkflowActionSpec extends FlatSpec with Matchers {
@@ -19,7 +18,7 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
                                    configuration = Configuration(Seq(Property("some", "value"))),
                                    yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sub-workflow>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<sub-workflow>
         <app-path>{"${SomeAction_applicationPath}"}</app-path>
         <propagate-configuration/>
         <configuration>
@@ -44,7 +43,7 @@ class SubWorkflowActionSpec extends FlatSpec with Matchers {
                                    configuration = Configuration(Seq(Property("some", "value"))),
                                    yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<sub-workflow>
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<sub-workflow>
         <app-path>{"${SomeAction_applicationPath}"}</app-path>
         <configuration>
           <property>

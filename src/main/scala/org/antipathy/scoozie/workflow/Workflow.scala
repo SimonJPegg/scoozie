@@ -1,14 +1,15 @@
 package org.antipathy.scoozie.workflow
 
-import org.antipathy.scoozie.{JobProperties, Nameable, Node, XmlSerializable}
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import scala.language.existentials
 import scala.xml.Elem
-import org.antipathy.scoozie.control._
+import org.antipathy.scoozie.action.control._
 import scala.collection.immutable._
 import org.antipathy.scoozie.configuration.Credential
 import org.antipathy.scoozie.Scoozie
-import org.antipathy.scoozie.action.SubWorkflowAction
+import org.antipathy.scoozie.action.{Nameable, Node, SubWorkflowAction}
+import org.antipathy.scoozie.properties.JobProperties
+import org.antipathy.scoozie.xml.XmlSerializable
 
 /**
   * Oozie workflow definition
@@ -16,13 +17,13 @@ import org.antipathy.scoozie.action.SubWorkflowAction
   * @param path The path to this workflow
   * @param transitions the actions within the workflow
   * @param credentialsOption optional credentials for this workflow
-  * @param configurationOption optional configuration for this workflow
+  * @param configuration configuration for this workflow
   * @param yarnConfig The yarn configuration for this workflow
   */
 case class Workflow(override val name: String,
                     path: String,
                     transitions: Node,
-                    configurationOption: Option[Configuration] = None,
+                    configuration: Configuration,
                     yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
     with Nameable
@@ -35,11 +36,7 @@ case class Workflow(override val name: String,
         (Credentials(Credential("", "", Seq())), Map())
     }
 
-  private val (mappedConfig, mappedProperties) = configurationOption match {
-    case Some(configuration) =>
-      configuration.withActionProperties(name)
-    case None => (Configuration(Seq.empty), Map())
-  }
+  private val (mappedConfig, mappedProperties) = configuration.withActionProperties(name)
 
   /**
     * The XML for this node
@@ -118,13 +115,13 @@ case class Workflow(override val name: String,
       SubWorkflowAction(name = this.name,
                         applicationPath = this.path,
                         propagateConfiguration = propagateConfiguration,
-                        configuration = Scoozie.Config.emptyConfiguration,
+                        configuration = Scoozie.Configuration.emptyConfiguration,
                         yarnConfig = yarnConfig)
     } else {
       SubWorkflowAction(name = this.name,
                         applicationPath = this.path,
                         propagateConfiguration = propagateConfiguration,
-                        configuration = this.configurationOption.getOrElse(Scoozie.Config.emptyConfiguration),
+                        configuration = this.configuration,
                         yarnConfig = yarnConfig)
     }
 }

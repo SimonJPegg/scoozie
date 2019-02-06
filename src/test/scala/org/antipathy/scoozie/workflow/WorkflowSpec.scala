@@ -3,8 +3,7 @@ package org.antipathy.scoozie.workflow
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.configuration._
-import org.antipathy.scoozie.control._
-import scala.xml
+import org.antipathy.scoozie.action.control._
 import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
 
@@ -42,7 +41,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -60,7 +59,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq(),
                                   files = Seq(),
                                   prepareOption = None,
-                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -71,7 +70,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Config.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfiguration,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -81,12 +80,12 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
-                            configurationOption =
-                              Some(Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue")))),
+                            configuration =
+                              Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
 
-    xml.Utility.trim(workflow.toXML) should be(
-      xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
+    scala.xml.Utility.trim(workflow.toXML) should be(
+      scala.xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -215,7 +214,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
-                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -231,7 +230,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   commandLineArgs = Seq(),
                                   files = Seq(),
                                   prepareOption = None,
-                                  configuration = Scoozie.Config.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -242,7 +241,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Config.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfiguration,
                                 yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -253,11 +252,11 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(decision),
-                            configurationOption = None,
+                            configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = yarnConfig)
 
-    xml.Utility.trim(workflow.toXML) should be(
-      xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
+    scala.xml.Utility.trim(workflow.toXML) should be(
+      scala.xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>

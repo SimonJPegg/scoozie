@@ -4,7 +4,6 @@ import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.configuration.{Configuration, YarnConfig}
 import scala.collection.immutable._
 import org.antipathy.scoozie.configuration.Arg
-import org.antipathy.scoozie.Node
 import org.antipathy.scoozie.configuration.Credentials
 
 /**

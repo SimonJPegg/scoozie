@@ -1,11 +1,10 @@
 package org.antipathy.scoozie.testing
 
 import org.antipathy.scoozie.workflow.Workflow
-import org.antipathy.scoozie.Node
 import scala.collection.immutable._
-import org.antipathy.scoozie.control._
+import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.exception._
-import org.antipathy.scoozie.action.Action
+import org.antipathy.scoozie.action.{Action, Node}
 
 /**
   * Class for testing Ooize Workflows

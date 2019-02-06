@@ -3,7 +3,6 @@ package org.antipathy.scoozie.action
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
 
@@ -22,10 +21,10 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              envVars = Seq(),
                              files = Seq(),
                              captureOutput = false,
-                             configuration = Scoozie.Config.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <exec>{"${SomeAction_scriptName}"}</exec>
@@ -48,10 +47,10 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              envVars = Seq(),
                              captureOutput = false,
                              files = Seq(),
-                             configuration = Scoozie.Config.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <exec>{"${SomeAction_scriptName}"}</exec>
@@ -82,7 +81,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              configuration = Configuration(Seq(Property("name", "value"))),
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <configuration>
@@ -116,7 +115,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              configuration = Configuration(Seq(Property("name", "value"))),
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <configuration>
@@ -153,10 +152,10 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              envVars = Seq(),
                              files = Seq(),
                              captureOutput = true,
-                             configuration = Scoozie.Config.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <exec>{"${SomeAction_scriptName}"}</exec>

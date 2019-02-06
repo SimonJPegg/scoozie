@@ -1,7 +1,6 @@
 package org.antipathy.scoozie.configuration
 
 import org.scalatest.{FlatSpec, Matchers}
-import scala.xml
 
 class PropertySpec extends FlatSpec with Matchers {
 
@@ -11,7 +10,7 @@ class PropertySpec extends FlatSpec with Matchers {
     val result =
       Property("someProp", "someValue").toXML
 
-    xml.Utility.trim(result) should be(xml.Utility.trim(<property>
+    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<property>
         <name>someProp</name>
         <value>someValue</value>
       </property>))

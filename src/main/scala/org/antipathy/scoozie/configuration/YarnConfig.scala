@@ -1,17 +1,14 @@
 package org.antipathy.scoozie.configuration
 
-import org.antipathy.scoozie.OozieProperties
-
+import org.antipathy.scoozie.properties.OozieProperties
 import scala.collection.immutable._
 
 /**
   * Config for yarn Actions
   * @param jobTracker Job tracker URL
   * @param nameNode name node url
-  * @param configuration properties for this action
   */
-case class YarnConfig(jobTracker: String, nameNode: String, configuration: Configuration = Configuration(Seq()))
-    extends OozieProperties {
+case class YarnConfig(jobTracker: String, nameNode: String) extends OozieProperties {
 
   /**
     * Get the XML for the jobTracker property

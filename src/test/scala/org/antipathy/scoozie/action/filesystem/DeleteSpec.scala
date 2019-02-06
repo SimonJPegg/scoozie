@@ -1,7 +1,6 @@
 package org.antipathy.scoozie.action.filesystem
 
 import org.scalatest.{FlatSpec, Matchers}
-import scala.xml
 
 class DeleteSpec extends FlatSpec with Matchers {
 
@@ -10,7 +9,7 @@ class DeleteSpec extends FlatSpec with Matchers {
   it should "generate valid XML" in {
     val result = Delete("/Some/Path").toXML
 
-    xml.Utility.trim(result) should be(xml.Utility.trim(<delete path="/Some/Path" />))
+    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<delete path="/Some/Path" />))
   }
 
 }

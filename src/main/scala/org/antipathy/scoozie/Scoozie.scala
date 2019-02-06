@@ -4,12 +4,13 @@ import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.action.prepare.{Prepare => ActionPrepare}
 import org.antipathy.scoozie.action.prepare.PrepareFSAction
 import org.antipathy.scoozie.configuration._
-import org.antipathy.scoozie.control._
+import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration}
+import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.coordinator.Coordinator
-import org.antipathy.scoozie.formatter.OozieXmlFormatter
+import org.antipathy.scoozie.xml.formatter.OozieXmlFormatter
 import org.antipathy.scoozie.functions._
 import org.antipathy.scoozie.testing.WorkflowTestRunner
-import org.antipathy.scoozie.validator.{OozieValidator, SchemaType}
+import org.antipathy.scoozie.xml.validator.{OozieValidator, SchemaType}
 import org.antipathy.scoozie.workflow.Workflow
 import scala.collection.immutable._
 import org.antipathy.scoozie.action.filesystem._
@@ -25,7 +26,7 @@ object Scoozie {
   /**
     * Oozie workflow actions
     */
-  object Action {
+  object Actions {
 
     /**
       * Oozie decision control node
@@ -46,7 +47,7 @@ object Scoozie {
       * @param prepareOption optional preparation step
       */
     def distCP(name: String,
-               configuration: Configuration,
+               configuration: ActionConfiguration,
                yarnConfig: YarnConfig,
                prepareOption: Option[ActionPrepare] = None,
                arguments: Seq[String],
@@ -98,7 +99,7 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def hive(name: String,
-             configuration: Configuration,
+             configuration: ActionConfiguration,
              yarnConfig: YarnConfig,
              prepareOption: Option[ActionPrepare] = None,
              hiveSettingsXML: String,
@@ -128,7 +129,7 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def hive2(name: String,
-              configuration: Configuration,
+              configuration: ActionConfiguration,
               yarnConfig: YarnConfig,
               prepareOption: Option[ActionPrepare] = None,
               hiveSettingsXML: String,
@@ -162,7 +163,7 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def java(name: String,
-             configuration: Configuration,
+             configuration: ActionConfiguration,
              yarnConfig: YarnConfig,
              prepareOption: Option[ActionPrepare] = None,
              mainClass: String,
@@ -205,7 +206,7 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def pig(name: String,
-            configuration: Configuration,
+            configuration: ActionConfiguration,
             yarnConfig: YarnConfig,
             prepareOption: Option[ActionPrepare] = None,
             script: String,
@@ -227,7 +228,7 @@ object Scoozie {
       * @param prepareOption an optional prepare stage for the action
       */
     def shell(name: String,
-              configuration: Configuration,
+              configuration: ActionConfiguration,
               yarnConfig: YarnConfig,
               prepareOption: Option[ActionPrepare] = None,
               scriptName: String,
@@ -263,7 +264,7 @@ object Scoozie {
       * @param yarnConfig Yarn configuration for this action
       */
     def spark(name: String,
-              configuration: Configuration,
+              configuration: ActionConfiguration,
               yarnConfig: YarnConfig,
               prepareOption: Option[ActionPrepare] = None,
               sparkSettings: String,
@@ -299,9 +300,9 @@ object Scoozie {
       * @param prepareOption an optional prepare step
       */
     def sqoopAction(name: String,
-                    configuration: Configuration,
+                    configuration: ActionConfiguration,
                     yarnConfig: YarnConfig,
-                    prepareOption: Option[ActionPrepare] = None,
+                    prepareOption: Option[ActionPrepare],
                     command: String,
                     files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
       SqoopAction(name, Some(command), Seq.empty, files, configuration, yarnConfig, prepareOption)
@@ -316,9 +317,9 @@ object Scoozie {
       * @param prepareOption an optional prepare step
       */
     def sqoopAction(name: String,
-                    configuration: Configuration,
+                    configuration: ActionConfiguration,
                     yarnConfig: YarnConfig,
-                    prepareOption: Option[ActionPrepare] = None,
+                    prepareOption: Option[ActionPrepare],
                     args: Seq[String],
                     files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
       SqoopAction(name, None, args, files, configuration, yarnConfig, prepareOption)
@@ -351,7 +352,7 @@ object Scoozie {
       * @param yarnConfig the yarn configuration
       */
     def subWorkflow(name: String,
-                    configuration: Configuration,
+                    configuration: ActionConfiguration,
                     yarnConfig: YarnConfig,
                     applicationPath: String,
                     propagateConfiguration: Boolean,
@@ -443,7 +444,7 @@ object Scoozie {
   /**
     * Methods for creating Oozie properties
     */
-  object Config {
+  object Configuration {
 
     /**
       * Create an oozie property
@@ -458,23 +459,23 @@ object Scoozie {
       * @param properties the properties of the configuration
       * @return an oozie configuration
       */
-    def configuration(properties: Seq[Property]): Configuration =
-      Configuration(properties)
+    def configuration(properties: Seq[Property]): ActionConfiguration =
+      ActionConfiguration(properties)
 
     /**
       * Oozie configuration for a workflow or an action
       * @param properties a map of oozie properties
       * @return
       */
-    def configuration(properties: Map[String, String]): Configuration =
-      Configuration(Seq(properties.map {
+    def configuration(properties: Map[String, String]): ActionConfiguration =
+      ActionConfiguration(Seq(properties.map {
         case (key, value) => Property(key, value)
       }.toSeq: _*))
 
     /**
       * Empty Oozie configuration for a workflow or an action
       */
-    def emptyConfiguration: Configuration = Configuration(Seq.empty)
+    def emptyConfiguration: ActionConfiguration = ActionConfiguration(Seq.empty)
 
     /**
       * Create the credentials for an oozie workflow
@@ -497,22 +498,10 @@ object Scoozie {
       *
       * @param jobTracker The oozie job tracker
       * @param nameNode The HDFS name node
-      * @param configuration additional yarn configuration options
       * @return a yarn configuration
       */
-    def yarnConfiguration(jobTracker: String, nameNode: String, configuration: Configuration = emptyConfiguration) =
-      YarnConfig(jobTracker, nameNode, configuration)
-
-    /**
-      * Create a yarn configuration for an oozie workflow
-      *
-      * @param jobTracker The oozie job tracker
-      * @param nameNode The HDFS name node
-      * @param config additional yarn configuration options
-      * @return a yarn configuration
-      */
-    def yarnConfiguration(jobTracker: String, nameNode: String, config: Map[String, String]): YarnConfig =
-      YarnConfig(jobTracker, nameNode, configuration(config))
+    def yarnConfiguration(jobTracker: String, nameNode: String) =
+      YarnConfig(jobTracker, nameNode)
   }
 
   /**
@@ -538,31 +527,31 @@ object Scoozie {
       * @param workflow the workflow to validate
       */
     def validate(workflow: Workflow): Unit =
-      OozieValidator.validate(Format.format(workflow, 80, 4), SchemaType.workflow)
+      OozieValidator.validate(Formatting.format(workflow), SchemaType.workflow)
 
     /**
       * Validate the passed in coordinator
       * @param coOrdinator the coordinator to validate
       */
     def validate(coOrdinator: Coordinator): Unit =
-      OozieValidator.validate(Format.format(coOrdinator, 80, 4), SchemaType.coOrdinator)
+      OozieValidator.validate(Formatting.format(coOrdinator), SchemaType.coOrdinator)
   }
 
   /**
     * Methods for formatting Oozie workflows
     */
-  private[scoozie] object Format {
+  private[scoozie] object Formatting {
+    import org.antipathy.scoozie.xml.XmlSerializable
+    private val formatter: OozieXmlFormatter = new OozieXmlFormatter(80, 4)
 
     /**
       * Method for formatting XML nodes
       *
       * @param oozieNode the node to format
-      * @param width maximum width of any row
-      * @param step indentation for each level of the XML
       * @return XML document in string format
       */
-    def format(oozieNode: XmlSerializable, width: Int, step: Int): String =
-      new OozieXmlFormatter(width, step).format(oozieNode)
+    def format(oozieNode: XmlSerializable): String =
+      formatter.format(oozieNode)
   }
 
   /**
@@ -571,25 +560,35 @@ object Scoozie {
     * @param name the name of the workflow
     * @param path The path to this workflow
     * @param transitions the actions within the workflow
-    * @param configurationOption optional configuration for this workflow
+    * @param configuration configuration for this workflow
     * @param yarnConfig The yarn configuration for this workflow
     * @param credentialsOption optional credentials for this workflow
     */
   def workflow(name: String,
                path: String,
                transitions: Node,
-               configurationOption: Option[Configuration] = None,
+               configuration: ActionConfiguration,
                yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Workflow =
-    Workflow(name, path, transitions, configurationOption, yarnConfig)
+    Workflow(name, path, transitions, configuration, yarnConfig)
 
+  /**
+    * Oozie coOrdinator definition
+    * @param name the CoOrdinator name
+    * @param frequency the CoOrdinator frequency
+    * @param start the CoOrdinator start time
+    * @param end the CoOrdinator end time
+    * @param timezone the CoOrdinator time-zone
+    * @param workflow the workflow to run
+    * @param configuration configuration for the workflow
+    */
   def coordinator(name: String,
                   frequency: String,
                   start: String,
                   end: String,
                   timezone: String,
                   workflow: Workflow,
-                  configurationOption: Option[Configuration] = None): Coordinator =
-    Coordinator(name, frequency, start, end, timezone, workflow, configurationOption)
+                  configuration: ActionConfiguration): Coordinator =
+    Coordinator(name, frequency, start, end, timezone, workflow, configuration)
 
   object Functions {
 

@@ -1,7 +1,6 @@
 package org.antipathy.scoozie.configuration
 
 import org.scalatest.{FlatSpec, Matchers}
-import scala.xml
 import scala.collection.immutable._
 
 class ConfigurationSpec extends FlatSpec with Matchers {
@@ -14,7 +13,7 @@ class ConfigurationSpec extends FlatSpec with Matchers {
           Property("oozie.hive.defaults", "/usr/foo/hive-0.6-default.xml"))
     ).toXML
 
-    xml.Utility.trim(result) should be(xml.Utility.trim(<configuration>
+    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<configuration>
       <property>
         <name>mapred.compress.map.output</name>
         <value>true</value>

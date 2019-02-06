@@ -3,7 +3,6 @@ package org.antipathy.scoozie.action
 import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
 import org.antipathy.scoozie.configuration.Credentials
-import scala.xml
 import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
 
@@ -21,10 +20,10 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Config.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
@@ -51,10 +50,10 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq("tableName=\"SomeTable\"", "date=\"2019-01-13\""),
                             prepareOption = None,
-                            configuration = Scoozie.Config.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
@@ -90,7 +89,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             ),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
             <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
@@ -134,7 +133,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             ),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
-    xml.Utility.trim(result.toXML) should be(xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
           <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
