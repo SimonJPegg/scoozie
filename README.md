@@ -1,8 +1,13 @@
 # Scoozie
 
-[![License][licenseImg]][licenseLink] [![Codacy][codacyImg2]][codacyLink][![CodeCovImg]][CodCovLink]
+[![Codacy][codacyImg2]][codacyLink]  [![CodeCovImg]][CodCovLink]  [![languageBage]][languageLink] 
+
+[![issuesBadge]][issuesLink] ![releaseBadge] ![newCommitsBadge]
 
 Latest `version`s: 
+
+
+
 
 * Scala 2.10:  [![Maven][210mavenImg]][mavenLink]
 * Scala 2.11:  [![Maven][211mavenImg]][mavenLink]
@@ -275,6 +280,12 @@ start -> sparkOrShell -> doASparkThing -> mainFork -> (doAJavaThing, doAHiveThin
 * Add support for complex workflows in the `WorkflowTestRunner` class.
 * Add support for datasets.
 
+[languageBage]: https://img.shields.io/github/languages/top/simonjpegg/scoozie.svg?style=flat
+[languageLink]: https://www.scala-lang.org/
+
+[issuesBadge]: https://img.shields.io/github/issues/simonjpegg/scoozie.svg?style=flat
+[issuesLink]: https://github.com/SimonJPegg/scoozie/issues
+
 [licenseImg]: https://img.shields.io/badge/Licence-Apache%202.0-blue.svg
 [licenseLink]: ./LICENSE
 
@@ -290,4 +301,5 @@ start -> sparkOrShell -> doASparkThing -> mainFork -> (doAJavaThing, doAHiveThin
 [CodeCovImg]: https://api.codacy.com/project/badge/Coverage/4c627c7c58834629a0d737db4097a1b0
 [CodCovLink]: https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=SimonJPegg/scoozie&utm_campaign=Badge_Coverage
 
-
+[releaseBadge]: https://img.shields.io/github/release/simonjpegg/scoozie.svg?style=flat
+[newCommitsBadge]: https://img.shields.io/github/commits-since/simonjpegg/scoozie/latest.svg?style=flat
