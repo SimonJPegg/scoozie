@@ -68,6 +68,8 @@ releaseCrossBuild := true
 
 releasePublishArtifactsAction := PgpKeys.publishSigned.value
 
+parallelExecution in Test := false
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
@@ -88,7 +90,5 @@ releaseCrossBuild := true
 coverageEnabled := true
 coverageMinimum := 70
 coverageFailOnMinimum := true
-coverageOutputHTML := true
-coverageOutputXML := false
 
 scalafmtOnCompile := true

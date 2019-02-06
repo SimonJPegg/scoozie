@@ -30,9 +30,9 @@ trait GeneratedCoordinator extends JobProperties {
     */
   final def saveCoordinator(folderLocation: String): Unit = {
     Scoozie.Test.validate(this.workflow)
-    val formattedWorkflow = Scoozie.Formatting.format(this.coordinator)
+    val formattedCoordinator = Scoozie.Formatting.format(this.coordinator)
     this.saveWorkflow(folderLocation)
-    writeFile(folderLocation, ArtefactWriter.coordinatorFileName, formattedWorkflow)
+    writeFile(folderLocation, ArtefactWriter.coordinatorFileName, formattedCoordinator)
     saveJobProperties(folderLocation)
   }
 
