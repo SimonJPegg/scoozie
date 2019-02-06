@@ -1,6 +1,6 @@
 # Scoozie
 
-[![License][licenseImg]] [licenseLink] [![Codacy][codacyImg2]][codacyLink][![CodeCovImg]][CodCovLink]
+[![License][licenseImg]][licenseLink] [![Codacy][codacyImg2]][codacyLink][![CodeCovImg]][CodCovLink]
 
 Latest `version`s: 
 
@@ -275,9 +275,8 @@ start -> sparkOrShell -> doASparkThing -> mainFork -> (doAJavaThing, doAHiveThin
 * Add support for complex workflows in the `WorkflowTestRunner` class.
 * Add support for datasets.
 
-[licenseImg]: https://img.shields.io/github/license/simonjpegg/scoozie.svg
-[licenseImg2]: https://img.shields.io/badge/license-Apache%202-blue.svg
-[licenseLink]: LICENSE
+[licenseImg]: https://img.shields.io/badge/Licence-Apache%202.0-blue.svg
+[licenseLink]: ./LICENSE
 
 [codacyImg]: https://img.shields.io/codacy/grade/fdf40afa99a342b093836bfa22871c2d.svg?style=flat
 [codacyImg2]: https://api.codacy.com/project/badge/grade/fdf40afa99a342b093836bfa22871c2d
