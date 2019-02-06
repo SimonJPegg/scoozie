@@ -38,7 +38,8 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.8" % "compile",
   "commons-io" % "commons-io" % "2.6" % "compile",
   "xerces" % "xercesImpl" % "2.11.0" % "compile",
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
+  "com.github.pathikrit" %% "better-files" % "3.7.0"
 )
 
 libraryDependencies ++= {

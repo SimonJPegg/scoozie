@@ -39,9 +39,7 @@ case class Coordinator(override val name: String,
     mappedProperties.flatMap {
       case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
     }.toSeq.sorted.toSet.mkString(System.lineSeparator()) +
-    System.lineSeparator() +
-    workflow.jobProperties
-
+    System.lineSeparator()
   }
 
   /**

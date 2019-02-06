@@ -62,8 +62,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                              workflow = workflow,
                              configuration = Configuration(Seq(Property("some", "value"))))
 
-    result.jobProperties should be("""SomeCoOrd_property0=value
-                                     |sampleWorkflow_property0=value""".stripMargin)
+    result.jobProperties should be("SomeCoOrd_property0=value\n")
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app
       name="SomeCoOrd"

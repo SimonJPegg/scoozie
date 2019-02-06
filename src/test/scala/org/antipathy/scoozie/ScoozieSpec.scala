@@ -2,106 +2,14 @@ package org.antipathy.scoozie
 
 import org.scalatest.{FlatSpec, Matchers}
 import scala.collection.immutable._
-import org.antipathy.scoozie.configuration.Credentials
-import org.antipathy.scoozie.workflow.Workflow
 import scala.xml.Utility
 
 class ScoozieSpec extends FlatSpec with Matchers {
 
   behavior of "Scoozie"
 
-  class TestWorkflow(jobTracker: String, nameNode: String, yarnProperties: Map[String, String]) {
-    import org.antipathy.scoozie.coordinator.Coordinator
-
-    private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
-    private val yarnConfig = Scoozie.Configuration.yarnConfiguration(jobTracker, nameNode)
-    private val kill = Scoozie.Actions.kill("Workflow failed")
-
-    private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
-                                                    sparkSettings = "/path/to/spark/settings",
-                                                    sparkMasterURL = "masterURL",
-                                                    sparkMode = "mode",
-                                                    sparkJobName = "JobName",
-                                                    mainClass = "org.antipathy.Main",
-                                                    sparkJar = "/path/to/jar",
-                                                    sparkOptions = "spark options",
-                                                    commandLineArgs = Seq(),
-                                                    files = Seq(),
-                                                    prepareOption = None,
-                                                    configuration = Scoozie.Configuration.emptyConfiguration,
-                                                    yarnConfig = yarnConfig)
-
-    private val emailAction = Scoozie.Actions.email(name = "alertFailure",
-                                                    to = Seq("a@a.com", "b@b.com"),
-                                                    subject = "message subject",
-                                                    body = "message body")
-
-    private val shellAction = Scoozie.Actions.shell(name = "doAShellThing",
-                                                    prepareOption = None,
-                                                    scriptName = "script.sh",
-                                                    scriptLocation = "/path/to/script.sh",
-                                                    commandLineArgs = Seq(),
-                                                    envVars = Seq(),
-                                                    files = Seq(),
-                                                    captureOutput = true,
-                                                    configuration = Scoozie.Configuration.emptyConfiguration,
-                                                    yarnConfig = yarnConfig)
-
-    private val hiveAction = Scoozie.Actions.hive(name = "doAHiveThing",
-                                                  hiveSettingsXML = "/path/to/settings.xml",
-                                                  scriptName = "someScript.hql",
-                                                  scriptLocation = "/path/to/someScript.hql",
-                                                  parameters = Seq(),
-                                                  prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
-                                                  yarnConfig = yarnConfig)
-
-    private val javaAction = Scoozie.Actions.java(name = "doAJavaThing",
-                                                  mainClass = "org.antipathy.Main",
-                                                  javaJar = "/path/to/jar",
-                                                  javaOptions = "java options",
-                                                  commandLineArgs = Seq(),
-                                                  captureOutput = false,
-                                                  files = Seq(),
-                                                  prepareOption =
-                                                    Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
-                                                  yarnConfig = yarnConfig)
-
-    private val start = Scoozie.Actions.start
-
-    private val transitions = {
-      val errorMail = emailAction okTo kill errorTo kill
-      val mainJoin = Scoozie.Actions.join("mainJoin", Scoozie.Actions.end)
-      val java = javaAction okTo mainJoin errorTo errorMail
-      val hive = hiveAction okTo mainJoin errorTo errorMail
-      val mainFork = Scoozie.Actions.fork("mainFork", Seq(java, hive))
-      val shell = shellAction okTo mainFork errorTo errorMail
-      val spark = sparkAction okTo mainFork errorTo errorMail
-      val decision = Scoozie.Actions.decision("sparkOrShell", spark, Scoozie.Actions.switch(shell, "${someVar}"))
-      start okTo decision
-    }
-
-    val workflow: Workflow = Scoozie.workflow(name = "ExampleWorkflow",
-                                              path = "/path/to/workflow.xml",
-                                              transitions = transitions,
-                                              configuration = Scoozie.Configuration.emptyConfiguration,
-                                              yarnConfig = yarnConfig)
-
-    val coOrdinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator",
-                                                       frequency = "startFreq",
-                                                       start = "start",
-                                                       end = "end",
-                                                       timezone = "timeZome",
-                                                       workflow = workflow,
-                                                       configuration =
-                                                         Scoozie.Configuration.configuration(yarnProperties))
-
-    val jobConfig: String = coOrdinator.jobProperties
-  }
-
   it should "allow the creation of an oozie workflow" in {
-    val testWorkflow = new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
+    val testWorkflow = new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
 
     Utility.trim(testWorkflow.workflow.toXML) should be(
       Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="ExampleWorkflow">
@@ -188,42 +96,40 @@ class ScoozieSpec extends FlatSpec with Matchers {
         </workflow-app>)
     )
 
-    testWorkflow.jobConfig should be("""ExampleCoOrdinator_property0=value1
-                                       |ExampleCoOrdinator_property1=value2
-                                       |alertFailure_body=message body
-                                       |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
-                                       |jobTracker=yarn
-                                       |doAJavaThing_javaOptions=java options
-                                       |alertFailure_to=a@a.com,b@b.com
-                                       |doASparkThing_sparkOptions=spark options
-                                       |nameNode=nameservice1
-                                       |doAJavaThing_prepare_delete=/some/path
-                                       |doAHiveThing_scriptLocation=/path/to/someScript.hql
-                                       |doAShellThing_scriptName=script.sh
-                                       |doASparkThing_sparkJobName=JobName
-                                       |doASparkThing_sparkMasterURL=masterURL
-                                       |alertFailure_subject=message subject
-                                       |doASparkThing_sparkMode=mode
-                                       |doASparkThing_mainClass=org.antipathy.Main
-                                       |doASparkThing_sparkJar=/path/to/jar
-                                       |doAJavaThing_mainClass=org.antipathy.Main
-                                       |doAJavaThing_javaJar=/path/to/jar
-                                       |doASparkThing_sparkSettings=/path/to/spark/settings
-                                       |doAHiveThing_scriptName=someScript.hql
-                                       |doAShellThing_scriptLocation=/path/to/script.sh""".stripMargin)
+    testWorkflow.jobProperties should be("""ExampleCoOrdinator_property0=value1
+                                           |ExampleCoOrdinator_property1=value2
+                                           |alertFailure_body=message body
+                                           |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
+                                           |jobTracker=yarn
+                                           |doAJavaThing_javaOptions=java options
+                                           |alertFailure_to=a@a.com,b@b.com
+                                           |doASparkThing_sparkOptions=spark options
+                                           |nameNode=nameservice1
+                                           |doAJavaThing_prepare_delete=/some/path
+                                           |doAHiveThing_scriptLocation=/path/to/someScript.hql
+                                           |doAShellThing_scriptName=script.sh
+                                           |doASparkThing_sparkJobName=JobName
+                                           |doASparkThing_sparkMasterURL=masterURL
+                                           |alertFailure_subject=message subject
+                                           |doASparkThing_sparkMode=mode
+                                           |doASparkThing_mainClass=org.antipathy.Main
+                                           |doASparkThing_sparkJar=/path/to/jar
+                                           |doAJavaThing_mainClass=org.antipathy.Main
+                                           |doAJavaThing_javaJar=/path/to/jar
+                                           |doASparkThing_sparkSettings=/path/to/spark/settings
+                                           |doAHiveThing_scriptName=someScript.hql
+                                           |doAShellThing_scriptLocation=/path/to/script.sh""".stripMargin)
   }
 
   it should "allow validation of an oozie workflow" in {
-    Scoozie.Test.validate(
-      new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2")).workflow
-    )
+    Scoozie.Test.validate(new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2")).workflow)
   }
 
   it should "allow testing the transitions of an oozie workflow" in {
 
     Scoozie.Test
       .workflowTesterWorkflowTestRunner(
-        new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2")).workflow
+        new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2")).workflow
       )
       .traversalPath should be(
       "start -> " +
@@ -237,8 +143,8 @@ class ScoozieSpec extends FlatSpec with Matchers {
   }
 
   it should "allow the creation of an oozie coordinator" in {
-    val testWorkflow = new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
-    Utility.trim(testWorkflow.coOrdinator.toXML) should be(Utility.trim(<coordinator-app
+    val testWorkflow = new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
+    Utility.trim(testWorkflow.coordinator.toXML) should be(Utility.trim(<coordinator-app
         name="ExampleCoOrdinator"
         frequency="startFreq"
         start="start" end="end"
@@ -263,7 +169,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
 
   it should "allow validation of an oozie coordinator" in {
     Scoozie.Test.validate(
-      new TestWorkflow("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2")).coOrdinator
+      new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2")).coordinator
     )
   }
 
