@@ -19,7 +19,7 @@ private[scoozie] trait ArtefactWriter {
     val outputDir = File(Paths.get(outputFolder))
 
     val outputFile = outputDir / fileName
-    outputFile.createFileIfNotExists(createParents = true)
+    outputFile.createIfNotExists(createParents = true)
 
     outputFile.writeText(contents)
   }

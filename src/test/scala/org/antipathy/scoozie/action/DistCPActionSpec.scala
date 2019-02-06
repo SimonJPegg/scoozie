@@ -48,8 +48,7 @@ class DistCPActionSpec extends FlatSpec with Matchers {
     val additionalconfig = Map("somekey1" -> "somevalue1",
                                "somekey2" -> "somevalue2",
                                "somekey3" -> "somevalue3",
-                               "somekey4" -> "somevalue4",
-    )
+                               "somekey4" -> "somevalue4")
 
     val result = Scoozie.Actions
       .distCP("distCP",

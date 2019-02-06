@@ -14,7 +14,7 @@ scalacOptions ++= Seq("-encoding", "UTF-8", "-deprecation", "-unchecked", "-feat
 
 licenses := Seq((
   "Apache License, Version 2.0", 
-  url("https://github.com/SimonJPegg/scoozie/blob/master/LICENSE.md")
+  url("https://github.com/SimonJPegg/scoozie/blob/master/LICENSE")
 ))
 
 developers := List(
@@ -38,8 +38,7 @@ libraryDependencies ++= Seq(
   "org.apache.commons" % "commons-lang3" % "3.8" % "compile",
   "commons-io" % "commons-io" % "2.6" % "compile",
   "xerces" % "xercesImpl" % "2.11.0" % "compile",
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "com.github.pathikrit" %% "better-files" % "3.7.0"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 )
 
 libraryDependencies ++= {
@@ -48,9 +47,13 @@ libraryDependencies ++= {
       libraryDependencies.value ++ Seq(
         "org.scala-lang.modules" %% "scala-xml" % "1.1.1",
         "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.1",
-        "org.scala-lang.modules" %% "scala-swing" % "2.0.3")
+        "org.scala-lang.modules" %% "scala-swing" % "2.0.3",
+        "com.github.pathikrit" %% "better-files" % "3.7.0")
     case _ =>
-      libraryDependencies.value :+ "org.scala-lang" % "scala-swing" % "2.10.7"
+      libraryDependencies.value ++ Seq(
+        "org.scala-lang" % "scala-swing" % "2.10.7",
+        "com.github.pathikrit" %% "better-files" % "2.17.0"
+      )
   }
 }
 

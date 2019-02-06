@@ -355,8 +355,7 @@ object Scoozie {
                     configuration: ActionConfiguration,
                     yarnConfig: YarnConfig,
                     applicationPath: String,
-                    propagateConfiguration: Boolean,
-    )(implicit credentialsOption: Option[Credentials]): Node =
+                    propagateConfiguration: Boolean)(implicit credentialsOption: Option[Credentials]): Node =
       SubWorkflowAction(name, applicationPath, propagateConfiguration, configuration, yarnConfig)
 
     /**
