@@ -65,11 +65,13 @@ Each generated action exposes an `okTo` and an `errorTo` function that take the 
 Each action expects an implicit `Option[Credentials]` object for specifying credentials for a workflow.  These can be created via the following methods:
 
 For jobs without credentials:
-```
+
+```scala
 implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
 ```
 For jobs with credentials:
-```
+
+```scala
   implicit val credentials: Option[Credentials] = Scoozie.Configuration.credentials("hive-credentials","hive", Seq(Property(name = "name", value = "value"))
 ```
 
@@ -79,7 +81,7 @@ Scoozie provides validation of the generated XML against the Oozie XSDs for each
 
 For example:
 
-```
+```scala
 val transitions = {
       val spark = sparkAction okTo End() errorTo kill
       val hive3 = hiveAction3 okTo End() errorTo kill
@@ -103,13 +105,13 @@ val transitions = {
 
 The transitions are represented as a string with the ` -> ` symbol representing a transistion between two nodes.  No distinction is made between a successful transition or an error transition for this representation.  Forks are represented as 
 
-```
+```scala
 Start -> someFork -> (action1, action2) -> someJoin -> End
 ```
 
 or ona failed node in a fork
 
-```
+```scala
 Start -> someFork -> (action1, action2) -> kill
 ```
 
@@ -132,7 +134,7 @@ In addition to generating workflows and coordinators, Scoozie will generate thei
 
 The code below shows a worked example of a Scoozie client:
 
-```
+```scala
 class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
     extends GeneratedWorkflow
     with GeneratedCoordinator {
@@ -226,15 +228,14 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
 
 The artifacts can be generated from this class via the following methods:
 
-```
+```scala
 testJob.saveCoordinator("/some/path/")
-
 ```
  or
  
- ```
+```scala
  testJob.saveWorkflow("/some/path/")
- ```
+```
  
  As mentioned above, this would save both the xml and the required properties to the specified location.  THe properties generated from this example would be:
  
@@ -266,7 +267,7 @@ nameNode=nameservice1
 
 The transitions from this class would be expressed as 
 
-```
+```scala
 start -> sparkOrShell -> doASparkThing -> mainFork -> (doAJavaThing, doAHiveThing) -> mainJoin -> end
 ```
 
