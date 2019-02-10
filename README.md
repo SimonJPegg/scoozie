@@ -11,7 +11,7 @@ Latest versions:
 
 * Scala 2.10:  [![Maven][210mavenImg]][mavenLink]
 * Scala 2.11:  [![Maven][211mavenImg]][mavenLink]
-* SCala 2.12:  [![Maven][212mavenImg]][mavenLink]
+* Scala 2.12:  [![Maven][212mavenImg]][mavenLink]
 
 An Oozie artefact builder library for scala.  it was created to allow developers  to quickly generate new Oozie artefacts without copy/pasting xml and avoiding typos in the XML they create.
 
@@ -22,7 +22,7 @@ Scoozie was created with CDH in mind and supports oozie version 4.1.0.
 Scoozie provides two modes of interaction
 
 * A [Scala API](./ScalaAPI.md)
-* A [Json API](HoconAPI.md)
+* A [Hocon API](HoconAPI.md)
 
 See the above links for more information.
 
