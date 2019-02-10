@@ -104,7 +104,7 @@ case class Workflow(override val name: String,
     val pattern = "\\w+".r
     properties.flatMap {
       case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
-    }.toSeq.sorted.toSet.mkString(System.lineSeparator())
+    }.toSet.toSeq.sorted.mkString(System.lineSeparator())
   }
 
   /**

@@ -3,6 +3,10 @@ package org.antipathy.scoozie.action
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import scala.xml.Elem
 import scala.collection.immutable._
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.ConfigurationBuilder
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie sub-workflow action definition
@@ -51,12 +55,33 @@ final class SubWorkflowAction(override val name: String,
       </sub-workflow>
 }
 
+/**
+  * Companion object
+  */
 object SubWorkflowAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             applicationPath: String,
             propagateConfiguration: Boolean,
             configuration: Configuration,
             yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     Node(new SubWorkflowAction(name, applicationPath, propagateConfiguration, configuration, yarnConfig))
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      SubWorkflowAction(name = config.getString("name"),
+                        applicationPath = config.getString("application-path"),
+                        propagateConfiguration = config.hasPath("propagate-configuration"),
+                        configuration = ConfigurationBuilder.buildConfiguration(config),
+                        yarnConfig = yarnConfig)
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

@@ -3,7 +3,10 @@ package org.antipathy.scoozie.action
 import scala.xml.Elem
 import org.antipathy.scoozie.configuration.Args
 import scala.collection.immutable._
-import org.antipathy.scoozie.configuration.Credentials
+import com.typesafe.config.Config
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie SSH action
@@ -36,6 +39,11 @@ final class SshAction(override val name: String,
   override val properties: Map[String, String] = Map(hostProperty -> host, commandProperty -> command) ++ argsProperty
 
   /**
+    * Does this action require yarn credentials in Kerberos environments
+    */
+  override def requiresCredentials: Boolean = false
+
+  /**
     * The XML for this node
     */
   override def toXML: Elem =
@@ -50,10 +58,29 @@ final class SshAction(override val name: String,
       </ssh>
 }
 
+/**
+  * Companion object
+  */
 object SshAction {
 
-  def apply(name: String, host: String, command: String, args: Seq[String], captureOutput: Boolean)(
-      implicit credentialsOption: Option[Credentials]
-  ): Node =
-    Node(new SshAction(name, host, command, args, captureOutput))
+  /**
+    * Create a new instance of this action
+    */
+  def apply(name: String, host: String, command: String, args: Seq[String], captureOutput: Boolean): Node =
+    Node(new SshAction(name, host, command, args, captureOutput))(None)
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config): Node =
+    try {
+      SshAction(name = config.getString("name"),
+                host = config.getString("host"),
+                command = config.getString("command"),
+                captureOutput = config.hasPath("capture-output"),
+                args = Seq(config.getStringList("command-line-arguments").asScala: _*))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

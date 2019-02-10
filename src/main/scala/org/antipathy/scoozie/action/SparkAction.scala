@@ -4,6 +4,11 @@ import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.configuration._
 import scala.xml.Elem
 import scala.collection.immutable._
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie Spark action definition
@@ -102,8 +107,14 @@ final class SparkAction(override val name: String,
     </spark>
 }
 
+/**
+  * Companion object
+  */
 object SparkAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             sparkSettings: String,
             sparkMasterURL: String,
@@ -132,4 +143,27 @@ object SparkAction {
                       configuration,
                       yarnConfig)
     )
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      SparkAction(name = config.getString("name"),
+                  sparkSettings = config.getString("spark-settings"),
+                  sparkMasterURL = config.getString("spark-master-url"),
+                  sparkMode = config.getString("spark-mode"),
+                  sparkJobName = config.getString("spark-job-name"),
+                  mainClass = config.getString("main-class"),
+                  sparkJar = config.getString("spark-jar"),
+                  sparkOptions = config.getString("spark-options"),
+                  commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
+                  files = Seq(config.getStringList("files").asScala: _*),
+                  configuration = ConfigurationBuilder.buildConfiguration(config),
+                  yarnConfig = yarnConfig,
+                  prepareOption = PrepareBuilder.build(config))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

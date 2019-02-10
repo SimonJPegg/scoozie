@@ -4,6 +4,11 @@ import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.configuration.{Argument, Configuration, Credentials, YarnConfig}
 import scala.xml.Elem
 import scala.collection.immutable._
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie Java action definition
@@ -82,8 +87,14 @@ class PigAction(override val name: String,
     </pig>
 }
 
+/**
+  * Companion object
+  */
 object PigAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             script: String,
             params: Seq[String],
@@ -92,4 +103,21 @@ object PigAction {
             yarnConfig: YarnConfig,
             prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
     Node(new PigAction(name, script, params, jobXml, configuration, yarnConfig, prepareOption))
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      PigAction(name = config.getString("name"),
+                script = config.getString("script"),
+                params = Seq(config.getStringList("params").asScala: _*),
+                jobXml = if (config.hasPath("job-xml")) Some(config.getString("job-xml")) else None,
+                configuration = ConfigurationBuilder.buildConfiguration(config),
+                yarnConfig,
+                prepareOption = PrepareBuilder.build(config))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

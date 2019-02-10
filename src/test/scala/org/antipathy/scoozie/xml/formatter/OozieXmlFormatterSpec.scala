@@ -144,7 +144,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <ok to="end"/>
                        |        <error to="emailAction"/>
                        |    </action>
-                       |    <action name="emailAction" cred="hive-credentials">
+                       |    <action name="emailAction">
                        |        <email xmlns="uri:oozie:email-action:0.1">
                        |            <to>${emailAction_to}</to>
                        |            <subject>${emailAction_subject}</subject>

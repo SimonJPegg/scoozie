@@ -13,5 +13,10 @@ private[scoozie] trait Action extends XmlSerializable with Nameable with OoziePr
     * The XML namespace for an action element
     */
   def xmlns: Option[String]
+
+  /**
+    * Does this action require yarn credentials in Kerberos environments
+    */
+  def requiresCredentials: Boolean = true
 }
 // $COVERAGE-ON$

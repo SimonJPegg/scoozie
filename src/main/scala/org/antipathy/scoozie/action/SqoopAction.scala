@@ -7,6 +7,11 @@ import scala.xml.Elem
 import org.antipathy.scoozie.configuration.Arg
 import org.antipathy.scoozie.configuration.File
 import org.antipathy.scoozie.configuration.Credentials
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie Sqoop action definition
@@ -76,8 +81,14 @@ class SqoopAction(override val name: String,
     </sqoop>
 }
 
+/**
+  * Companion object
+  */
 object SqoopAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             command: Option[String],
             args: Seq[String],
@@ -86,4 +97,23 @@ object SqoopAction {
             yarnConfig: YarnConfig,
             prepareOption: Option[Prepare])(implicit credentialsOption: Option[Credentials]): Node =
     Node(new SqoopAction(name, command, args, files, configuration, yarnConfig, prepareOption))
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      SqoopAction(name = config.getString("name"),
+                  command = if (config.hasPath("command")) Some(config.getString("command")) else None,
+                  args =
+                    if (config.hasPath("command")) Seq(config.getStringList("command-line-arguments").asScala: _*)
+                    else Seq(),
+                  files = Seq(config.getStringList("files").asScala: _*),
+                  configuration = ConfigurationBuilder.buildConfiguration(config),
+                  yarnConfig = yarnConfig,
+                  prepareOption = PrepareBuilder.build(config))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

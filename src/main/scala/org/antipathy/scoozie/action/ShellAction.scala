@@ -5,6 +5,11 @@ import org.antipathy.scoozie.configuration._
 import scala.xml.Elem
 import org.antipathy.scoozie.configuration.Credentials
 import scala.collection.immutable._
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   *
@@ -90,8 +95,14 @@ final class ShellAction(override val name: String,
   }
 }
 
+/**
+  * Companion object
+  */
 object ShellAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             scriptName: String,
             scriptLocation: String,
@@ -114,4 +125,24 @@ object ShellAction {
                       yarnConfig,
                       prepareOption)
     )
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      ShellAction(name = config.getString("name"),
+                  scriptName = config.getString("script-name"),
+                  scriptLocation = config.getString("script-location"),
+                  commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
+                  envVars = Seq(config.getStringList("environment-variables").asScala: _*),
+                  files = Seq(config.getStringList("files").asScala: _*),
+                  captureOutput = config.hasPath("capture-output"),
+                  configuration = ConfigurationBuilder.buildConfiguration(config),
+                  yarnConfig,
+                  prepareOption = PrepareBuilder.build(config))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

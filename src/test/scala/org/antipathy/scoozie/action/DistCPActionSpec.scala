@@ -99,5 +99,4 @@ class DistCPActionSpec extends FlatSpec with Matchers {
           "${distCP_prepare_delete}" -> "/some/path2")
     )
   }
-
 }

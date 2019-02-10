@@ -5,6 +5,11 @@ import org.antipathy.scoozie.configuration.{Configuration, YarnConfig}
 import scala.collection.immutable._
 import org.antipathy.scoozie.configuration.Arg
 import org.antipathy.scoozie.configuration.Credentials
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * DistCP action definition
@@ -69,8 +74,14 @@ class DistCPAction(override val name: String,
     </distcp>
 }
 
+/**
+  * Companion object
+  */
 object DistCPAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             arguments: Seq[String],
             javaOptions: String,
@@ -78,4 +89,21 @@ object DistCPAction {
             yarnConfig: YarnConfig,
             prepareOption: Option[Prepare])(implicit credentialsOption: Option[Credentials]): Node =
     Node(new DistCPAction(name, arguments, javaOptions, configuration, yarnConfig, prepareOption))
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      DistCPAction(name = config.getString("name"),
+                   arguments = Seq(config.getStringList("arguments").asScala: _*),
+                   javaOptions = config.getString("java-options"),
+                   configuration = ConfigurationBuilder.buildConfiguration(config),
+                   yarnConfig = yarnConfig,
+                   prepareOption = PrepareBuilder.build(config))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
+
 }
