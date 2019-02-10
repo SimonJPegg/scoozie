@@ -5,6 +5,8 @@ import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration}
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.workflow.Workflow
+import java.nio.file.Path
+import com.typesafe.config.ConfigFactory
 
 /**
   * Entry class for Scoozie.
@@ -84,5 +86,13 @@ object Scoozie {
                   workflow: Workflow,
                   configuration: ActionConfiguration): Coordinator =
     Coordinator(name, frequency, start, end, timezone, workflow, configuration)
+
+  /**
+    * Build an Oozie workflow (and optional coordinator) from the config file at the specified path
+    *
+    * @param configPath the path to build the artefacts from
+    * @return a GeneratedArtefacts object containing a workflow, optional coordinator and job properties
+    */
+  def fromConfig(configPath: Path): GeneratedArtefacts = GeneratedArtefacts(ConfigFactory.parseFile(configPath.toFile))
 
 }

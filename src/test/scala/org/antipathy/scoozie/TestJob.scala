@@ -9,8 +9,8 @@ import scala.collection.immutable.{Map, Seq}
   * Test class for interface
   */
 class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
-    extends GeneratedWorkflow
-    with GeneratedCoordinator {
+    extends ScoozieWorkflow
+    with ScoozieCoordinator {
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
   private val yarnConfig = Scoozie.Configuration.yarnConfiguration(jobTracker, nameNode)

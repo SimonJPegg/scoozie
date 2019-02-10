@@ -4,7 +4,7 @@
 
 [![issuesBadge]][issuesLink] ![releaseBadge] ![newCommitsBadge]
 
-Latest `version`s: 
+Latest versions: 
 
 
 
@@ -118,7 +118,7 @@ Start -> someFork -> (action1, action2) -> kill
 Further examples can be seen in the `WorkflowTestRunnerSpec` class. This class takes constructor aguments to specify the names of actions to fail, or to use on decision points.
 
 ### Exposed traits 
-The `GeneratedCoordinator` and `GeneratedWorkflow` traits are exposed for clients of this library to implement and are the suggested method of use.  They expose methods for saving both the generated workflows and their respective properties.  Files generated via these traits will be named:
+The `ScoozieCoordinator` and `ScoozieWorkflow` traits are exposed for clients of this library to implement and are the suggested method of use.  They expose methods for saving both the generated workflows and their respective properties.  Files generated via these traits will be named:
 
 * `workflow.xml`
 * `coordinator.xml`
@@ -136,8 +136,8 @@ The code below shows a worked example of a Scoozie client:
 
 ```scala
 class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
-    extends GeneratedWorkflow
-    with GeneratedCoordinator {
+    extends ScoozieWorkflow
+    with ScoozieCoordinator {
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
   
