@@ -24,6 +24,8 @@ private[scoozie] object PrepareBuilder {
         .getConfig("prepare")
         .entrySet()
         .asScala
+        .toSeq
+        .sortBy(_.getKey)
         .map {
           case delete if delete.getKey.toLowerCase.equals("delete") => Delete(delete.getValue.render())
           case mkdir if mkdir.getKey.toLowerCase.equals("mkdir")    => MakeDir(mkdir.getValue.render())

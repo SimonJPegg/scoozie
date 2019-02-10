@@ -2,6 +2,7 @@ package org.antipathy.scoozie.builder
 
 import org.scalatest.{FlatSpec, Matchers}
 import com.typesafe.config.ConfigFactory
+import org.antipathy.scoozie.Scoozie
 
 class WorkflowBuilderSpec extends FlatSpec with Matchers {
 
@@ -246,6 +247,8 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |sparkAction_sparkMode=mode
                                      |sparkAction_sparkOptions=spark-options
                                      |sparkAction_sparkSettings=someSettings""".stripMargin)
+
+    Scoozie.Test.validate(result)
   }
 
   it should "build a workflow with a decision" in {
@@ -426,8 +429,8 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
               <prepare>
-                <mkdir path="${sparkAction_prepare_makedir}"/>
                 <delete path="${sparkAction_prepare_delete}"/>
+                <mkdir path="${sparkAction_prepare_makedir}"/>
               </prepare>
               <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
@@ -497,5 +500,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |sparkAction_sparkMode=mode
                                      |sparkAction_sparkOptions=spark-options
                                      |sparkAction_sparkSettings=someSettings""".stripMargin)
+
+    Scoozie.Test.validate(result)
   }
 }
