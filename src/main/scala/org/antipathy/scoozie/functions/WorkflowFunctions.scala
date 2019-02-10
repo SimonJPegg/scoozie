@@ -24,7 +24,7 @@ object WorkflowFunctions {
     * returns the value of the workflow job configuration property for the current workflow job,
     * or an empty string if undefined.
     */
-  def conf(name: String): String = "${wf:conf(" + name + ")}"
+  def conf(name: String): String = "${wf:hocon(" + name + ")}"
 
   /**
     * returns the user name that started the current workflow job.

@@ -16,7 +16,7 @@ class WorkflowFunctionsSpec extends FlatSpec with Matchers {
 
     WorkflowFunctions.appPath should be("${wf:appPath()}")
 
-    WorkflowFunctions.conf(nodeName) should be("${wf:conf(" + nodeName + ")}")
+    WorkflowFunctions.conf(nodeName) should be("${wf:hocon(" + nodeName + ")}")
 
     WorkflowFunctions.user should be("${wf:user()}")
 

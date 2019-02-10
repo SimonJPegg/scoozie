@@ -17,7 +17,7 @@ case class Credentials(credential: Credential) extends XmlSerializable with Oozi
     * @return a copy of the configuration and its properties
     */
   private[scoozie] def withActionProperties(actionName: String): (Credentials, Map[String, String]) = {
-    val mappedProps = credential.properties.zipWithIndex.map {
+    val mappedProps = credential.properties.sortBy(_.name).zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_credentialProperty$index")
         (Property(name, p), p -> value)

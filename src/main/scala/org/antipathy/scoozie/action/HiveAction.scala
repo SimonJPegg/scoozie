@@ -4,6 +4,11 @@ import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import scala.xml.Elem
 import scala.collection.immutable._
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie Hive action definition
@@ -79,8 +84,14 @@ final class HiveAction(override val name: String,
       </hive>
 }
 
+/**
+  * Companion object
+  */
 object HiveAction {
 
+  /**
+    * Create a new instance of this action
+    */
   def apply(name: String,
             hiveSettingsXML: String,
             scriptName: String,
@@ -99,4 +110,22 @@ object HiveAction {
                      yarnConfig,
                      prepareOption)
     )
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
+    try {
+      HiveAction(name = config.getString("name"),
+                 hiveSettingsXML = config.getString("hive-settings-xml"),
+                 scriptName = config.getString("script-name"),
+                 scriptLocation = config.getString("script-location"),
+                 parameters = Seq(config.getStringList("parameters").asScala: _*),
+                 configuration = ConfigurationBuilder.buildConfiguration(config),
+                 yarnConfig,
+                 prepareOption = PrepareBuilder.build(config))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

@@ -37,8 +37,8 @@ private[scoozie] case class Node(
     * The node to transition to on failure
     */
   def errorTo(node: Node): Node = this.action match {
-    case _ @(_: Fork | _: Decision | _: End | _: Kill | _: Start) => this
-    case _                                                        => this.copy(failureTransition = Some(node))
+    case _ @(_: Fork | _: Decision | _: End | _: Kill | _: Start | _: Join) => this
+    case _                                                                  => this.copy(failureTransition = Some(node))
   }
 
   /**
@@ -78,7 +78,7 @@ private[scoozie] case class Node(
     }
 
     <action name ={action.name}
-      cred={credentialsOption.map(_.credential.name).orNull}>
+      cred={if (action.requiresCredentials) credentialsOption.map(_.credential.name).orNull else null}>
       {action.toXML}
       <ok to= {successTransition.get.action.name}/>
       <error to = {failureTransition.get.action.name}/>

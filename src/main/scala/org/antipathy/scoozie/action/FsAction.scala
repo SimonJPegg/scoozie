@@ -2,17 +2,23 @@ package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.action.filesystem._
 import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.exception.UnknownActionException
+import com.typesafe.config.Config
+import scala.collection.JavaConverters._
+import java.util
+import org.antipathy.scoozie.exception.UnknownStepException
+import scala.collection.immutable.Seq
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie filesystem action definition
   * @param name the name of the action
-  * @param actions the actions to perform
+  * @param steps the actions to perform
   */
-class FsAction(override val name: String, actions: Seq[FileSystemAction]) extends Action {
+class FsAction(override val name: String, steps: Seq[FileSystemAction]) extends Action {
 
-  private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = actions.zipWithIndex.map {
+  private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
       val p = s"${name}_chmodPath$index"
       val perm = s"${name}_chmodPermissions$index"
@@ -53,7 +59,42 @@ class FsAction(override val name: String, actions: Seq[FileSystemAction]) extend
   </fs>
 }
 
+/**
+  * Companion object
+  */
 object FsAction {
-  def apply(name: String, actions: Seq[FileSystemAction])(implicit credentialsOption: Option[Credentials]): Node =
-    Node(new FsAction(name, actions))
+
+  /**
+    * Create a new instance of this action
+    */
+  def apply(name: String, actions: Seq[FileSystemAction]): Node =
+    Node(new FsAction(name, actions))(None)
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config): Node =
+    try {
+      FsAction(name = config.getString("name"), actions = buildFSSteps(config.getConfigList("steps")))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
+
+  /**
+    * Build the steps in this action from a collection of configuration objects
+    */
+  private def buildFSSteps(configList: util.List[_ <: Config]): Seq[FileSystemAction] =
+    Seq(configList.asScala.map {
+      case delete if delete.hasPath("delete") => Delete(delete.getString("delete"))
+      case mkdir if mkdir.hasPath("mkdir")    => MakeDir(mkdir.getString("mkdir"))
+      case touchz if touchz.hasPath("touchz") => Touchz(touchz.getString("touchz"))
+      case chmod if chmod.hasPath("chmod") =>
+        Chmod(chmod.getString("chmod.path"), chmod.getString("chmod.permissions"), chmod.getString("chmod.dir-files"))
+      case move if move.hasPath("move") =>
+        Move(move.getString("move.source"), move.getString("move.target"))
+      case unknown =>
+        throw new UnknownStepException(s"$unknown is not a valid filesystem step")
+    }: _*)
+
 }

@@ -4,6 +4,7 @@ import scala.xml.Elem
 import scala.collection.immutable.Map
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
 import org.antipathy.scoozie.xml.XmlSerializable
+import scala.collection.immutable._
 
 /**
   * Ooize actions prepare definition

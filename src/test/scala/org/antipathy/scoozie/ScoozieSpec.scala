@@ -99,26 +99,26 @@ class ScoozieSpec extends FlatSpec with Matchers {
     testWorkflow.jobProperties should be("""ExampleCoOrdinator_property0=value1
                                            |ExampleCoOrdinator_property1=value2
                                            |alertFailure_body=message body
-                                           |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
-                                           |jobTracker=yarn
-                                           |doAJavaThing_javaOptions=java options
-                                           |alertFailure_to=a@a.com,b@b.com
-                                           |doASparkThing_sparkOptions=spark options
-                                           |nameNode=nameservice1
-                                           |doAJavaThing_prepare_delete=/some/path
-                                           |doAHiveThing_scriptLocation=/path/to/someScript.hql
-                                           |doAShellThing_scriptName=script.sh
-                                           |doASparkThing_sparkJobName=JobName
-                                           |doASparkThing_sparkMasterURL=masterURL
                                            |alertFailure_subject=message subject
-                                           |doASparkThing_sparkMode=mode
+                                           |alertFailure_to=a@a.com,b@b.com
+                                           |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
+                                           |doAHiveThing_scriptLocation=/path/to/someScript.hql
+                                           |doAHiveThing_scriptName=someScript.hql
+                                           |doAJavaThing_javaJar=/path/to/jar
+                                           |doAJavaThing_javaOptions=java options
+                                           |doAJavaThing_mainClass=org.antipathy.Main
+                                           |doAJavaThing_prepare_delete=/some/path
+                                           |doAShellThing_scriptLocation=/path/to/script.sh
+                                           |doAShellThing_scriptName=script.sh
                                            |doASparkThing_mainClass=org.antipathy.Main
                                            |doASparkThing_sparkJar=/path/to/jar
-                                           |doAJavaThing_mainClass=org.antipathy.Main
-                                           |doAJavaThing_javaJar=/path/to/jar
+                                           |doASparkThing_sparkJobName=JobName
+                                           |doASparkThing_sparkMasterURL=masterURL
+                                           |doASparkThing_sparkMode=mode
+                                           |doASparkThing_sparkOptions=spark options
                                            |doASparkThing_sparkSettings=/path/to/spark/settings
-                                           |doAHiveThing_scriptName=someScript.hql
-                                           |doAShellThing_scriptLocation=/path/to/script.sh""".stripMargin)
+                                           |jobTracker=yarn
+                                           |nameNode=nameservice1""".stripMargin)
   }
 
   it should "allow validation of an oozie workflow" in {

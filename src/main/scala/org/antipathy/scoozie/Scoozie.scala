@@ -62,9 +62,7 @@ object Scoozie {
       * @param subject the message subject
       * @param body the message body
       */
-    def email(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String)(
-        implicit credentialsOption: Option[Credentials]
-    ): Node =
+    def email(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String): Node =
       EmailAction(name, to, cc, subject, body)
 
     /**
@@ -82,10 +80,10 @@ object Scoozie {
     /**
       * Oozie filesystem action
       * @param name the name of the action
-      * @param action the actions to perform
+      * @param step the steps to perform
       */
-    def fs(name: String, action: FileSystemAction*)(implicit credentialsOption: Option[Credentials]): Node =
-      FsAction(name, action)
+    def fs(name: String, step: FileSystemAction*): Node =
+      FsAction(name, Seq(step: _*))
 
     /**
       * Oozie Hive action

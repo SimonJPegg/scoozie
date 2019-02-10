@@ -1,8 +1,11 @@
 package org.antipathy.scoozie.action
 
 import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Credentials
 import scala.collection.immutable._
+import com.typesafe.config.Config
+import scala.collection.JavaConverters._
+import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Email action definition
@@ -39,6 +42,11 @@ final class EmailAction(override val name: String,
      } else { Map() })
 
   /**
+    * Does this action require yarn credentials in Kerberos environments
+    */
+  override def requiresCredentials: Boolean = false
+
+  /**
     * The XML for this node
     */
   override def toXML: Elem = <email xmlns={xmlns.orNull}>
@@ -52,10 +60,29 @@ final class EmailAction(override val name: String,
       </email>
 }
 
+/**
+  * Comaption object
+  */
 object EmailAction {
 
-  def apply(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String)(
-      implicit credentialsOption: Option[Credentials]
-  ): Node =
-    Node(new EmailAction(name, to, cc, subject, body))
+  /**
+    * Create a new instance of this action
+    */
+  def apply(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String): Node =
+    Node(new EmailAction(name, to, cc, subject, body))(None)
+
+  /**
+    * Create a new instance of this action from a configuration
+    */
+  def apply(config: Config): Node =
+    try {
+      EmailAction(to = Seq(config.getStringList("to").asScala: _*),
+                  cc = Seq(config.getStringList("cc").asScala: _*),
+                  name = config.getString("name"),
+                  subject = config.getString("subject"),
+                  body = config.getString("body"))
+    } catch {
+      case c: ConfigException =>
+        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    }
 }

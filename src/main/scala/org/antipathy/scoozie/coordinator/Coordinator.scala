@@ -38,7 +38,7 @@ case class Coordinator(override val name: String,
     val pattern = "\\w+".r
     mappedProperties.flatMap {
       case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
-    }.toSeq.sorted.toSet.mkString(System.lineSeparator()) +
+    }.toSet.toSeq.sorted.mkString(System.lineSeparator()) +
     System.lineSeparator()
   }
 

@@ -20,7 +20,7 @@ private[scoozie] case class Configuration(configProperties: Seq[Property])
     * @return a copy of the configuration and its properties
     */
   private[scoozie] def withActionProperties(actionName: String): (Configuration, Map[String, String]) = {
-    val mappedProps = configProperties.zipWithIndex.map {
+    val mappedProps = configProperties.sortBy(_.name).zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_property$index")
         (Property(name, p), p -> value)
