@@ -33,8 +33,8 @@ class DistCPAction(override val name: String,
 
   private val configurationProperties = configuration.withActionProperties(name)
   private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
+  private val prepareProperties = prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
+  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
 
   /**
     * The XML namespace for an action element
@@ -58,8 +58,8 @@ class DistCPAction(override val name: String,
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
       {prepareOptionMapped.map(_.toXML).orNull}
-      {if (configurationProperties.config.configProperties.nonEmpty) {
-          configurationProperties.config.toXML
+      {if (configurationProperties.mappedType.configProperties.nonEmpty) {
+          configurationProperties.mappedType.toXML
         }
       }
       {if (!javaOptions.isEmpty) {

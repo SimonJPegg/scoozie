@@ -39,8 +39,8 @@ class SqoopAction(override val name: String,
     buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val configurationProperties = configuration.withActionProperties(name)
   private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
+  private val prepareProperties = prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
+  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
 
   /**
     * Get the Oozie properties for this object
@@ -70,8 +70,8 @@ class SqoopAction(override val name: String,
           <job-xml>{jobXmlProperty.keys}</job-xml>
         }
       }
-      {if (configurationProperties.config.configProperties.nonEmpty) {
-          configurationProperties.config.toXML
+      {if (configurationProperties.mappedType.configProperties.nonEmpty) {
+          configurationProperties.mappedType.toXML
         }
       }
       { if (command.isDefined) {

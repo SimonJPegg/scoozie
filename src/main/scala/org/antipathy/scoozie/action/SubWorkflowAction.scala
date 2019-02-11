@@ -26,7 +26,7 @@ final class SubWorkflowAction(override val name: String,
 
   private val applicationPathProperty = formatProperty(s"${name}_applicationPath")
   private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.config
+  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * The XML namespace for an action element

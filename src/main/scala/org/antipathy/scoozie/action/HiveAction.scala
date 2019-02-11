@@ -43,10 +43,10 @@ final class HiveAction(override val name: String,
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
   private val prepareProperties =
-    prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
+    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
+  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
   private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.config
+  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * Get the Oozie properties for this object

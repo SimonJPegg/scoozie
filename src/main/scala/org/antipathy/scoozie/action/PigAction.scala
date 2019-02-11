@@ -42,12 +42,12 @@ class PigAction(override val name: String,
     buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val mappedConfigAndProperties =
     configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.config
+  private val mappedConfig = mappedConfigAndProperties.mappedType
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
   private val prepareProperties =
-    prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
+    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
+  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
 
   /**
     * Get the Oozie properties for this object
