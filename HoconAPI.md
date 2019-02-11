@@ -335,6 +335,8 @@ pig:
   type: "pig"
   script: ""
   params: []
+  arguments: []
+  files: []
   job-xml: "" //optional
   configuration: {}
   prepare: {}

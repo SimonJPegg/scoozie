@@ -162,20 +162,24 @@ object Actions {
     * Oozie Java action definition
     * @param name the name of the action
     * @param script the location of the pig script
-    * @param params arguments to the script
-    * @param jobXml optional job.xml for the script
+    * @param params parameters to the script
+    * @param arguments arguments to the script
+    * @param files additional files to bundle with the job
+    * @param jobXmlOption optional job.xml for the script
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def pig(name: String,
-          configuration: Configuration,
-          yarnConfig: YarnConfig,
-          prepareOption: Option[ActionPrepare] = None,
           script: String,
           params: Seq[String],
-          jobXml: Option[String] = None)(implicit credentialsOption: Option[Credentials]): Node =
-    PigAction(name, script, params, jobXml, configuration, yarnConfig, prepareOption)
+          arguments: Seq[String],
+          files: Seq[String],
+          jobXmlOption: Option[String],
+          configuration: Configuration,
+          yarnConfig: YarnConfig,
+          prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+    PigAction(name, script, params, arguments, files, jobXmlOption, configuration, yarnConfig, prepareOption)
 
   /**
     *
