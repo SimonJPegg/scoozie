@@ -32,7 +32,6 @@ private[scoozie] object TransitionBuilder {
         case "distcp"     => NodeWithConfig(DistCPAction(config, yarnConfig), config)
         case "email"      => NodeWithConfig(EmailAction(config), config)
         case "filesystem" => NodeWithConfig(FsAction(config), config)
-        case "hive2"      => NodeWithConfig(Hive2Action(config, yarnConfig), config)
         case "hive"       => NodeWithConfig(HiveAction(config, yarnConfig), config)
         case "java"       => NodeWithConfig(JavaAction(config, yarnConfig), config)
         case "pig"        => NodeWithConfig(PigAction(config, yarnConfig), config)

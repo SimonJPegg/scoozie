@@ -23,8 +23,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -64,8 +66,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -106,8 +110,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -180,8 +186,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -253,8 +261,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -359,8 +369,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -465,8 +477,10 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 

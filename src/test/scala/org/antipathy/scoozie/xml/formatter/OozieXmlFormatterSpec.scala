@@ -29,8 +29,10 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
@@ -145,7 +147,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <error to="emailAction"/>
                        |    </action>
                        |    <action name="emailAction">
-                       |        <email xmlns="uri:oozie:email-action:0.1">
+                       |        <email xmlns="uri:oozie:email-action:0.2">
                        |            <to>${emailAction_to}</to>
                        |            <subject>${emailAction_subject}</subject>
                        |            <body>${emailAction_body}</body>

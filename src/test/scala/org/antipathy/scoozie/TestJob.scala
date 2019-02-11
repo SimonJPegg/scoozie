@@ -32,6 +32,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
                                                   to = Seq("a@a.com", "b@b.com"),
+                                                  cc = Seq.empty,
                                                   subject = "message subject",
                                                   body = "message body")
 

@@ -46,9 +46,15 @@ object Actions {
     * @param cc an optional cc recipient list
     * @param subject the message subject
     * @param body the message body
+    * @param contentTypeOption optional string defining the content type of the message
     */
-  def email(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String): Node =
-    EmailAction(name, to, cc, subject, body)
+  def email(name: String,
+            to: Seq[String],
+            cc: Seq[String],
+            subject: String,
+            body: String,
+            contentTypeOption: Option[String] = None): Node =
+    EmailAction(name, to, cc, subject, body, contentTypeOption)
 
   /**
     * oozie end control node
@@ -65,10 +71,12 @@ object Actions {
   /**
     * Oozie filesystem action
     * @param name the name of the action
+    * @param jobXMLOption optional job.xml path
     * @param step the steps to perform
+    * @param configuration additional config for this action
     */
-  def fs(name: String, step: FileSystemAction*): Node =
-    FsAction(name, Seq(step: _*))
+  def fs(name: String, jobXMLOption: Option[String], configuration: Configuration, step: FileSystemAction*): Node =
+    FsAction(name, Seq(step: _*), jobXMLOption, configuration)
 
   /**
     * Oozie Hive action
@@ -90,40 +98,6 @@ object Actions {
            scriptLocation: String,
            parameters: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
     HiveAction(name, hiveSettingsXML, scriptName, scriptLocation, parameters, configuration, yarnConfig, prepareOption)
-
-  /**
-    * Oozie Hive action definition
-    * @param name the name of the action
-    * @param hiveSettingsXML the path to the hive settings XML
-    * @param scriptName the name of the hive script
-    * @param scriptLocation the path to the hive script
-    * @param parameters a collection of parameters to the hive script
-    * @param configuration additional config for this action
-    * @param yarnConfig Yarn configuration for this action
-    * @param jdbcUrl The JDBC URL for the Hive Server 2
-    * @param password Password of the current user (non-kerberos environments)
-    * @param prepareOption an optional ActionPrepare stage for the action
-    */
-  def hive2(name: String,
-            configuration: Configuration,
-            yarnConfig: YarnConfig,
-            prepareOption: Option[ActionPrepare] = None,
-            hiveSettingsXML: String,
-            scriptName: String,
-            scriptLocation: String,
-            parameters: Seq[String],
-            jdbcUrl: String,
-            password: Option[String] = None)(implicit credentialsOption: Option[Credentials]): Node =
-    Hive2Action(name,
-                hiveSettingsXML,
-                scriptName,
-                scriptLocation,
-                parameters,
-                configuration,
-                yarnConfig,
-                jdbcUrl,
-                password,
-                prepareOption)
 
   /**
     * Oozie Java action definition

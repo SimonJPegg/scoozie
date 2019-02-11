@@ -271,6 +271,7 @@ Email:
   cc: []
   subject: ""
   body: ""
+  content-type: "" //optional
   ok-to: ""
   error-to: ""
 }
@@ -280,6 +281,8 @@ FileSystem:
 {
   name: ""
   type: "filesystem"
+  job-xml: ""
+  configuration: {}
   steps: {
     //any of
     delete: ""
@@ -301,22 +304,6 @@ Hive:
   script-name: ""
   script-location: ""
   configuration: {}
-  prepare: {}
-  ok-to: ""
-  error-to: ""
-}
-```
-Hive2:
-```hocon
-{
-  name: ""
-  type: "hive2"
-  hive-settings-xml: ""
-  script-name: ""
-  parameters: []
-  configuration: {}
-  jdbcurl: ""
-  password: "" //optional
   prepare: {}
   ok-to: ""
   error-to: ""

@@ -18,8 +18,9 @@ class NodeSpec extends FlatSpec with Matchers {
     val result = EmailAction(name = "email",
                              to = Seq("a@a.com", "b@b.com"),
                              cc = Seq("c@c.com", "d@d.com"),
-                             "message subject",
-                             "message body")
+                             subject = "message subject",
+                             body = "message body",
+                             contentTypeOption = None)
 
     an[TransitionException] should be thrownBy {
       result.toXML
@@ -50,8 +51,9 @@ class NodeSpec extends FlatSpec with Matchers {
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
                                   cc = Seq("c@c.com", "d@d.com"),
-                                  "message subject",
-                                  "message body")
+                                  subject = "message subject",
+                                  body = "message body",
+                                  contentTypeOption = None)
 
     val result = sparkAction okTo emailAction
 
@@ -91,8 +93,9 @@ class NodeSpec extends FlatSpec with Matchers {
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
                                   cc = Seq("c@c.com", "d@d.com"),
-                                  "message subject",
-                                  "message body")
+                                  subject = "message subject",
+                                  body = "message body",
+                                  contentTypeOption = None)
 
     val result = Start() okTo emailAction
 
@@ -165,8 +168,9 @@ class NodeSpec extends FlatSpec with Matchers {
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
                                   cc = Seq("c@c.com", "d@d.com"),
-                                  "message subject",
-                                  "message body")
+                                  subject = "message subject",
+                                  body = "message body",
+                                  contentTypeOption = None)
 
     val result = (sparkAction okTo emailAction errorTo emailAction).toXML
 
@@ -229,8 +233,9 @@ class NodeSpec extends FlatSpec with Matchers {
     val emailAction = EmailAction(name = "email",
                                   to = Seq("a@a.com", "b@b.com"),
                                   cc = Seq("c@c.com", "d@d.com"),
-                                  "message subject",
-                                  "message body")
+                                  subject = "message subject",
+                                  body = "message body",
+                                  contentTypeOption = None)
 
     val result = (sparkAction okTo emailAction errorTo emailAction).toXML
 
