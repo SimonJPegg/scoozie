@@ -9,14 +9,22 @@ import java.util
 import org.antipathy.scoozie.exception.UnknownStepException
 import scala.collection.immutable.Seq
 import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+import org.antipathy.scoozie.builder.ConfigurationBuilder
 
 /**
   * Oozie filesystem action definition
   * @param name the name of the action
   * @param steps the actions to perform
+  * @param jobXMLOption optional job.xml path
+  * @param configuration additional config for this action
   */
-class FsAction(override val name: String, steps: Seq[FileSystemAction]) extends Action {
+class FsAction(override val name: String,
+               steps: Seq[FileSystemAction],
+               jobXMLOption: Option[String],
+               configuration: Configuration)
+    extends Action {
 
   private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
@@ -67,15 +75,20 @@ object FsAction {
   /**
     * Create a new instance of this action
     */
-  def apply(name: String, actions: Seq[FileSystemAction]): Node =
-    Node(new FsAction(name, actions))(None)
+  def apply(name: String, actions: Seq[FileSystemAction], jobXml: Option[String], configuration: Configuration): Node =
+    Node(new FsAction(name, actions, jobXml, configuration))(None)
 
   /**
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
     try {
-      FsAction(name = config.getString("name"), actions = buildFSSteps(config.getConfigList("steps")))
+      FsAction(name = config.getString("name"),
+               actions = buildFSSteps(config.getConfigList("steps")),
+               jobXml = if (config.hasPath("job-xml")) {
+                 Some(config.getString("job-xml"))
+               } else None,
+               configuration = ConfigurationBuilder.buildConfiguration(config))
     } catch {
       case c: ConfigException =>
         throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
