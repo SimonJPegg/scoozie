@@ -33,7 +33,7 @@
         sudo rm -f /home/kinley/.ssh/oozie_id_rsa.pub
     -->
     <action name="ssh-hadoop-get">
-        <ssh xmlns="uri:oozie:ssh-action:0.1">
+        <ssh xmlns="uri:oozie:ssh-action:0.2">
             <host>kinley@localhost</host>
             <command>hadoop</command>
             <args>fs</args>
