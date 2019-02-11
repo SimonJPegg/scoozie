@@ -63,6 +63,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 javaOptions = "java options",
                                                 commandLineArgs = Seq(),
                                                 captureOutput = false,
+                                                jobXmlOption = None,
                                                 files = Seq(),
                                                 prepareOption =
                                                   Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),

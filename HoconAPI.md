@@ -315,6 +315,7 @@ Java:
 {
   name: ""
   type: "java"
+  job-xml: "" //optional
   main-class: ""
   java-jar: ""
   java-options: ""

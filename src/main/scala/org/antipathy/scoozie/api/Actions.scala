@@ -118,20 +118,22 @@ object Actions {
     * @param commandLineArgs command line arguments for the java job
     * @param files files to include with the application
     * @param captureOutput capture output from this action
+    * @param jobXmlOption optional job.xml path
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def java(name: String,
-           configuration: Configuration,
-           yarnConfig: YarnConfig,
-           prepareOption: Option[ActionPrepare] = None,
            mainClass: String,
            javaJar: String,
            javaOptions: String,
            commandLineArgs: Seq[String],
            files: Seq[String],
-           captureOutput: Boolean)(implicit credentialsOption: Option[Credentials]): Node =
+           captureOutput: Boolean,
+           jobXmlOption: Option[String],
+           configuration: Configuration,
+           yarnConfig: YarnConfig,
+           prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
     JavaAction(name,
                mainClass,
                javaJar,
@@ -139,6 +141,7 @@ object Actions {
                commandLineArgs,
                files,
                captureOutput,
+               jobXmlOption,
                configuration,
                yarnConfig,
                prepareOption)

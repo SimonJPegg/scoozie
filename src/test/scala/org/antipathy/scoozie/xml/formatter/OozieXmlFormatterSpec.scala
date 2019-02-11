@@ -91,7 +91,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
 
     val result = formatter.format(workflow)
 
-    result should be("""<workflow-app name="sampleWorkflow" xmlns="uri:oozie:workflow:0.4">
+    result should be("""<workflow-app name="sampleWorkflow" xmlns="uri:oozie:workflow:0.5">
                        |    <global>
                        |        <job-tracker>${jobTracker}</job-tracker>
                        |        <name-node>${nameNode}</name-node>

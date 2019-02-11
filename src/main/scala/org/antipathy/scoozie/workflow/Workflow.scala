@@ -42,7 +42,7 @@ case class Workflow(override val name: String,
     * The XML for this node
     */
   override def toXML: Elem =
-    <workflow-app name={name} xmlns="uri:oozie:workflow:0.4">
+    <workflow-app name={name} xmlns="uri:oozie:workflow:0.5">
       <global>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
