@@ -72,7 +72,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
             <hive xmlns="uri:oozie:hive-action:0.2">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${doAHiveThing_hiveSettingsXML}"}</job-xml>
+              <job-xml>{"${doAHiveThing_jobXML}"}</job-xml>
               <script>{"${doAHiveThing_scriptName}"}</script>
               <file>{"${doAHiveThing_scriptLocation}"}</file>
             </hive>
@@ -106,7 +106,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                            |alertFailure_body=message body
                                            |alertFailure_subject=message subject
                                            |alertFailure_to=a@a.com,b@b.com
-                                           |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
+                                           |doAHiveThing_jobXML=/path/to/settings.xml
                                            |doAHiveThing_scriptLocation=/path/to/someScript.hql
                                            |doAHiveThing_scriptName=someScript.hql
                                            |doAJavaThing_javaJar=/path/to/jar

@@ -48,10 +48,11 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   yarnConfig = yarnConfig)
 
   private val hiveAction = Scoozie.Actions.hive(name = "doAHiveThing",
-                                                hiveSettingsXML = "/path/to/settings.xml",
                                                 scriptName = "someScript.hql",
                                                 scriptLocation = "/path/to/someScript.hql",
                                                 parameters = Seq(),
+                                                jobXmlOption = Some("/path/to/settings.xml"),
+                                                files = Seq(),
                                                 prepareOption = None,
                                                 configuration = Scoozie.Configuration.emptyConfiguration,
                                                 yarnConfig = yarnConfig)

@@ -17,14 +17,16 @@ import org.antipathy.scoozie.builder.ConfigurationBuilder
   * Oozie filesystem action definition
   * @param name the name of the action
   * @param steps the actions to perform
-  * @param jobXMLOption optional job.xml path
+  * @param jobXmlOption optional job.xml path
   * @param configuration additional config for this action
   */
 class FsAction(override val name: String,
                steps: Seq[FileSystemAction],
-               jobXMLOption: Option[String],
+               jobXmlOption: Option[String],
                configuration: Configuration)
     extends Action {
+
+  private val jobXMLProperty = formatProperty(s"${name}_jobxml")
 
   private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
@@ -57,12 +59,19 @@ class FsAction(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  override def properties: Map[String, String] = namedActionsAnProps.flatMap(_._2).toMap
+  override def properties: Map[String, String] =
+    if (jobXmlOption.isDefined) {
+      Map(jobXMLProperty -> jobXmlOption.get)
+    } else { Map() } ++ namedActionsAnProps.flatMap(_._2).toMap
 
   /**
     * The XML for this node
     */
   override def toXML: Elem = <fs>
+    {if (jobXmlOption.isDefined) {
+        <job-xml>{jobXMLProperty}</job-xml>
+      }
+    }
     {namedActionsAnProps.map(_._1.toXML)}
   </fs>
 }
@@ -75,8 +84,11 @@ object FsAction {
   /**
     * Create a new instance of this action
     */
-  def apply(name: String, actions: Seq[FileSystemAction], jobXml: Option[String], configuration: Configuration): Node =
-    Node(new FsAction(name, actions, jobXml, configuration))(None)
+  def apply(name: String,
+            actions: Seq[FileSystemAction],
+            jobXmlOption: Option[String],
+            configuration: Configuration): Node =
+    Node(new FsAction(name, actions, jobXmlOption, configuration))(None)
 
   /**
     * Create a new instance of this action from a configuration
@@ -85,7 +97,7 @@ object FsAction {
     try {
       FsAction(name = config.getString("name"),
                actions = buildFSSteps(config.getConfigList("steps")),
-               jobXml = if (config.hasPath("job-xml")) {
+               jobXmlOption = if (config.hasPath("job-xml")) {
                  Some(config.getString("job-xml"))
                } else None,
                configuration = ConfigurationBuilder.buildConfiguration(config))

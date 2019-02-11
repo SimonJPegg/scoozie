@@ -68,7 +68,8 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -124,10 +125,10 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <error to="emailAction"/>
                        |    </action>
                        |    <action name="hiveAction" cred="hive-credentials">
-                       |        <hive xmlns="uri:oozie:hive-action:0.2">
+                       |        <hive xmlns="uri:oozie:hive-action:0.5">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
-                       |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
+                       |            <job-xml>${hiveAction_jobXML}</job-xml>
                        |            <script>${hiveAction_scriptName}</script>
                        |            <file>${hiveAction_scriptLocation}</file>
                        |        </hive>

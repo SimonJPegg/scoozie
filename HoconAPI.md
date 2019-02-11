@@ -300,9 +300,10 @@ Hive:
 {
   name: ""
   type: "hive"
-  hive-settings-xml: ""
+  job-xml: "" //optional
   script-name: ""
   script-location: ""
+  files: []
   configuration: {}
   prepare: {}
   ok-to: ""

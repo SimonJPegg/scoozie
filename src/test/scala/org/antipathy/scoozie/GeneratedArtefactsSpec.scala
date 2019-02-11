@@ -73,10 +73,10 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        </switch>
         |    </decision>
         |    <action name="hiveAction" cred="someCredentials">
-        |        <hive xmlns="uri:oozie:hive-action:0.2">
+        |        <hive xmlns="uri:oozie:hive-action:0.5">
         |            <job-tracker>${jobTracker}</job-tracker>
         |            <name-node>${nameNode}</name-node>
-        |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
+        |            <job-xml>${hiveAction_jobXML}</job-xml>
         |            <script>${hiveAction_scriptName}</script>
         |            <file>${hiveAction_scriptLocation}</file>
         |        </hive>
@@ -130,7 +130,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     ouputProperties.lines.mkString(System.lineSeparator()) should be("""errorEmail_body=yep
                                                                        |errorEmail_subject=hello
                                                                        |errorEmail_to=a@a.com
-                                                                       |hiveAction_hiveSettingsXML=settings
+                                                                       |hiveAction_jobXML=settings
                                                                        |hiveAction_scriptLocation=/some/location
                                                                        |hiveAction_scriptName=script.hql
                                                                        |jobTracker=someNameNode
@@ -251,10 +251,10 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        </switch>
         |    </decision>
         |    <action name="hiveAction" cred="someCredentials">
-        |        <hive xmlns="uri:oozie:hive-action:0.2">
+        |        <hive xmlns="uri:oozie:hive-action:0.5">
         |            <job-tracker>${jobTracker}</job-tracker>
         |            <name-node>${nameNode}</name-node>
-        |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
+        |            <job-xml>${hiveAction_jobXML}</job-xml>
         |            <script>${hiveAction_scriptName}</script>
         |            <file>${hiveAction_scriptLocation}</file>
         |        </hive>
@@ -317,7 +317,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |errorEmail_body=yep
                                                                        |errorEmail_subject=hello
                                                                        |errorEmail_to=a@a.com
-                                                                       |hiveAction_hiveSettingsXML=settings
+                                                                       |hiveAction_jobXML=settings
                                                                        |hiveAction_scriptLocation=/some/location
                                                                        |hiveAction_scriptName=script.hql
                                                                        |jobTracker=someNameNode
@@ -438,10 +438,10 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        </switch>
         |    </decision>
         |    <action name="hiveAction" cred="someCredentials">
-        |        <hive xmlns="uri:oozie:hive-action:0.2">
+        |        <hive xmlns="uri:oozie:hive-action:0.5">
         |            <job-tracker>${jobTracker}</job-tracker>
         |            <name-node>${nameNode}</name-node>
-        |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
+        |            <job-xml>${hiveAction_jobXML}</job-xml>
         |            <script>${hiveAction_scriptName}</script>
         |            <file>${hiveAction_scriptLocation}</file>
         |        </hive>
@@ -504,7 +504,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |errorEmail_body=yep
                                                                        |errorEmail_subject=hello
                                                                        |errorEmail_to=a@a.com
-                                                                       |hiveAction_hiveSettingsXML=settings
+                                                                       |hiveAction_jobXML=settings
                                                                        |hiveAction_scriptLocation=/some/location
                                                                        |hiveAction_scriptName=script.hql
                                                                        |jobTracker=someNameNode

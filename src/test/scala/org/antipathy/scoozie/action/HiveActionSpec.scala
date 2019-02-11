@@ -15,10 +15,11 @@ class HiveActionSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val result = HiveAction(name = "SomeAction",
-                            hiveSettingsXML = "/path/to/settings.xml",
                             scriptName = "someScript.hql",
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq(),
+                            jobXmlOption = Some("/path/to/settings.xml"),
+                            files = Seq(),
                             prepareOption = None,
                             configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
@@ -26,7 +27,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXML}"}</job-xml>
           <script>{"${SomeAction_scriptName}"}</script>
           <file>{"${SomeAction_scriptLocation}"}</file>
         </hive>))
@@ -36,7 +37,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
           "${jobTracker}" -> "jobTracker",
           "${SomeAction_scriptLocation}" -> "/path/to/someScript.hql",
           "${SomeAction_scriptName}" -> "someScript.hql",
-          "${SomeAction_hiveSettingsXML}" -> "/path/to/settings.xml")
+          "${SomeAction_jobXML}" -> "/path/to/settings.xml")
     )
   }
 
@@ -45,7 +46,8 @@ class HiveActionSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val result = HiveAction(name = "SomeAction",
-                            hiveSettingsXML = "/path/to/settings.xml",
+                            jobXmlOption = Some("/path/to/settings.xml"),
+                            files = Seq(),
                             scriptName = "someScript.hql",
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq("tableName=\"SomeTable\"", "date=\"2019-01-13\""),
@@ -56,7 +58,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXML}"}</job-xml>
           <script>{"${SomeAction_scriptName}"}</script>
           <param>{"${SomeAction_parameter0}"}</param>
           <param>{"${SomeAction_parameter1}"}</param>
@@ -70,7 +72,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
           "${SomeAction_scriptLocation}" -> "/path/to/someScript.hql",
           "${SomeAction_scriptName}" -> "someScript.hql",
           "${SomeAction_parameter1}" -> "date=\"2019-01-13\"",
-          "${SomeAction_hiveSettingsXML}" -> "/path/to/settings.xml")
+          "${SomeAction_jobXML}" -> "/path/to/settings.xml")
     )
   }
 
@@ -79,7 +81,8 @@ class HiveActionSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val result = HiveAction(name = "SomeAction",
-                            hiveSettingsXML = "/path/to/settings.xml",
+                            jobXmlOption = Some("/path/to/settings.xml"),
+                            files = Seq(),
                             scriptName = "someScript.hql",
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq(),
@@ -92,7 +95,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
-            <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
+            <job-xml>{"${SomeAction_jobXML}"}</job-xml>
             <configuration>
               <property>
                 <name>someProp1</name>
@@ -113,7 +116,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
           "${jobTracker}" -> "jobTracker",
           "${SomeAction_scriptLocation}" -> "/path/to/someScript.hql",
           "${SomeAction_scriptName}" -> "someScript.hql",
-          "${SomeAction_hiveSettingsXML}" -> "/path/to/settings.xml",
+          "${SomeAction_jobXML}" -> "/path/to/settings.xml",
           "${SomeAction_property0}" -> "someValue2")
     )
   }
@@ -123,7 +126,8 @@ class HiveActionSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val result = HiveAction(name = "SomeAction",
-                            hiveSettingsXML = "/path/to/settings.xml",
+                            jobXmlOption = Some("/path/to/settings.xml"),
+                            files = Seq(),
                             scriptName = "someScript.hql",
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq("tableName=\"SomeTable\"", "date=\"2019-01-13\""),
@@ -136,7 +140,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_hiveSettingsXML}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXML}"}</job-xml>
           <configuration>
             <property>
               <name>someProp1</name>
@@ -161,7 +165,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
           "${SomeAction_scriptLocation}" -> "/path/to/someScript.hql",
           "${SomeAction_scriptName}" -> "someScript.hql",
           "${SomeAction_parameter1}" -> "date=\"2019-01-13\"",
-          "${SomeAction_hiveSettingsXML}" -> "/path/to/settings.xml",
+          "${SomeAction_jobXML}" -> "/path/to/settings.xml",
           "${SomeAction_property0}" -> "someValue2")
     )
   }

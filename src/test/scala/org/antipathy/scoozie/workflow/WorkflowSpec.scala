@@ -67,7 +67,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -136,7 +137,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <hive xmlns="uri:oozie:hive-action:0.2">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${hiveAction_hiveSettingsXML}"}</job-xml>
+              <job-xml>{"${hiveAction_jobXML}"}</job-xml>
               <script>{"${hiveAction_scriptName}"}</script>
               <file>{"${hiveAction_scriptLocation}"}</file>
             </hive>
@@ -174,7 +175,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
     workflow.jobProperties should be("""emailAction_body=message body
                                        |emailAction_subject=message subject
                                        |emailAction_to=a@a.com,b@b.com
-                                       |hiveAction_hiveSettingsXML=/path/to/settings.xml
+                                       |hiveAction_jobXML=/path/to/settings.xml
                                        |hiveAction_scriptLocation=/path/to/someScript.hql
                                        |hiveAction_scriptName=someScript.hql
                                        |jobTracker=jobTracker
@@ -247,7 +248,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -292,7 +294,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <hive xmlns="uri:oozie:hive-action:0.2">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${hiveAction_hiveSettingsXML}"}</job-xml>
+              <job-xml>{"${hiveAction_jobXML}"}</job-xml>
               <script>{"${hiveAction_scriptName}"}</script>
               <file>{"${hiveAction_scriptLocation}"}</file>
             </hive>
@@ -344,7 +346,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
     workflow.jobProperties should be("""emailAction_body=message body
                                        |emailAction_subject=message subject
                                        |emailAction_to=a@a.com,b@b.com
-                                       |hiveAction_hiveSettingsXML=/path/to/settings.xml
+                                       |hiveAction_jobXML=/path/to/settings.xml
                                        |hiveAction_scriptLocation=/path/to/someScript.hql
                                        |hiveAction_scriptName=someScript.hql
                                        |jobTracker=jobTracker

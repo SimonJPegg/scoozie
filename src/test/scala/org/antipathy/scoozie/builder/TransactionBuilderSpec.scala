@@ -141,10 +141,11 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |      {
                          |        name:"hiveAction"
                          |        type: "hive"
-                         |        hive-settings-xml: "settings"
+                         |        job-xml: "settings"
                          |        script-name: "script.hql"
                          |        script-location: "/some/location"
                          |        parameters: []
+                         |        files: []
                          |        configuration: {}
                          |        ok-to: "mainJoin"
                          |        error-to: "errorEmail"
@@ -273,10 +274,11 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |      {
                          |        name:"hiveAction"
                          |        type: "hive"
-                         |        hive-settings-xml: "settings"
+                         |        job-xml: "settings"
                          |        script-name: "script.hql"
                          |        script-location: "/some/location"
                          |        parameters: []
+                         |        files: []
                          |        configuration: {}
                          |        ok-to: "shellAction"
                          |        error-to: "errorEmail"
@@ -471,10 +473,11 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |      {
                          |        name:"hiveAction"
                          |        type: "hive"
-                         |        hive-settings-xml: "settings"
+                         |        job-xml: "settings"
                          |        script-name: "script.hql"
                          |        script-location: "/some/location"
                          |        parameters: []
+                         |        files: []
                          |        configuration: {}
                          |        ok-to: "shellAction"
                          |        error-to: "errorEmail"

@@ -71,33 +71,43 @@ object Actions {
   /**
     * Oozie filesystem action
     * @param name the name of the action
-    * @param jobXMLOption optional job.xml path
+    * @param jobXmlOption optional job.xml path
     * @param step the steps to perform
     * @param configuration additional config for this action
     */
-  def fs(name: String, jobXMLOption: Option[String], configuration: Configuration, step: FileSystemAction*): Node =
-    FsAction(name, Seq(step: _*), jobXMLOption, configuration)
+  def fs(name: String, jobXmlOption: Option[String], configuration: Configuration, step: FileSystemAction*): Node =
+    FsAction(name, Seq(step: _*), jobXmlOption, configuration)
 
   /**
-    * Oozie Hive action
+    * Oozie Hive action definition
     * @param name the name of the action
-    * @param hiveSettingsXML the path to the hive settings XML
     * @param scriptName the name of the hive script
     * @param scriptLocation the path to the hive script
     * @param parameters a collection of parameters to the hive script
+    * @param jobXmlOption optional job.xml path
+    * @param files additional files to pass to job
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def hive(name: String,
-           configuration: Configuration,
-           yarnConfig: YarnConfig,
-           prepareOption: Option[ActionPrepare] = None,
-           hiveSettingsXML: String,
            scriptName: String,
            scriptLocation: String,
-           parameters: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
-    HiveAction(name, hiveSettingsXML, scriptName, scriptLocation, parameters, configuration, yarnConfig, prepareOption)
+           parameters: Seq[String],
+           jobXmlOption: Option[String],
+           files: Seq[String],
+           configuration: Configuration,
+           yarnConfig: YarnConfig,
+           prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+    HiveAction(name,
+               scriptName,
+               scriptLocation,
+               parameters,
+               jobXmlOption,
+               files,
+               configuration,
+               yarnConfig,
+               prepareOption)
 
   /**
     * Oozie Java action definition

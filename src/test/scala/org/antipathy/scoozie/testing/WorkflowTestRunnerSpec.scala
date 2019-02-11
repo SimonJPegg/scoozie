@@ -149,7 +149,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -225,7 +226,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -316,7 +318,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -327,7 +330,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -392,7 +396,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -435,7 +440,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -532,7 +538,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -543,7 +550,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -598,7 +606,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -607,7 +616,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -662,7 +672,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
     val hiveAction3 = HiveAction(name = "hiveAction3",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -671,7 +682,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -680,7 +692,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -731,7 +744,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
     val hiveAction3 = HiveAction(name = "hiveAction3",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -740,7 +754,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -749,7 +764,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -801,7 +817,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
     val hiveAction3 = HiveAction(name = "hiveAction3",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -810,7 +827,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
-                                 hiveSettingsXML = "/path/to/settings.xml",
+                                 jobXmlOption = Some("/path/to/settings.xml"),
+                                 files = Seq(),
                                  scriptName = "someScript.hql",
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
@@ -819,7 +837,8 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
