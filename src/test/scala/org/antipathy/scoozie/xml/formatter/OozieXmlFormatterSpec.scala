@@ -129,7 +129,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <hive xmlns="uri:oozie:hive-action:0.5">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
-                       |            <job-xml>${hiveAction_jobXML}</job-xml>
+                       |            <job-xml>${hiveAction_jobXml}</job-xml>
                        |            <script>${hiveAction_scriptName}</script>
                        |            <file>${hiveAction_scriptLocation}</file>
                        |        </hive>

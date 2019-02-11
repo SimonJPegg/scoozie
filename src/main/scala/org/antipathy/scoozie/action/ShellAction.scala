@@ -65,7 +65,7 @@ final class ShellAction(override val name: String,
     Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++
     commandLineArgsProperties ++
     envVarsProperties ++
-    mappedConfigAndProperties._2
+    mappedConfigAndProperties._2 ++ jobXmlProperty ++ filesProperties
 
   /**
     * The XML namespace for an action element
@@ -85,7 +85,7 @@ final class ShellAction(override val name: String,
         }
       }
       {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty}</job-xml>
+          <job-xml>{jobXmlProperty.keys}</job-xml>
         }
       }
       {if (mappedConfig.configProperties.nonEmpty) {

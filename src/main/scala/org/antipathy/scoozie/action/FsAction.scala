@@ -26,7 +26,7 @@ class FsAction(override val name: String,
                configuration: Configuration)
     extends Action {
 
-  private val jobXMLProperty = formatProperty(s"${name}_jobxml")
+  private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
   private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
@@ -60,16 +60,14 @@ class FsAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    if (jobXmlOption.isDefined) {
-      Map(jobXMLProperty -> jobXmlOption.get)
-    } else { Map() } ++ namedActionsAnProps.flatMap(_._2).toMap
+    jobXmlProperty ++ namedActionsAnProps.flatMap(_._2).toMap
 
   /**
     * The XML for this node
     */
   override def toXML: Elem = <fs>
     {if (jobXmlOption.isDefined) {
-        <job-xml>{jobXMLProperty}</job-xml>
+      <job-xml>{jobXmlProperty.keys}</job-xml>
       }
     }
     {namedActionsAnProps.map(_._1.toXML)}

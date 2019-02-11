@@ -19,7 +19,7 @@ class PigActionSpec extends FlatSpec with Matchers {
                            params = Seq(),
                            arguments = Seq(),
                            files = Seq(),
-                           jobXmlOption = None,
+                           jobXmlOption = Some("/path/to/job.xml"),
                            configuration = Scoozie.Configuration.emptyConfiguration,
                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
                            prepareOption = None).action
@@ -27,10 +27,13 @@ class PigActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
+          <job-xml>{"${pigAction_jobXml}"}</job-xml>
           <script>{"${pigAction_script}"}</script>
         </pig>))
 
-    result.properties should be(Map("${pigAction_script}" -> "/path/to/script"))
+    result.properties should be(
+      Map("${pigAction_script}" -> "/path/to/script", "${pigAction_jobXml}" -> "/path/to/job.xml")
+    )
   }
 
   it should "generate valid XML with script arguments" in {

@@ -78,7 +78,7 @@ class PigAction(override val name: String,
         }
       }
       {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty}</job-xml>
+          <job-xml>{jobXmlProperty.keys}</job-xml>
         }
       }
 

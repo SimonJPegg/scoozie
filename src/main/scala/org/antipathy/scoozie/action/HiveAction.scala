@@ -34,7 +34,7 @@ final class HiveAction(override val name: String,
                        prepareOption: Option[Prepare])
     extends Action {
 
-  private val jobXMLProperty = formatProperty(s"${name}_jobXML")
+  private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
   private val parametersProperties =
@@ -51,13 +51,11 @@ final class HiveAction(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  override def properties: Map[String, String] = {
-
-    val jobXML = if (jobXmlOption.isDefined) {
-      Map(jobXMLProperty -> jobXmlOption.get)
-    } else { Map() }
-    yarnConfig.properties ++ Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++ parametersProperties ++ mappedConfigAndProperties._2 ++ filesProperties ++ jobXML
-  }
+  override def properties: Map[String, String] =
+    jobXmlProperty ++
+    yarnConfig.properties ++
+    Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++
+    prepareProperties ++ parametersProperties ++ mappedConfigAndProperties._2 ++ filesProperties
 
   /**
     * The XML namespace for an action element
@@ -76,7 +74,7 @@ final class HiveAction(override val name: String,
           }
         }
         {if (jobXmlOption.isDefined) {
-              <job-xml>{jobXMLProperty}</job-xml>
+              <job-xml>{jobXmlProperty.keys}</job-xml>
             }
         }
         {if (mappedConfig.configProperties.nonEmpty) {

@@ -43,6 +43,8 @@ final class JavaAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
   private val prepareProperties =
@@ -59,7 +61,7 @@ final class JavaAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties._2
+    mappedConfigAndProperties._2 ++ jobXmlProperty
 
   /**
     * The XML namespace for an action element
@@ -75,6 +77,10 @@ final class JavaAction(override val name: String,
         {yarnConfig.nameNodeXML}
         {if (prepareOptionMapped.isDefined) {
             prepareOptionMapped.get.toXML
+          }
+        }
+        {if (jobXmlOption.isDefined) {
+            <job-xml>{jobXmlProperty.keys}</job-xml>
           }
         }
         {if (mappedConfig.configProperties.nonEmpty) {
