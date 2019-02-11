@@ -1,15 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
-import org.antipathy.scoozie.exception.ConfigurationMissingException
+import org.antipathy.scoozie.action.prepare.Prepare
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
 import org.antipathy.scoozie.configuration._
+import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie Hive action definition
@@ -27,26 +26,21 @@ final class HiveAction(override val name: String,
                        scriptName: String,
                        scriptLocation: String,
                        parameters: Seq[String],
-                       jobXmlOption: Option[String],
+                       override val jobXmlOption: Option[String],
                        files: Seq[String],
-                       configuration: Configuration,
+                       override val configuration: Configuration,
                        yarnConfig: YarnConfig,
-                       prepareOption: Option[Prepare])
-    extends Action {
+                       override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
-  private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
   private val parametersProperties =
     buildSequenceProperties(name, "parameter", parameters)
   private val filesProperties = buildSequenceProperties(name, "file", files)
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
 
   /**
     * Get the Oozie properties for this object
@@ -55,7 +49,7 @@ final class HiveAction(override val name: String,
     jobXmlProperty ++
     yarnConfig.properties ++
     Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++
-    prepareProperties ++ parametersProperties ++ mappedConfigAndProperties._2 ++ filesProperties
+    prepareProperties ++ parametersProperties ++ configurationProperties.properties ++ filesProperties
 
   /**
     * The XML namespace for an action element
@@ -69,22 +63,13 @@ final class HiveAction(override val name: String,
     <hive xmlns={xmlns.orNull}>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
-        {if (prepareOptionMapped.isDefined) {
-            prepareOptionMapped.get.toXML
-          }
-        }
-        {if (jobXmlOption.isDefined) {
-              <job-xml>{jobXmlProperty.keys}</job-xml>
-            }
-        }
-        {if (mappedConfig.configProperties.nonEmpty) {
-            mappedConfig.toXML
-          }
-        }
+        {prepareXML}
+        {jobXml}
+        {configXML}
         <script>{scriptNameProperty}</script>
-        {parametersProperties.map(p => Param(p._1).toXML)}
+        {parametersProperties.keys.map(p => Param(p).toXML)}
         <file>{scriptLocationProperty}</file>
-        {filesProperties.map(f => File(f._1).toXML)}
+        {filesProperties.keys.map(f => File(f).toXML)}
       </hive>
 }
 
@@ -121,20 +106,17 @@ object HiveAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      HiveAction(name = config.getString("name"),
-                 scriptName = config.getString("script-name"),
-                 scriptLocation = config.getString("script-location"),
-                 parameters = Seq(config.getStringList("parameters").asScala: _*),
-                 jobXmlOption = if (config.hasPath("job-xml")) {
-                   Some(config.getString("job-xml"))
-                 } else None,
-                 files = Seq(config.getStringList("files").asScala: _*),
+    MonadBuilder.tryOperation[Node] { () =>
+      HiveAction(name = config.getString(HoconConstants.name),
+                 scriptName = config.getString(HoconConstants.scriptName),
+                 scriptLocation = config.getString(HoconConstants.scriptLocation),
+                 parameters = Seq(config.getStringList(HoconConstants.parameters).asScala: _*),
+                 jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
+                 files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
                  prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

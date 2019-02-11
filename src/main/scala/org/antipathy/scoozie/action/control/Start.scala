@@ -1,8 +1,9 @@
 package org.antipathy.scoozie.action.control
 
 import org.antipathy.scoozie.action.{Action, Node}
-import scala.xml.Elem
+
 import scala.collection.immutable.Map
+import scala.xml.Elem
 
 /**
   * oozie Start control node

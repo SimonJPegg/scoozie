@@ -1,7 +1,8 @@
 package org.antipathy.scoozie.action.prepare
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class PrepareSpec extends FlatSpec with Matchers {

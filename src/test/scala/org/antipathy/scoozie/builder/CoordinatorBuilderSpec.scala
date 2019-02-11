@@ -1,7 +1,8 @@
 package org.antipathy.scoozie.builder
 
-import org.scalatest.{FlatSpec, Matchers}
 import com.typesafe.config.ConfigFactory
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class CoordinatorBuilderSpec extends FlatSpec with Matchers {

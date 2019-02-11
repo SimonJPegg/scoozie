@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.configuration
 
 import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class ConfigurationSpec extends FlatSpec with Matchers {

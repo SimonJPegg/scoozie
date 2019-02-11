@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.properties
 
 /**
@@ -10,3 +11,4 @@ private[scoozie] trait JobProperties {
     */
   def jobProperties: String
 }
+// $COVERAGE-ON$

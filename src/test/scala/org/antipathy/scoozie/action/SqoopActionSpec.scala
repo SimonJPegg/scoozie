@@ -1,8 +1,9 @@
 package org.antipathy.scoozie.action
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.configuration.Credentials
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class SqoopActionSpec extends FlatSpec with Matchers {
@@ -19,7 +20,7 @@ class SqoopActionSpec extends FlatSpec with Matchers {
                    files = Seq("one", "two"),
                    jobXmlOption = None,
                    configuration = Scoozie.Configuration.configuration(Map("key" -> "value")),
-                   yarnConfig = Scoozie.Configuration.yarnConfiguration("someJT", "someNN"),
+                   yarnConfig = Scoozie.Configuration.yarnConfig("someJT", "someNN"),
                    prepareOption = None)
       .action
 
@@ -55,7 +56,7 @@ class SqoopActionSpec extends FlatSpec with Matchers {
                    files = Seq("one", "two"),
                    jobXmlOption = None,
                    configuration = Scoozie.Configuration.configuration(Map("key" -> "value")),
-                   yarnConfig = Scoozie.Configuration.yarnConfiguration("someJT", "someNN"),
+                   yarnConfig = Scoozie.Configuration.yarnConfig("someJT", "someNN"),
                    prepareOption = None)
       .action
 

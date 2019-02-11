@@ -12,12 +12,13 @@ private[scoozie] class ResourceResolver extends LSResourceResolver {
   /**
     * handle schema import and include statements
     */
-  override def resolveResource(`type`: String,
+  override def resolveResource(typ: String,
                                namespaceURI: String,
                                publicId: String,
                                systemId: String,
                                baseURI: String): LSInput = {
-    val nonNullSystemId = if (systemId == null) {
+    import org.antipathy.scoozie.Scoozie
+    val nonNullSystemId = if (systemId == Scoozie.Null) {
       FilenameUtils.getName(baseURI)
     } else {
       systemId

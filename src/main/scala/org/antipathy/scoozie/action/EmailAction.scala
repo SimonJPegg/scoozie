@@ -1,11 +1,12 @@
 package org.antipathy.scoozie.action
 
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Email action definition
@@ -28,7 +29,7 @@ final class EmailAction(override val name: String,
   private val subjectProperty = formatProperty(s"${name}_subject")
   private val bodyProperty = formatProperty(s"${name}_body")
   private val ccProperty = formatProperty(s"${name}_cc")
-  private val contentTypeProperty = formatProperty(s"${name}_contentType")
+  private val contentTypeProperty = buildStringOptionProperty(name, "contentType", contentTypeOption)
 
   /**
     * The XML namespace for an action element
@@ -42,10 +43,7 @@ final class EmailAction(override val name: String,
     Map(toProperty -> to.mkString(","), subjectProperty -> subject, bodyProperty -> body) ++
     (if (cc.nonEmpty) {
        Map(ccProperty -> cc.mkString(","))
-     } else { Map() }) ++
-    (if (contentTypeOption.isDefined) {
-       Map(contentTypeProperty -> contentTypeOption.get)
-     } else { Map() })
+     } else { Map() }) ++ contentTypeProperty
 
   /**
     * Does this action require yarn credentials in Kerberos environments
@@ -64,7 +62,7 @@ final class EmailAction(override val name: String,
         <subject>{subjectProperty}</subject>
         <body>{bodyProperty}</body>
         {if (contentTypeOption.isDefined) {
-            <content_type>{contentTypeProperty}</content_type>
+            <content_type>{contentTypeProperty.keys}</content_type>
           }
         }
       </email>
@@ -90,17 +88,14 @@ object EmailAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    try {
-      EmailAction(to = Seq(config.getStringList("to").asScala: _*),
-                  cc = Seq(config.getStringList("cc").asScala: _*),
-                  name = config.getString("name"),
-                  subject = config.getString("subject"),
-                  body = config.getString("body"),
-                  contentTypeOption = if (config.hasPath("content-type")) {
-                    Some(config.getString("content-type"))
-                  } else None)
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    MonadBuilder.tryOperation { () =>
+      EmailAction(to = Seq(config.getStringList(HoconConstants.to).asScala: _*),
+                  cc = Seq(config.getStringList(HoconConstants.cc).asScala: _*),
+                  name = config.getString(HoconConstants.name),
+                  subject = config.getString(HoconConstants.subject),
+                  body = config.getString(HoconConstants.body),
+                  contentTypeOption = ConfigurationBuilder.optionalString(config, HoconConstants.contentType))
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

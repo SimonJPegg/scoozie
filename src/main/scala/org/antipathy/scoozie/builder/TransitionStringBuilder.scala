@@ -10,5 +10,6 @@ object TransitionStringBuilder {
   /**
     * Get the transition string for this workflow
     */
-  def build(config: Config): String = config.getString("validate.transitions").replace("  ", " ")
+  def build(config: Config): String =
+    config.getString(s"${HoconConstants.validate}.${HoconConstants.transitions}").replace("  ", " ")
 }

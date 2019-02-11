@@ -5,9 +5,10 @@ import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.xml.XmlSerializable
+
 import scala.collection.immutable._
-import scala.xml.Elem
 import scala.language.existentials
+import scala.xml.Elem
 
 /**
   * Oozie coOrdinator definition
@@ -31,7 +32,9 @@ case class Coordinator(override val name: String,
     with OozieProperties
     with JobProperties {
 
-  private val (mappedConfig, mappedProperties) = configuration.withActionProperties(name)
+  //private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
+
+  private val mappedConfigAndproperties = configuration.withActionProperties(name)
 
   private val frequencyProperty = formatProperty(s"${name}_frequency")
   private val startProperty = formatProperty(s"${name}_start")
@@ -48,7 +51,7 @@ case class Coordinator(override val name: String,
         endProperty -> end,
         timezoneProperty -> timezone,
         workflowPathProperty -> workflow.path) ++
-    mappedProperties
+    mappedConfigAndproperties.properties
 
   /**
     * Get the job properties
@@ -73,8 +76,8 @@ case class Coordinator(override val name: String,
       <action>
         <workflow>
           <app-path>{workflowPathProperty}</app-path>
-          {if (mappedConfig.configProperties.nonEmpty) {
-              mappedConfig.toXML
+          {if (mappedConfigAndproperties.mappedType.configProperties.nonEmpty) {
+            mappedConfigAndproperties.mappedType.toXML
             }
           }
         </workflow>
@@ -82,4 +85,3 @@ case class Coordinator(override val name: String,
     </coordinator-app>
 
 }
-object Coordinator {}

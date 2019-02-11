@@ -1,11 +1,12 @@
 package org.antipathy.scoozie.coordinator
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
-import scala.collection.immutable._
-import org.antipathy.scoozie.action.control.Start
-import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action.control.Start
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
+import org.antipathy.scoozie.workflow.Workflow
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class CoordinatorSpec extends FlatSpec with Matchers {
 
@@ -19,7 +20,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
                             jobXmlOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "", nameNode = ""))
 
     val result = Coordinator(name = "SomeCoOrd",
@@ -28,7 +29,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                              end = "2009-01-04T08:00Z",
                              timezone = "America/Los_Angeles",
                              workflow = workflow,
-                             configuration = Scoozie.Configuration.emptyConfiguration).toXML
+                             configuration = Scoozie.Configuration.emptyConfig).toXML
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<coordinator-app
         name="SomeCoOrd"

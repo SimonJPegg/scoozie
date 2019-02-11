@@ -1,8 +1,8 @@
 package org.antipathy.scoozie
 
-import org.antipathy.scoozie.properties.JobProperties
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.io.ArtefactWriter
+import org.antipathy.scoozie.properties.JobProperties
 
 /**
   * Trait that may be extended by clients of the library

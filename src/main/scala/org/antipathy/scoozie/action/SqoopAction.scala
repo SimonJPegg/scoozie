@@ -1,17 +1,14 @@
 package org.antipathy.scoozie.action
 
+import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Configuration, YarnConfig}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
+import org.antipathy.scoozie.configuration._
+import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
 import scala.collection.immutable._
 import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Arg
-import org.antipathy.scoozie.configuration.File
-import org.antipathy.scoozie.configuration.Credentials
-import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
-import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 /**
   * Oozie Sqoop action definition
@@ -28,23 +25,18 @@ class SqoopAction(override val name: String,
                   command: Option[String],
                   args: Seq[String],
                   files: Seq[String],
-                  jobXmlOption: Option[String],
-                  configuration: Configuration,
+                  override val jobXmlOption: Option[String],
+                  override val configuration: Configuration,
                   yarnConfig: YarnConfig,
-                  prepareOption: Option[Prepare])
-    extends Action {
-
-  <xs:element name="job-xml" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+                  override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val argsProperties = buildSequenceProperties(name, "arguments", args)
   private val filesProperties = buildSequenceProperties(name, "files", files)
   private val commandProperty = buildStringOptionProperty(name, "command", command)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val configurationProperties = configuration.withActionProperties(name)
-  private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
 
   /**
     * Get the Oozie properties for this object
@@ -52,7 +44,7 @@ class SqoopAction(override val name: String,
   override def properties: Map[String, String] =
     argsProperties ++
     filesProperties ++
-    configurationProperties._2 ++
+    configurationProperties.properties ++
     prepareProperties ++
     jobXmlProperty ++
     commandProperty
@@ -69,18 +61,9 @@ class SqoopAction(override val name: String,
     <sqoop xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-        prepareOptionMapped.get.toXML
-        }
-      }
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-      {if (configurationProperties._1.configProperties.nonEmpty) {
-          configurationProperties._1.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       { if (command.isDefined) {
           <command>{commandProperty.keys}</command>
         } else {
@@ -113,21 +96,19 @@ object SqoopAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      SqoopAction(name = config.getString("name"),
-                  command = if (config.hasPath("command")) Some(config.getString("command")) else None,
+    MonadBuilder.tryOperation[Node] { () =>
+      SqoopAction(name = config.getString(HoconConstants.name),
+                  command = ConfigurationBuilder.optionalString(config, HoconConstants.command),
                   args =
-                    if (config.hasPath("command")) Seq(config.getStringList("command-line-arguments").asScala: _*)
+                    if (config.hasPath(HoconConstants.command))
+                      Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*)
                     else Seq(),
-                  files = Seq(config.getStringList("files").asScala: _*),
-                  jobXmlOption = if (config.hasPath("job-xml")) {
-                    Some(config.getString("job-xml"))
-                  } else None,
+                  files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                  jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
                   prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

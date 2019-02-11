@@ -45,7 +45,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -63,7 +63,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -75,7 +75,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -86,7 +86,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                             path = "",
                             transitions = Start().okTo(fork),
                             jobXmlOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = yarnConfig)
 
     val formatter = new OozieXmlFormatter(width = 80, step = 4)
