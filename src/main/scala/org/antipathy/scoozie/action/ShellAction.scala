@@ -149,7 +149,9 @@ object ShellAction {
                   commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
                   envVars = Seq(config.getStringList("environment-variables").asScala: _*),
                   files = Seq(config.getStringList("files").asScala: _*),
-                  captureOutput = config.hasPath("capture-output"),
+                  captureOutput = if (config.hasPath("capture-output")) {
+                    config.getBoolean("capture-output")
+                  } else false,
                   jobXmlOption = if (config.hasPath("job-xml")) {
                     Some(config.getString("job-xml"))
                   } else None,

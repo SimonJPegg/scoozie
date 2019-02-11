@@ -186,7 +186,6 @@ validate {
 ### Available actions
 
 The actions listed below are currently available via the hocon API.  Unless otherwise specified all properties are required.
-Where `capture-output` is set, it is `true`.
 
 Most actions allow specifying a `prepare` and a `configuration` property, these are optional, but should be specified in a key value format, e.g:
 

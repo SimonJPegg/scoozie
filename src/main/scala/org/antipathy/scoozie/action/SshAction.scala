@@ -77,7 +77,9 @@ object SshAction {
       SshAction(name = config.getString("name"),
                 host = config.getString("host"),
                 command = config.getString("command"),
-                captureOutput = config.hasPath("capture-output"),
+                captureOutput = if (config.hasPath("capture-output")) {
+                  config.getBoolean("capture-output")
+                } else false,
                 args = Seq(config.getStringList("command-line-arguments").asScala: _*))
     } catch {
       case c: ConfigException =>
