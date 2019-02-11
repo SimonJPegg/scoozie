@@ -2,7 +2,7 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -112,18 +112,19 @@ object PigAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      PigAction(name = config.getString("name"),
-                script = config.getString("script"),
-                params = Seq(config.getStringList("params").asScala: _*),
-                arguments = Seq(config.getStringList("arguments").asScala: _*),
-                files = Seq(config.getStringList("files").asScala: _*),
-                jobXmlOption = if (config.hasPath("job-xml")) Some(config.getString("job-xml")) else None,
+      PigAction(name = config.getString(HoconConstants.name),
+                script = config.getString(HoconConstants.script),
+                params = Seq(config.getStringList(HoconConstants.params).asScala: _*),
+                arguments = Seq(config.getStringList(HoconConstants.arguments).asScala: _*),
+                files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                jobXmlOption =
+                  if (config.hasPath(HoconConstants.jobXml)) Some(config.getString(HoconConstants.jobXml)) else None,
                 configuration = ConfigurationBuilder.buildConfiguration(config),
                 yarnConfig,
                 prepareOption = PrepareBuilder.build(config))
     } match {
       case Success(value) => value
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

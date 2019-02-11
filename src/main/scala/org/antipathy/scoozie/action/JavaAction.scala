@@ -2,7 +2,7 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -135,17 +135,17 @@ object JavaAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      JavaAction(name = config.getString("name"),
-                 mainClass = config.getString("main-class"),
-                 javaJar = config.getString("java-jar"),
-                 javaOptions = config.getString("java-options"),
-                 commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
-                 files = Seq(config.getStringList("files").asScala: _*),
-                 captureOutput = if (config.hasPath("capture-output")) {
-                   config.getBoolean("capture-output")
-                 } else false,
-                 jobXmlOption = if (config.hasPath("job-xml")) {
-                   Some(config.getString("job-xml"))
+      JavaAction(name = config.getString(HoconConstants.name),
+                 mainClass = config.getString(HoconConstants.mainClass),
+                 javaJar = config.getString(HoconConstants.javaJar),
+                 javaOptions = config.getString(HoconConstants.javaOptions),
+                 commandLineArgs = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*),
+                 files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                 captureOutput = if (config.hasPath(HoconConstants.captureOutput)) {
+                   config.getBoolean(HoconConstants.captureOutput)
+                 } else { false },
+                 jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
+                   Some(config.getString(HoconConstants.jobXml))
                  } else None,
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
@@ -153,6 +153,6 @@ object JavaAction {
     } match {
       case Success(node) => node
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

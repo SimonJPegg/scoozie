@@ -2,7 +2,7 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
 import org.antipathy.scoozie.configuration.{Arg, Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -91,15 +91,16 @@ object DistCPAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      DistCPAction(name = config.getString("name"),
-                   arguments = Seq(config.getStringList("arguments").asScala: _*),
-                   javaOptions = config.getString("java-options"),
+
+      DistCPAction(name = config.getString(HoconConstants.name),
+                   arguments = Seq(config.getStringList(HoconConstants.arguments).asScala: _*),
+                   javaOptions = config.getString(HoconConstants.javaOptions),
                    configuration = ConfigurationBuilder.buildConfiguration(config),
                    yarnConfig = yarnConfig,
                    prepareOption = PrepareBuilder.build(config))
     } match {
       case Success(node) => node
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

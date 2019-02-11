@@ -1,7 +1,7 @@
 package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.ConfigurationBuilder
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants}
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -76,14 +76,14 @@ object SubWorkflowAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      SubWorkflowAction(name = config.getString("name"),
-                        applicationPath = config.getString("application-path"),
-                        propagateConfiguration = config.hasPath("propagate-configuration"),
+      SubWorkflowAction(name = config.getString(HoconConstants.name),
+                        applicationPath = config.getString(HoconConstants.applicationPath),
+                        propagateConfiguration = config.hasPath(HoconConstants.propagateConfiguration),
                         configuration = ConfigurationBuilder.buildConfiguration(config),
                         yarnConfig = yarnConfig)
     } match {
       case Success(value) => value
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

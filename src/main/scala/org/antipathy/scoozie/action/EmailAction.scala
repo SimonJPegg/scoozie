@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.HoconConstants
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
@@ -89,17 +90,17 @@ object EmailAction {
     */
   def apply(config: Config): Node =
     Try {
-      EmailAction(to = Seq(config.getStringList("to").asScala: _*),
-                  cc = Seq(config.getStringList("cc").asScala: _*),
-                  name = config.getString("name"),
-                  subject = config.getString("subject"),
-                  body = config.getString("body"),
-                  contentTypeOption = if (config.hasPath("content-type")) {
-                    Some(config.getString("content-type"))
+      EmailAction(to = Seq(config.getStringList(HoconConstants.to).asScala: _*),
+                  cc = Seq(config.getStringList(HoconConstants.cc).asScala: _*),
+                  name = config.getString(HoconConstants.name),
+                  subject = config.getString(HoconConstants.subject),
+                  body = config.getString(HoconConstants.body),
+                  contentTypeOption = if (config.hasPath(HoconConstants.contentType)) {
+                    Some(config.getString(HoconConstants.contentType))
                   } else None)
     } match {
       case Success(value) => value
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

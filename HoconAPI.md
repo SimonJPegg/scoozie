@@ -13,9 +13,9 @@ artefacts.saveToPath(Paths.get("/some/output/directory/"))
 
 Depending on the content of the configuration, this will output the following files:
 
-  * workflow.xml
-  * coordinator.xml
-  * job.properties (if a coordinator is specified, this will contain properties for both of the above files)
+* workflow.xml
+* coordinator.xml
+* job.properties (if a coordinator is specified, this will contain properties for both of the above files)
 
 Properties in the workflow and coordinator will be substituted for generated variable names and values contained in the `job.properties`. 
 

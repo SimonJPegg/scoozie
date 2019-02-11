@@ -2,7 +2,7 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
 import org.antipathy.scoozie.configuration.{Credentials, _}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -38,8 +38,6 @@ final class ShellAction(override val name: String,
                         yarnConfig: YarnConfig,
                         prepareOption: Option[Prepare])
     extends Action {
-
-  <xs:element name="job-xml" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
@@ -140,17 +138,17 @@ object ShellAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      ShellAction(name = config.getString("name"),
-                  scriptName = config.getString("script-name"),
-                  scriptLocation = config.getString("script-location"),
-                  commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
-                  envVars = Seq(config.getStringList("environment-variables").asScala: _*),
-                  files = Seq(config.getStringList("files").asScala: _*),
-                  captureOutput = if (config.hasPath("capture-output")) {
-                    config.getBoolean("capture-output")
+      ShellAction(name = config.getString(HoconConstants.name),
+                  scriptName = config.getString(HoconConstants.scriptName),
+                  scriptLocation = config.getString(HoconConstants.scriptLocation),
+                  commandLineArgs = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*),
+                  envVars = Seq(config.getStringList(HoconConstants.environmentVariables).asScala: _*),
+                  files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                  captureOutput = if (config.hasPath(HoconConstants.captureOutput)) {
+                    config.getBoolean(HoconConstants.captureOutput)
                   } else false,
-                  jobXmlOption = if (config.hasPath("job-xml")) {
-                    Some(config.getString("job-xml"))
+                  jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
+                    Some(config.getString(HoconConstants.jobXml))
                   } else None,
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig,
@@ -158,6 +156,6 @@ object ShellAction {
     } match {
       case Success(value) => value
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

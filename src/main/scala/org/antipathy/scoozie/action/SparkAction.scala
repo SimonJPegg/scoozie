@@ -2,7 +2,7 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -151,17 +151,17 @@ object SparkAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      SparkAction(name = config.getString("name"),
-                  sparkMasterURL = config.getString("spark-master-url"),
-                  sparkMode = config.getString("spark-mode"),
-                  sparkJobName = config.getString("spark-job-name"),
-                  mainClass = config.getString("main-class"),
-                  sparkJar = config.getString("spark-jar"),
-                  sparkOptions = config.getString("spark-options"),
-                  commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
-                  files = Seq(config.getStringList("files").asScala: _*),
-                  jobXmlOption = if (config.hasPath("job-xml")) {
-                    Some(config.getString("job-xml"))
+      SparkAction(name = config.getString(HoconConstants.name),
+                  sparkMasterURL = config.getString(HoconConstants.sparkMasterUrl),
+                  sparkMode = config.getString(HoconConstants.sparkMode),
+                  sparkJobName = config.getString(HoconConstants.sparkJobName),
+                  mainClass = config.getString(HoconConstants.mainClass),
+                  sparkJar = config.getString(HoconConstants.sparkJar),
+                  sparkOptions = config.getString(HoconConstants.sparkOptions),
+                  commandLineArgs = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*),
+                  files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                  jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
+                    Some(config.getString(HoconConstants.jobXml))
                   } else None,
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
@@ -169,6 +169,6 @@ object SparkAction {
     } match {
       case Success(value) => value
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

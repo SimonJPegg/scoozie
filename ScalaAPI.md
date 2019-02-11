@@ -220,7 +220,7 @@ testJob.saveCoordinator("/some/path/")
  
  As mentioned above, this would save both the xml and the required properties to the specified location.  THe properties generated from this example would be:
  
-```
+```$xslt
 alertFailure_body=message body
 alertFailure_subject=message subject
 alertFailure_to=a@a.com,b@b.com

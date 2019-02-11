@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.HoconConstants
 import org.antipathy.scoozie.configuration.Args
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
@@ -75,16 +76,16 @@ object SshAction {
     */
   def apply(config: Config): Node =
     Try {
-      SshAction(name = config.getString("name"),
-                host = config.getString("host"),
-                command = config.getString("command"),
-                captureOutput = if (config.hasPath("capture-output")) {
-                  config.getBoolean("capture-output")
+      SshAction(name = config.getString(HoconConstants.name),
+                host = config.getString(HoconConstants.host),
+                command = config.getString(HoconConstants.command),
+                captureOutput = if (config.hasPath(HoconConstants.captureOutput)) {
+                  config.getBoolean(HoconConstants.captureOutput)
                 } else false,
-                args = Seq(config.getStringList("command-line-arguments").asScala: _*))
+                args = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*))
     } match {
       case Success(value) => value
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

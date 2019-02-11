@@ -6,9 +6,9 @@
 
 Latest versions: 
 
-  * Scala 2.10:  [![Maven][210mavenimg]][mavenlink]
-  * Scala 2.11:  [![Maven][211mavenimg]][mavenlink]
-  * Scala 2.12:  [![Maven][212mavenimg]][mavenlink]
+* Scala 2.10:  [![Maven][210mavenimg]][mavenlink]
+* Scala 2.11:  [![Maven][211mavenimg]][mavenlink]
+* Scala 2.12:  [![Maven][212mavenimg]][mavenlink]
 
 An Oozie artefact builder library for scala.  it was created to allow developers  to quickly generate new Oozie artefacts without copy/pasting xml and avoiding typos in the XML they create.
 
@@ -25,11 +25,11 @@ See the above links for more information.
 
 ## TODO
 
-  * Add support for Oozie SLAs
-  * Add the ability to join `ScoozieWorkflow` classes and combine properties.
-  * Add functionality to deploy artefacts directly from the library.
-  * Add support for complex workflows in the `WorkflowTestRunner` class.
-  * Add support for datasets.
+* Add support for Oozie SLAs
+* Add the ability to join `ScoozieWorkflow` classes and combine properties.
+* Add functionality to deploy artefacts directly from the library.
+* Add support for complex workflows in the `WorkflowTestRunner` class.
+* Add support for datasets.
 
 [languagebadge]: https://img.shields.io/github/languages/top/simonjpegg/scoozie.svg?style=flat
 [languagelink]: https://www.scala-lang.org/

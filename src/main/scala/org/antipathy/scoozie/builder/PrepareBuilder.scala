@@ -19,19 +19,19 @@ private[scoozie] object PrepareBuilder {
     * @return a prepare object
     */
   def build(config: Config): Option[Prepare] =
-    if (config.hasPath("prepare") &&
-        config.getConfig("prepare").entrySet().asScala.nonEmpty) {
+    if (config.hasPath(HoconConstants.prepare) &&
+        config.getConfig(HoconConstants.prepare).entrySet().asScala.nonEmpty) {
       val steps = config
-        .getConfig("prepare")
+        .getConfig(HoconConstants.prepare)
         .entrySet()
         .asScala
         .toSeq
         .sortBy(_.getKey)
         .map {
-          case delete if delete.getKey.toLowerCase.equals("delete") => Delete(delete.getValue.render())
-          case mkdir if mkdir.getKey.toLowerCase.equals("mkdir")    => MakeDir(mkdir.getValue.render())
+          case delete if delete.getKey.toLowerCase.equals(HoconConstants.delete) => Delete(delete.getValue.render())
+          case mkdir if mkdir.getKey.toLowerCase.equals(HoconConstants.mkDir)    => MakeDir(mkdir.getValue.render())
           case unknown =>
-            throw new UnknownStepException(s"$unknown is not a valid prepare step")
+            throw new UnknownStepException(s"$unknown is not a valid ${HoconConstants.prepare} step")
         }
         .toSeq
       Some(Prepare(Seq(steps: _*)))

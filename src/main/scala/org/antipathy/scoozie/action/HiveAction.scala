@@ -2,8 +2,8 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig, _}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
@@ -119,20 +119,20 @@ object HiveAction {
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     Try {
-      HiveAction(name = config.getString("name"),
-                 scriptName = config.getString("script-name"),
-                 scriptLocation = config.getString("script-location"),
-                 parameters = Seq(config.getStringList("parameters").asScala: _*),
-                 jobXmlOption = if (config.hasPath("job-xml")) {
-                   Some(config.getString("job-xml"))
+      HiveAction(name = config.getString(HoconConstants.name),
+                 scriptName = config.getString(HoconConstants.scriptName),
+                 scriptLocation = config.getString(HoconConstants.scriptLocation),
+                 parameters = Seq(config.getStringList(HoconConstants.parameters).asScala: _*),
+                 jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
+                   Some(config.getString(HoconConstants.jobXml))
                  } else None,
-                 files = Seq(config.getStringList("files").asScala: _*),
+                 files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
                  prepareOption = PrepareBuilder.build(config))
     } match {
       case Success(node) => node
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 }

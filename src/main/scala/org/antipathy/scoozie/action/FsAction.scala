@@ -4,7 +4,7 @@ import java.util
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.filesystem._
-import org.antipathy.scoozie.builder.ConfigurationBuilder
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants}
 import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.exception.{ConfigurationMissingException, UnknownActionException, UnknownStepException}
 
@@ -93,16 +93,16 @@ object FsAction {
     */
   def apply(config: Config): Node =
     Try {
-      FsAction(name = config.getString("name"),
-               actions = buildFSSteps(config.getConfigList("steps")),
-               jobXmlOption = if (config.hasPath("job-xml")) {
-                 Some(config.getString("job-xml"))
+      FsAction(name = config.getString(HoconConstants.name),
+               actions = buildFSSteps(config.getConfigList(HoconConstants.steps)),
+               jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
+                 Some(config.getString(HoconConstants.jobXml))
                } else None,
                configuration = ConfigurationBuilder.buildConfiguration(config))
     } match {
       case Success(node) => node
       case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
     }
 
   /**
@@ -110,13 +110,16 @@ object FsAction {
     */
   private def buildFSSteps(configList: util.List[_ <: Config]): Seq[FileSystemAction] =
     Seq(configList.asScala.map {
-      case delete if delete.hasPath("delete") => Delete(delete.getString("delete"))
-      case mkdir if mkdir.hasPath("mkdir")    => MakeDir(mkdir.getString("mkdir"))
-      case touchz if touchz.hasPath("touchz") => Touchz(touchz.getString("touchz"))
-      case chmod if chmod.hasPath("chmod") =>
-        Chmod(chmod.getString("chmod.path"), chmod.getString("chmod.permissions"), chmod.getString("chmod.dir-files"))
-      case move if move.hasPath("move") =>
-        Move(move.getString("move.source"), move.getString("move.target"))
+      case delete if delete.hasPath(HoconConstants.delete) => Delete(delete.getString(HoconConstants.delete))
+      case mkdir if mkdir.hasPath(HoconConstants.mkDir)    => MakeDir(mkdir.getString(HoconConstants.mkDir))
+      case touchz if touchz.hasPath(HoconConstants.touchz) => Touchz(touchz.getString(HoconConstants.touchz))
+      case chmod if chmod.hasPath(HoconConstants.chmod) =>
+        Chmod(chmod.getString(s"${HoconConstants.chmod}.${HoconConstants.path}"),
+              chmod.getString(s"${HoconConstants.chmod}.${HoconConstants.permissions}"),
+              chmod.getString(s"${HoconConstants.chmod}.${HoconConstants.dirFiles}"))
+      case move if move.hasPath(s"${HoconConstants.move}") =>
+        Move(move.getString(s"${HoconConstants.move}.${HoconConstants.source}"),
+             move.getString(s"${HoconConstants.move}.${HoconConstants.target}"))
       case unknown =>
         throw new UnknownStepException(s"$unknown is not a valid filesystem step")
     }: _*)

@@ -19,10 +19,10 @@ private[scoozie] object ConfigurationBuilder {
     * @return a configuration object
     */
   def buildConfiguration(config: Config): Configuration =
-    if (config.hasPath("configuration")) {
+    if (config.hasPath(HoconConstants.configuration)) {
       Scoozie.Configuration.configuration(
         config
-          .getConfig("configuration")
+          .getConfig(HoconConstants.configuration)
           .entrySet()
           .asScala
           .toSeq
@@ -40,12 +40,12 @@ private[scoozie] object ConfigurationBuilder {
     * @return an optional credentials object
     */
   def buildCredentials(config: Config): Option[Credentials] =
-    if (config.hasPath("credentials")) {
-      val credentialsConfig = config.getConfig("credentials")
+    if (config.hasPath(HoconConstants.credentials)) {
+      val credentialsConfig = config.getConfig(HoconConstants.credentials)
       Some(
         Credentials(
-          Credential(configStringValue(credentialsConfig, "name"),
-                     configStringValue(credentialsConfig, "type"),
+          Credential(configStringValue(credentialsConfig, HoconConstants.name),
+                     configStringValue(credentialsConfig, HoconConstants.typ),
                      buildConfiguration(credentialsConfig).configProperties)
         )
       )
@@ -58,7 +58,8 @@ private[scoozie] object ConfigurationBuilder {
     Try {
       config.getString(path)
     } match {
-      case Success(value)     => value
-      case Failure(exception) => throw new ConfigurationMissingException(s"${exception.getMessage} in credentials")
+      case Success(value) => value
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${HoconConstants.credentials}")
     }
 }
