@@ -267,36 +267,40 @@ object Actions {
   /**
     * Oozie Sqoop action definition
     * @param name the name of the action
-    * @param command the sqoop command
+    * @param command an optional sqoop command (default)
     * @param files files to include with the action
+    * @param jobXmlOption optional job.xml path
     * @param configuration configuration to provide to the action
     * @param yarnConfig the yarn configuration
-    * @param prepareOption an optional ActionPrepare step
+    * @param prepareOption an optional prepare step
     */
   def sqoopAction(name: String,
                   configuration: Configuration,
                   yarnConfig: YarnConfig,
                   prepareOption: Option[ActionPrepare],
+                  jobXmlOption: Option[String],
                   command: String,
                   files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
-    SqoopAction(name, Some(command), Seq.empty, files, configuration, yarnConfig, prepareOption)
+    SqoopAction(name, Some(command), Seq.empty, files, jobXmlOption, configuration, yarnConfig, prepareOption)
 
   /**
     * Oozie Sqoop action definition
     * @param name the name of the action
     * @param args arguments to specify to sqoop (ignored if command is specified)
     * @param files files to include with the action
+    * @param jobXmlOption optional job.xml path
     * @param configuration configuration to provide to the action
     * @param yarnConfig the yarn configuration
-    * @param prepareOption an optional ActionPrepare step
+    * @param prepareOption an optional prepare step
     */
   def sqoopAction(name: String,
                   configuration: Configuration,
                   yarnConfig: YarnConfig,
                   prepareOption: Option[ActionPrepare],
+                  jobXmlOption: Option[String],
                   args: Seq[String],
                   files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
-    SqoopAction(name, None, args, files, configuration, yarnConfig, prepareOption)
+    SqoopAction(name, None, args, files, jobXmlOption, configuration, yarnConfig, prepareOption)
 
   /**
     * Oozie SSH action

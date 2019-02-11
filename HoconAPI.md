@@ -391,6 +391,7 @@ Sqoop:
   command: "" //specify this or command-line-arguments
   command-line-arguments: [] //ignored if command is specified
   files: []
+  job-xml: "" //optional
   configuration: {}
   prepare: {}
   ok-to: ""
