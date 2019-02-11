@@ -1,4 +1,4 @@
-<workflow-app name="sub-workflow" xmlns="uri:oozie:workflow:0.2">
+<workflow-app name="sub-workflow" xmlns="uri:oozie:workflow:0.5">
     <start to="fork-wordcount" />
 
     <!-- Fork two MapReduce jobs -->

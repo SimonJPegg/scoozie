@@ -15,7 +15,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val result = SparkAction(name = "SomeAction",
-                             sparkSettings = "/path/to/spark/settings",
                              sparkMasterURL = "masterURL",
                              sparkMode = "mode",
                              sparkJobName = "JobName",
@@ -24,6 +23,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
                              files = Seq(),
+                             jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
@@ -31,7 +31,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXml}"}</job-xml>
           <master>{"${SomeAction_sparkMasterURL}"}</master>
           <mode>{"${SomeAction_sparkMode}"}</mode>
           <name>{"${SomeAction_sparkJobName}"}</name>
@@ -46,7 +46,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           "${SomeAction_sparkJobName}" -> "JobName",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
           "${SomeAction_sparkOptions}" -> "spark options",
-          "${SomeAction_sparkSettings}" -> "/path/to/spark/settings",
+          "${SomeAction_jobXml}" -> "/path/to/spark/settings",
           "${SomeAction_sparkJar}" -> "/path/to/jar")
     )
   }
@@ -55,7 +55,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = SparkAction(name = "SomeAction",
-                             sparkSettings = "/path/to/spark/settings",
                              sparkMasterURL = "masterURL",
                              sparkMode = "mode",
                              sparkJobName = "JobName",
@@ -64,6 +63,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
+                             jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
@@ -71,7 +71,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXml}"}</job-xml>
           <master>{"${SomeAction_sparkMasterURL}"}</master>
           <mode>{"${SomeAction_sparkMode}"}</mode>
           <name>{"${SomeAction_sparkJobName}"}</name>
@@ -91,7 +91,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           "${SomeAction_sparkJobName}" -> "JobName",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
           "${SomeAction_sparkOptions}" -> "spark options",
-          "${SomeAction_sparkSettings}" -> "/path/to/spark/settings",
+          "${SomeAction_jobXml}" -> "/path/to/spark/settings",
           "${SomeAction_commandLineArg1}" -> "two",
           "${SomeAction_sparkJar}" -> "/path/to/jar")
     )
@@ -101,7 +101,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = SparkAction(name = "SomeAction",
-                             sparkSettings = "/path/to/spark/settings",
                              sparkMasterURL = "masterURL",
                              sparkMode = "mode",
                              sparkJobName = "JobName",
@@ -110,6 +109,8 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
                              files = Seq(),
+                             jobXmlOption = Some("/path/to/spark/settings"),
+                             prepareOption = None,
                              configuration = Configuration(
                                Seq(Property(name = "SomeProp1", "SomeValue1"),
                                    Property(name = "SomeProp2", "SomeValue2"))
@@ -119,7 +120,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXml}"}</job-xml>
           <configuration>
             <property><name>SomeProp1</name>
               <value>{"${SomeAction_property0}"}</value>
@@ -144,7 +145,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           "${SomeAction_sparkJobName}" -> "JobName",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
           "${SomeAction_sparkOptions}" -> "spark options",
-          "${SomeAction_sparkSettings}" -> "/path/to/spark/settings",
+          "${SomeAction_jobXml}" -> "/path/to/spark/settings",
           "${SomeAction_property0}" -> "SomeValue1",
           "${SomeAction_sparkJar}" -> "/path/to/jar")
     )
@@ -154,7 +155,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = SparkAction(name = "SomeAction",
-                             sparkSettings = "/path/to/spark/settings",
                              sparkMasterURL = "masterURL",
                              sparkMode = "mode",
                              sparkJobName = "JobName",
@@ -163,6 +163,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
+                             jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Configuration(
                                Seq(Property(name = "SomeProp1", "SomeValue1"),
@@ -173,7 +174,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
-          <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
+          <job-xml>{"${SomeAction_jobXml}"}</job-xml>
           <configuration>
             <property>
               <name>SomeProp1</name>
@@ -203,7 +204,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
           "${SomeAction_sparkJobName}" -> "JobName",
           "${SomeAction_mainClass}" -> "org.antipathy.Main",
           "${SomeAction_sparkOptions}" -> "spark options",
-          "${SomeAction_sparkSettings}" -> "/path/to/spark/settings",
+          "${SomeAction_jobXml}" -> "/path/to/spark/settings",
           "${SomeAction_property0}" -> "SomeValue1",
           "${SomeAction_commandLineArg1}" -> "two",
           "${SomeAction_sparkJar}" -> "/path/to/jar")

@@ -17,16 +17,23 @@ class PigActionSpec extends FlatSpec with Matchers {
     val result = PigAction(name = "pigAction",
                            script = "/path/to/script",
                            params = Seq(),
+                           arguments = Seq(),
+                           files = Seq(),
+                           jobXmlOption = Some("/path/to/job.xml"),
                            configuration = Scoozie.Configuration.emptyConfiguration,
-                           yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                           yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
+                           prepareOption = None).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<pig>
           <job-tracker>{"${jobTracker}"}</job-tracker>
           <name-node>{"${nameNode}"}</name-node>
+          <job-xml>{"${pigAction_jobXml}"}</job-xml>
           <script>{"${pigAction_script}"}</script>
         </pig>))
 
-    result.properties should be(Map("${pigAction_script}" -> "/path/to/script"))
+    result.properties should be(
+      Map("${pigAction_script}" -> "/path/to/script", "${pigAction_jobXml}" -> "/path/to/job.xml")
+    )
   }
 
   it should "generate valid XML with script arguments" in {
@@ -35,22 +42,34 @@ class PigActionSpec extends FlatSpec with Matchers {
 
     val result = PigAction(name = "pigAction",
                            script = "/path/to/script",
-                           params = Seq("one", "two"),
+                           params = Seq("pone", "ptwo"),
+                           arguments = Seq("aone", "atwo"),
+                           files = Seq("fone", "ftwo"),
+                           jobXmlOption = None,
                            configuration = Scoozie.Configuration.emptyConfiguration,
-                           yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
+                           yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
+                           prepareOption = None).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<pig>
-          <job-tracker>{"${jobTracker}"}</job-tracker>
-          <name-node>{"${nameNode}"}</name-node>
-          <script>{"${pigAction_script}"}</script>
-          <argument>-param</argument>
-          <argument>{"${pigAction_param0}"}</argument>
-          <argument>-param</argument>
-          <argument>{"${pigAction_param1}"}</argument>
-        </pig>))
+        <job-tracker>{"${jobTracker}"}</job-tracker>
+        <name-node>{"${nameNode}"}</name-node>
+        <script>{"${pigAction_script}"}</script>
+        <param>{"${pigAction_param0}"}</param>
+        <param>{"${pigAction_param1}"}</param>
+        <argument>{"${pigAction_arg0}"}</argument>
+        <argument>{"${pigAction_arg1}"}</argument>
+        <file>{"${pigAction_file0}"}</file>
+        <file>{"${pigAction_file1}"}</file>
+      </pig>))
 
     result.properties should be(
-      Map("${pigAction_param0}" -> "one", "${pigAction_script}" -> "/path/to/script", "${pigAction_param1}" -> "two")
+      Map("${pigAction_file1}" -> "ftwo",
+          "${pigAction_param0}" -> "pone",
+          "${pigAction_script}" -> "/path/to/script",
+          "${pigAction_arg0}" -> "aone",
+          "${pigAction_arg1}" -> "atwo",
+          "${pigAction_param1}" -> "ptwo",
+          "${pigAction_file0}" -> "fone")
     )
   }
 }

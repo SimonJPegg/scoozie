@@ -17,6 +17,7 @@ class SqoopActionSpec extends FlatSpec with Matchers {
       .sqoopAction(name = "sqoopAction",
                    command = "sqoopCommand",
                    files = Seq("one", "two"),
+                   jobXmlOption = None,
                    configuration = Scoozie.Configuration.configuration(Map("key" -> "value")),
                    yarnConfig = Scoozie.Configuration.yarnConfiguration("someJT", "someNN"),
                    prepareOption = None)
@@ -52,6 +53,7 @@ class SqoopActionSpec extends FlatSpec with Matchers {
       .sqoopAction(name = "sqoopAction",
                    args = Seq("arg1", "arg2"),
                    files = Seq("one", "two"),
+                   jobXmlOption = None,
                    configuration = Scoozie.Configuration.configuration(Map("key" -> "value")),
                    yarnConfig = Scoozie.Configuration.yarnConfiguration("someJT", "someNN"),
                    prepareOption = None)

@@ -8,7 +8,6 @@ Scoozie provides all its functionality via the `Scoozie` object and the followin
 	* DistCP
 	* Email
 	* FileSystem
-	* Hive2
 	* Hive
 	* Java
 	* Pig

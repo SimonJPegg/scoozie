@@ -14,10 +14,12 @@ class EmailActionSpec extends FlatSpec with Matchers {
 
     val result = EmailAction(name = "email",
                              to = Seq("a@a.com", "b@b.com"),
+                             cc = Seq.empty,
                              subject = "message subject",
-                             body = "message body").action
+                             body = "message body",
+                             contentTypeOption = None).action
 
-    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.2">
           <to>{"${email_to}"}</to>
           <subject>{"${email_subject}"}</subject>
           <body>{"${email_body}"}</body>
@@ -38,9 +40,10 @@ class EmailActionSpec extends FlatSpec with Matchers {
                              to = Seq("a@a.com", "b@b.com"),
                              cc = Seq("c@c.com", "d@d.com"),
                              "message subject",
-                             "message body").action
+                             "message body",
+                             contentTypeOption = None).action
 
-    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.1">
+    scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<email xmlns="uri:oozie:email-action:0.2">
           <to>{"${email_to}"}</to>
           <cc>{"${email_cc}"}</cc>
           <subject>{"${email_subject}"}</subject>

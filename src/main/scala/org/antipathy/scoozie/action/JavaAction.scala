@@ -19,6 +19,7 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
   * @param commandLineArgs command line arguments for the java job
   * @param files files to include with the application
   * @param captureOutput capture output from this action
+  * @param jobXmlOption optional job.xml path
   * @param configuration additional config for this action
   * @param yarnConfig Yarn configuration for this action
   * @param prepareOption an optional prepare stage for the action
@@ -30,9 +31,10 @@ final class JavaAction(override val name: String,
                        commandLineArgs: Seq[String],
                        files: Seq[String],
                        captureOutput: Boolean,
+                       jobXmlOption: Option[String],
                        configuration: Configuration,
                        yarnConfig: YarnConfig,
-                       prepareOption: Option[Prepare] = None)
+                       prepareOption: Option[Prepare])
     extends Action {
 
   private val mainClassProperty = formatProperty(s"${name}_mainClass")
@@ -41,6 +43,8 @@ final class JavaAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
   private val prepareProperties =
@@ -57,7 +61,7 @@ final class JavaAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties._2
+    mappedConfigAndProperties._2 ++ jobXmlProperty
 
   /**
     * The XML namespace for an action element
@@ -73,6 +77,10 @@ final class JavaAction(override val name: String,
         {yarnConfig.nameNodeXML}
         {if (prepareOptionMapped.isDefined) {
             prepareOptionMapped.get.toXML
+          }
+        }
+        {if (jobXmlOption.isDefined) {
+            <job-xml>{jobXmlProperty.keys}</job-xml>
           }
         }
         {if (mappedConfig.configProperties.nonEmpty) {
@@ -106,9 +114,10 @@ object JavaAction {
             commandLineArgs: Seq[String],
             files: Seq[String],
             captureOutput: Boolean,
+            jobXmlOption: Option[String],
             configuration: Configuration,
             yarnConfig: YarnConfig,
-            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+            prepareOption: Option[Prepare])(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new JavaAction(name,
                      mainClass,
@@ -117,6 +126,7 @@ object JavaAction {
                      commandLineArgs,
                      files,
                      captureOutput,
+                     jobXmlOption,
                      configuration,
                      yarnConfig,
                      prepareOption)
@@ -133,7 +143,12 @@ object JavaAction {
                  javaOptions = config.getString("java-options"),
                  commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
                  files = Seq(config.getStringList("files").asScala: _*),
-                 captureOutput = config.hasPath("capture-output"),
+                 captureOutput = if (config.hasPath("capture-output")) {
+                   config.getBoolean("capture-output")
+                 } else false,
+                 jobXmlOption = if (config.hasPath("job-xml")) {
+                   Some(config.getString("job-xml"))
+                 } else None,
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
                  prepareOption = PrepareBuilder.build(config))

@@ -21,6 +21,7 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
   * @param envVars environment variables for the script
   * @param files files to include with the script
   * @param captureOutput capture output from this action
+  * @param jobXmlOption optional job.xml path
   * @param configuration additional config for this action
   * @param yarnConfig Yarn configuration for this action
   * @param prepareOption an optional prepare stage for the action
@@ -32,10 +33,13 @@ final class ShellAction(override val name: String,
                         envVars: Seq[String],
                         files: Seq[String],
                         captureOutput: Boolean,
+                        jobXmlOption: Option[String],
                         configuration: Configuration,
                         yarnConfig: YarnConfig,
-                        prepareOption: Option[Prepare] = None)
+                        prepareOption: Option[Prepare])
     extends Action {
+
+  <xs:element name="job-xml" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
@@ -44,6 +48,8 @@ final class ShellAction(override val name: String,
   private val envVarsProperties =
     buildSequenceProperties(name, "envVars", envVars)
   private val filesProperties = buildSequenceProperties(name, "files", files)
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
   private val prepareProperties =
@@ -59,12 +65,12 @@ final class ShellAction(override val name: String,
     Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++
     commandLineArgsProperties ++
     envVarsProperties ++
-    mappedConfigAndProperties._2
+    mappedConfigAndProperties._2 ++ jobXmlProperty ++ filesProperties
 
   /**
     * The XML namespace for an action element
     */
-  override val xmlns: Option[String] = Some("uri:oozie:shell-action:0.1")
+  override val xmlns: Option[String] = Some("uri:oozie:shell-action:0.2")
 
   /**
     * The XML for this node
@@ -76,6 +82,10 @@ final class ShellAction(override val name: String,
       {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
           prepareOptionMapped.get.toXML
+        }
+      }
+      {if (jobXmlOption.isDefined) {
+          <job-xml>{jobXmlProperty.keys}</job-xml>
         }
       }
       {if (mappedConfig.configProperties.nonEmpty) {
@@ -110,9 +120,10 @@ object ShellAction {
             envVars: Seq[String],
             files: Seq[String],
             captureOutput: Boolean,
+            jobXmlOption: Option[String],
             configuration: Configuration,
             yarnConfig: YarnConfig,
-            prepareOption: Option[Prepare] = None)(implicit credentialsOption: Option[Credentials]): Node =
+            prepareOption: Option[Prepare])(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new ShellAction(name,
                       scriptName,
@@ -121,6 +132,7 @@ object ShellAction {
                       envVars,
                       files,
                       captureOutput,
+                      jobXmlOption,
                       configuration,
                       yarnConfig,
                       prepareOption)
@@ -137,7 +149,12 @@ object ShellAction {
                   commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
                   envVars = Seq(config.getStringList("environment-variables").asScala: _*),
                   files = Seq(config.getStringList("files").asScala: _*),
-                  captureOutput = config.hasPath("capture-output"),
+                  captureOutput = if (config.hasPath("capture-output")) {
+                    config.getBoolean("capture-output")
+                  } else false,
+                  jobXmlOption = if (config.hasPath("job-xml")) {
+                    Some(config.getString("job-xml"))
+                  } else None,
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig,
                   prepareOption = PrepareBuilder.build(config))

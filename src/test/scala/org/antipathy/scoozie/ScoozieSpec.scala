@@ -39,7 +39,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${doASparkThing_sparkSettings}"}</job-xml>
+              <job-xml>{"${doASparkThing_jobXml}"}</job-xml>
               <master>{"${doASparkThing_sparkMasterURL}"}</master>
               <mode>{"${doASparkThing_sparkMode}"}</mode>
               <name>{"${doASparkThing_sparkJobName}"}</name>
@@ -72,7 +72,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
             <hive xmlns="uri:oozie:hive-action:0.2">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${doAHiveThing_hiveSettingsXML}"}</job-xml>
+              <job-xml>{"${doAHiveThing_jobXml}"}</job-xml>
               <script>{"${doAHiveThing_scriptName}"}</script>
               <file>{"${doAHiveThing_scriptLocation}"}</file>
             </hive>
@@ -106,7 +106,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                            |alertFailure_body=message body
                                            |alertFailure_subject=message subject
                                            |alertFailure_to=a@a.com,b@b.com
-                                           |doAHiveThing_hiveSettingsXML=/path/to/settings.xml
+                                           |doAHiveThing_jobXml=/path/to/settings.xml
                                            |doAHiveThing_scriptLocation=/path/to/someScript.hql
                                            |doAHiveThing_scriptName=someScript.hql
                                            |doAJavaThing_javaJar=/path/to/jar
@@ -115,13 +115,13 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                            |doAJavaThing_prepare_delete=/some/path
                                            |doAShellThing_scriptLocation=/path/to/script.sh
                                            |doAShellThing_scriptName=script.sh
+                                           |doASparkThing_jobXml=/path/to/spark/settings
                                            |doASparkThing_mainClass=org.antipathy.Main
                                            |doASparkThing_sparkJar=/path/to/jar
                                            |doASparkThing_sparkJobName=JobName
                                            |doASparkThing_sparkMasterURL=masterURL
                                            |doASparkThing_sparkMode=mode
                                            |doASparkThing_sparkOptions=spark options
-                                           |doASparkThing_sparkSettings=/path/to/spark/settings
                                            |jobTracker=yarn
                                            |nameNode=nameservice1""".stripMargin)
   }

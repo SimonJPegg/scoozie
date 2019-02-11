@@ -52,21 +52,22 @@ object Scoozie {
   val Test: api.Test.type = api.Test
 
   /**
-    * Oozie workflow
-    *
+    * Oozie workflow definition
     * @param name the name of the workflow
     * @param path The path to this workflow
     * @param transitions the actions within the workflow
+    * @param jobXmlOption optional job.xml path
+    * @param credentialsOption optional credentials for this workflow
     * @param configuration configuration for this workflow
     * @param yarnConfig The yarn configuration for this workflow
-    * @param credentialsOption optional credentials for this workflow
     */
   def workflow(name: String,
                path: String,
                transitions: Node,
-               configuration: ActionConfiguration,
+               jobXmlOption: Option[String],
+               configuration: Configuration,
                yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Workflow =
-    Workflow(name, path, transitions, configuration, yarnConfig)
+    Workflow(name, path, transitions, jobXmlOption, configuration, yarnConfig)
 
   /**
     * Oozie coOrdinator definition

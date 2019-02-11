@@ -19,6 +19,7 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
   * @param command an optional sqoop command (default)
   * @param args arguments to specify to sqoop (ignored if command is specified)
   * @param files files to include with the action
+  * @param jobXmlOption optional job.xml path
   * @param configuration configuration to provide to the action
   * @param yarnConfig the yarn configuration
   * @param prepareOption an optional prepare step
@@ -27,15 +28,19 @@ class SqoopAction(override val name: String,
                   command: Option[String],
                   args: Seq[String],
                   files: Seq[String],
+                  jobXmlOption: Option[String],
                   configuration: Configuration,
                   yarnConfig: YarnConfig,
                   prepareOption: Option[Prepare])
     extends Action {
 
+  <xs:element name="job-xml" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+
   private val argsProperties = buildSequenceProperties(name, "arguments", args)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val commandProperty = formatProperty(s"${name}_command")
-
+  private val commandProperty = buildStringOptionProperty(name, "command", command)
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val configurationProperties = configuration.withActionProperties(name)
   private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
   private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
@@ -49,7 +54,8 @@ class SqoopAction(override val name: String,
     filesProperties ++
     configurationProperties._2 ++
     prepareProperties ++
-    command.map(prop => Map(commandProperty -> prop)).getOrElse(Map())
+    jobXmlProperty ++
+    commandProperty
 
   /**
     * The XML namespace for an action element
@@ -65,14 +71,18 @@ class SqoopAction(override val name: String,
       {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
         prepareOptionMapped.get.toXML
+        }
       }
+      {if (jobXmlOption.isDefined) {
+          <job-xml>{jobXmlProperty.keys}</job-xml>
+        }
       }
       {if (configurationProperties._1.configProperties.nonEmpty) {
           configurationProperties._1.toXML
         }
       }
       { if (command.isDefined) {
-          <command>{commandProperty}</command>
+          <command>{commandProperty.keys}</command>
         } else {
           argsProperties.keys.map(Arg(_).toXML)
         }
@@ -93,10 +103,11 @@ object SqoopAction {
             command: Option[String],
             args: Seq[String],
             files: Seq[String],
+            jobXmlOption: Option[String],
             configuration: Configuration,
             yarnConfig: YarnConfig,
             prepareOption: Option[Prepare])(implicit credentialsOption: Option[Credentials]): Node =
-    Node(new SqoopAction(name, command, args, files, configuration, yarnConfig, prepareOption))
+    Node(new SqoopAction(name, command, args, files, jobXmlOption, configuration, yarnConfig, prepareOption))
 
   /**
     * Create a new instance of this action from a configuration
@@ -109,6 +120,9 @@ object SqoopAction {
                     if (config.hasPath("command")) Seq(config.getStringList("command-line-arguments").asScala: _*)
                     else Seq(),
                   files = Seq(config.getStringList("files").asScala: _*),
+                  jobXmlOption = if (config.hasPath("job-xml")) {
+                    Some(config.getString("job-xml"))
+                  } else None,
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
                   prepareOption = PrepareBuilder.build(config))

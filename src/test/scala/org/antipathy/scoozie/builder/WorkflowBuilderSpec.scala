@@ -36,7 +36,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                              |      {
                                              |        name:"sparkAction"
                                              |        type:"spark"
-                                             |        spark-settings: "someSettings"
+                                             |        job-xml: "someSettings"
                                              |        spark-master-url: "masterurl"
                                              |        spark-mode: "mode"
                                              |        spark-job-name: "Jobname"
@@ -52,10 +52,11 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                              |      {
                                              |        name:"hiveAction"
                                              |        type: "hive"
-                                             |        hive-settings-xml: "settings"
+                                             |        job-xml: "settings"
                                              |        script-name: "script.hql"
                                              |        script-location: "/some/location"
                                              |        parameters: []
+                                             |        files: []
                                              |        configuration: {}
                                              |        ok-to: "mainJoin"
                                              |        error-to: "errorEmail"
@@ -167,7 +168,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
+              <job-xml>{"${sparkAction_jobXml}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
               <mode>{"${sparkAction_sparkMode}"}</mode>
               <name>{"${sparkAction_sparkJobName}"}</name>
@@ -180,10 +181,10 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
           </action>
 
           <action name="hiveAction" cred="someCredentials">
-            <hive xmlns="uri:oozie:hive-action:0.2">
+            <hive xmlns="uri:oozie:hive-action:0.5">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${hiveAction_hiveSettingsXML}"}</job-xml>
+              <job-xml>{"${hiveAction_jobXml}"}</job-xml>
               <script>{"${hiveAction_scriptName}"}</script>
               <file>{"${hiveAction_scriptLocation}"}</file>
             </hive>
@@ -225,7 +226,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
     result.jobProperties should be("""errorEmail_body=yep
                                      |errorEmail_subject=hello
                                      |errorEmail_to=a@a.com
-                                     |hiveAction_hiveSettingsXML=settings
+                                     |hiveAction_jobXml=settings
                                      |hiveAction_scriptLocation=/some/location
                                      |hiveAction_scriptName=script.hql
                                      |jobTracker=someNameNode
@@ -240,13 +241,13 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |someworkflow_property1="value2"
                                      |someworkflow_property2="value3"
                                      |someworkflow_property3="value4"
+                                     |sparkAction_jobXml=someSettings
                                      |sparkAction_mainClass=somemainclass
                                      |sparkAction_sparkJar=spark.jar
                                      |sparkAction_sparkJobName=Jobname
                                      |sparkAction_sparkMasterURL=masterurl
                                      |sparkAction_sparkMode=mode
-                                     |sparkAction_sparkOptions=spark-options
-                                     |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                     |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     Scoozie.Test.validate(result)
   }
@@ -283,7 +284,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                              |      {
                                              |        name:"sparkAction"
                                              |        type:"spark"
-                                             |        spark-settings: "someSettings"
+                                             |        job-xml: "someSettings"
                                              |        spark-master-url: "masterurl"
                                              |        spark-mode: "mode"
                                              |        spark-job-name: "Jobname"
@@ -303,10 +304,11 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                              |      {
                                              |        name:"hiveAction"
                                              |        type: "hive"
-                                             |        hive-settings-xml: "settings"
+                                             |        job-xml: "settings"
                                              |        script-name: "script.hql"
                                              |        script-location: "/some/location"
                                              |        parameters: []
+                                             |        files: []
                                              |        configuration: {}
                                              |        ok-to: "shellAction"
                                              |        error-to: "errorEmail"
@@ -413,10 +415,10 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
           </decision>
 
           <action name="hiveAction" cred="someCredentials">
-            <hive xmlns="uri:oozie:hive-action:0.2">
+            <hive xmlns="uri:oozie:hive-action:0.5">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${hiveAction_hiveSettingsXML}"}</job-xml>
+              <job-xml>{"${hiveAction_jobXml}"}</job-xml>
               <script>{"${hiveAction_scriptName}"}</script>
               <file>{"${hiveAction_scriptLocation}"}</file>
             </hive>
@@ -432,7 +434,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                 <delete path="${sparkAction_prepare_delete}"/>
                 <mkdir path="${sparkAction_prepare_makedir}"/>
               </prepare>
-              <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
+              <job-xml>{"${sparkAction_jobXml}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
               <mode>{"${sparkAction_sparkMode}"}</mode>
               <name>{"${sparkAction_sparkJobName}"}</name>
@@ -476,7 +478,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
     result.jobProperties should be("""errorEmail_body=yep
                                      |errorEmail_subject=hello
                                      |errorEmail_to=a@a.com
-                                     |hiveAction_hiveSettingsXML=settings
+                                     |hiveAction_jobXml=settings
                                      |hiveAction_scriptLocation=/some/location
                                      |hiveAction_scriptName=script.hql
                                      |jobTracker=someNameNode
@@ -491,6 +493,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |someworkflow_property1="value2"
                                      |someworkflow_property2="value3"
                                      |someworkflow_property3="value4"
+                                     |sparkAction_jobXml=someSettings
                                      |sparkAction_mainClass=somemainclass
                                      |sparkAction_prepare_delete="deletePath"
                                      |sparkAction_prepare_makedir="makePath"
@@ -498,8 +501,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |sparkAction_sparkJobName=Jobname
                                      |sparkAction_sparkMasterURL=masterurl
                                      |sparkAction_sparkMode=mode
-                                     |sparkAction_sparkOptions=spark-options
-                                     |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                     |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     Scoozie.Test.validate(result)
   }

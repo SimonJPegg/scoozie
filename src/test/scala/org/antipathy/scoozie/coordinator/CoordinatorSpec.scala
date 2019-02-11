@@ -18,6 +18,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
+                            jobXmlOption = None,
                             configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = YarnConfig(jobTracker = "", nameNode = ""))
 
@@ -51,6 +52,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
+                            jobXmlOption = None,
                             configuration = Configuration(Seq(Property("some", "value"))),
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "Namenode"))
 

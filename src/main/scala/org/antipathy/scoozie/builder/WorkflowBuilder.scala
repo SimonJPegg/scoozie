@@ -32,7 +32,11 @@ private[scoozie] object WorkflowBuilder {
 
     val transitions = TransitionBuilder.build(Seq(config.getConfigList("workflow.transitions").asScala: _*), yarnConfig)
 
-    Workflow(name, path, transitions, configuration, yarnConfig)
+    val jobXml = if (config.hasPath("workflow.job-xml")) {
+      Some(config.getString("workflow.job-xml"))
+    } else None
+
+    Workflow(name, path, transitions, jobXml, configuration, yarnConfig)
   }
 
 }

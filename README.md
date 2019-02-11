@@ -28,6 +28,7 @@ See the above links for more information.
 
 ## TODO
 
+* Add support for Oozie SLAs
 * Add the ability to join `ScoozieWorkflow` classes and combine properties.
 * Add functionality to deploy artefacts directly from the library.
 * Add support for complex workflows in the `WorkflowTestRunner` class.

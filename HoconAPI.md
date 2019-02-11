@@ -45,6 +45,7 @@ workflow {
       credentials2:"value2"
     }
   }
+  job-xml: "/path/to/job.xml" //optional
   transitions: [ //array of action objects that comprise the workflow transitions
     {
       type:"start"  //type is required for all actions
@@ -186,7 +187,6 @@ validate {
 ### Available actions
 
 The actions listed below are currently available via the hocon API.  Unless otherwise specified all properties are required.
-Where `capture-output` is set, it is `true`.
 
 Most actions allow specifying a `prepare` and a `configuration` property, these are optional, but should be specified in a key value format, e.g:
 
@@ -271,6 +271,7 @@ Email:
   cc: []
   subject: ""
   body: ""
+  content-type: "" //optional
   ok-to: ""
   error-to: ""
 }
@@ -280,6 +281,8 @@ FileSystem:
 {
   name: ""
   type: "filesystem"
+  job-xml: ""
+  configuration: {}
   steps: {
     //any of
     delete: ""
@@ -297,26 +300,11 @@ Hive:
 {
   name: ""
   type: "hive"
-  hive-settings-xml: ""
+  job-xml: "" //optional
   script-name: ""
   script-location: ""
+  files: []
   configuration: {}
-  prepare: {}
-  ok-to: ""
-  error-to: ""
-}
-```
-Hive2:
-```hocon
-{
-  name: ""
-  type: "hive2"
-  hive-settings-xml: ""
-  script-name: ""
-  parameters: []
-  configuration: {}
-  jdbcurl: ""
-  password: "" //optional
   prepare: {}
   ok-to: ""
   error-to: ""
@@ -327,6 +315,7 @@ Java:
 {
   name: ""
   type: "java"
+  job-xml: "" //optional
   main-class: ""
   java-jar: ""
   java-options: ""
@@ -346,6 +335,8 @@ pig:
   type: "pig"
   script: ""
   params: []
+  arguments: []
+  files: []
   job-xml: "" //optional
   configuration: {}
   prepare: {}
@@ -364,6 +355,7 @@ Shell:
   environment-variables: []
   files: []
   capture-output: true //optional
+  job-xml: "" //optional
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -375,7 +367,6 @@ Spark:
 {
   name: ""
   type: "spark"
-  spark-settings: ""
   spark-master-url: ""
   spark-mode: ""
   spark-job-name: ""
@@ -384,6 +375,7 @@ Spark:
   spark-options: ""
   command-line-arguments: []
   files: []
+  job-xml: "" //optional
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -398,6 +390,7 @@ Sqoop:
   command: "" //specify this or command-line-arguments
   command-line-arguments: [] //ignored if command is specified
   files: []
+  job-xml: "" //optional
   configuration: {}
   prepare: {}
   ok-to: ""

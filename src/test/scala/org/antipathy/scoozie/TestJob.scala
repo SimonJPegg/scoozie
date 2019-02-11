@@ -17,7 +17,6 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   private val kill = Scoozie.Actions.kill("Workflow failed")
 
   private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
-                                                  sparkSettings = "/path/to/spark/settings",
                                                   sparkMasterURL = "masterURL",
                                                   sparkMode = "mode",
                                                   sparkJobName = "JobName",
@@ -26,31 +25,35 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   sparkOptions = "spark options",
                                                   commandLineArgs = Seq(),
                                                   files = Seq(),
+                                                  jobXmlOption = Some("/path/to/spark/settings"),
                                                   prepareOption = None,
                                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                                   yarnConfig = yarnConfig)
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
                                                   to = Seq("a@a.com", "b@b.com"),
+                                                  cc = Seq.empty,
                                                   subject = "message subject",
                                                   body = "message body")
 
   private val shellAction = Scoozie.Actions.shell(name = "doAShellThing",
-                                                  prepareOption = None,
                                                   scriptName = "script.sh",
                                                   scriptLocation = "/path/to/script.sh",
                                                   commandLineArgs = Seq(),
                                                   envVars = Seq(),
                                                   files = Seq(),
                                                   captureOutput = true,
+                                                  jobXmlOption = None,
+                                                  prepareOption = None,
                                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                                   yarnConfig = yarnConfig)
 
   private val hiveAction = Scoozie.Actions.hive(name = "doAHiveThing",
-                                                hiveSettingsXML = "/path/to/settings.xml",
                                                 scriptName = "someScript.hql",
                                                 scriptLocation = "/path/to/someScript.hql",
                                                 parameters = Seq(),
+                                                jobXmlOption = Some("/path/to/settings.xml"),
+                                                files = Seq(),
                                                 prepareOption = None,
                                                 configuration = Scoozie.Configuration.emptyConfiguration,
                                                 yarnConfig = yarnConfig)
@@ -61,6 +64,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 javaOptions = "java options",
                                                 commandLineArgs = Seq(),
                                                 captureOutput = false,
+                                                jobXmlOption = None,
                                                 files = Seq(),
                                                 prepareOption =
                                                   Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
@@ -84,6 +88,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   override val workflow: Workflow = Scoozie.workflow(name = "ExampleWorkflow",
                                                      path = "/path/to/workflow.xml",
                                                      transitions = transitions,
+                                                     jobXmlOption = None,
                                                      configuration = Scoozie.Configuration.emptyConfiguration,
                                                      yarnConfig = yarnConfig)
 

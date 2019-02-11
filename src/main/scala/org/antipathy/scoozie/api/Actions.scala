@@ -46,9 +46,15 @@ object Actions {
     * @param cc an optional cc recipient list
     * @param subject the message subject
     * @param body the message body
+    * @param contentTypeOption optional string defining the content type of the message
     */
-  def email(name: String, to: Seq[String], cc: Seq[String] = Seq.empty[String], subject: String, body: String): Node =
-    EmailAction(name, to, cc, subject, body)
+  def email(name: String,
+            to: Seq[String],
+            cc: Seq[String],
+            subject: String,
+            body: String,
+            contentTypeOption: Option[String] = None): Node =
+    EmailAction(name, to, cc, subject, body, contentTypeOption)
 
   /**
     * oozie end control node
@@ -65,68 +71,46 @@ object Actions {
   /**
     * Oozie filesystem action
     * @param name the name of the action
+    * @param jobXmlOption optional job.xml path
     * @param step the steps to perform
+    * @param configuration additional config for this action
     */
-  def fs(name: String, step: FileSystemAction*): Node =
-    FsAction(name, Seq(step: _*))
+  def fs(name: String, jobXmlOption: Option[String], configuration: Configuration, step: FileSystemAction*): Node =
+    FsAction(name, Seq(step: _*), jobXmlOption, configuration)
 
   /**
     * Oozie Hive action
     * @param name the name of the action
-    * @param hiveSettingsXML the path to the hive settings XML
     * @param scriptName the name of the hive script
     * @param scriptLocation the path to the hive script
     * @param parameters a collection of parameters to the hive script
+    * @param jobXmlOption optional job.xml path
+    * @param files additional files to pass to job
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def hive(name: String,
-           configuration: Configuration,
-           yarnConfig: YarnConfig,
-           prepareOption: Option[ActionPrepare] = None,
-           hiveSettingsXML: String,
            scriptName: String,
            scriptLocation: String,
-           parameters: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
-    HiveAction(name, hiveSettingsXML, scriptName, scriptLocation, parameters, configuration, yarnConfig, prepareOption)
+           parameters: Seq[String],
+           jobXmlOption: Option[String],
+           files: Seq[String],
+           configuration: Configuration,
+           yarnConfig: YarnConfig,
+           prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+    HiveAction(name,
+               scriptName,
+               scriptLocation,
+               parameters,
+               jobXmlOption,
+               files,
+               configuration,
+               yarnConfig,
+               prepareOption)
 
   /**
-    * Oozie Hive action definition
-    * @param name the name of the action
-    * @param hiveSettingsXML the path to the hive settings XML
-    * @param scriptName the name of the hive script
-    * @param scriptLocation the path to the hive script
-    * @param parameters a collection of parameters to the hive script
-    * @param configuration additional config for this action
-    * @param yarnConfig Yarn configuration for this action
-    * @param jdbcUrl The JDBC URL for the Hive Server 2
-    * @param password Password of the current user (non-kerberos environments)
-    * @param prepareOption an optional ActionPrepare stage for the action
-    */
-  def hive2(name: String,
-            configuration: Configuration,
-            yarnConfig: YarnConfig,
-            prepareOption: Option[ActionPrepare] = None,
-            hiveSettingsXML: String,
-            scriptName: String,
-            scriptLocation: String,
-            parameters: Seq[String],
-            jdbcUrl: String,
-            password: Option[String] = None)(implicit credentialsOption: Option[Credentials]): Node =
-    Hive2Action(name,
-                hiveSettingsXML,
-                scriptName,
-                scriptLocation,
-                parameters,
-                configuration,
-                yarnConfig,
-                jdbcUrl,
-                password,
-                prepareOption)
-
-  /**
-    * Oozie Java action definition
+    * Oozie Java action
     * @param name the name of the action
     * @param mainClass the main class of the java job
     * @param javaJar the location of the java jar
@@ -134,20 +118,22 @@ object Actions {
     * @param commandLineArgs command line arguments for the java job
     * @param files files to include with the application
     * @param captureOutput capture output from this action
+    * @param jobXmlOption optional job.xml path
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def java(name: String,
-           configuration: Configuration,
-           yarnConfig: YarnConfig,
-           prepareOption: Option[ActionPrepare] = None,
            mainClass: String,
            javaJar: String,
            javaOptions: String,
            commandLineArgs: Seq[String],
            files: Seq[String],
-           captureOutput: Boolean)(implicit credentialsOption: Option[Credentials]): Node =
+           captureOutput: Boolean,
+           jobXmlOption: Option[String],
+           configuration: Configuration,
+           yarnConfig: YarnConfig,
+           prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
     JavaAction(name,
                mainClass,
                javaJar,
@@ -155,6 +141,7 @@ object Actions {
                commandLineArgs,
                files,
                captureOutput,
+               jobXmlOption,
                configuration,
                yarnConfig,
                prepareOption)
@@ -175,44 +162,51 @@ object Actions {
     * Oozie Java action definition
     * @param name the name of the action
     * @param script the location of the pig script
-    * @param params arguments to the script
-    * @param jobXml optional job.xml for the script
+    * @param params parameters to the script
+    * @param arguments arguments to the script
+    * @param files additional files to bundle with the job
+    * @param jobXmlOption optional job.xml for the script
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def pig(name: String,
-          configuration: Configuration,
-          yarnConfig: YarnConfig,
-          prepareOption: Option[ActionPrepare] = None,
           script: String,
           params: Seq[String],
-          jobXml: Option[String] = None)(implicit credentialsOption: Option[Credentials]): Node =
-    PigAction(name, script, params, jobXml, configuration, yarnConfig, prepareOption)
+          arguments: Seq[String],
+          files: Seq[String],
+          jobXmlOption: Option[String],
+          configuration: Configuration,
+          yarnConfig: YarnConfig,
+          prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+    PigAction(name, script, params, arguments, files, jobXmlOption, configuration, yarnConfig, prepareOption)
 
   /**
     *
-    * Oozie Hive action
+    * Oozie Hive action definition
     * @param name the name of the action
     * @param scriptName the name of the script
     * @param scriptLocation the path to the script
     * @param commandLineArgs command line arguments for script
     * @param envVars environment variables for the script
     * @param files files to include with the script
+    * @param captureOutput capture output from this action
+    * @param jobXmlOption optional job.xml path
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
-    * @param prepareOption an optional ActionPrepare stage for the action
+    * @param prepareOption an optional prepare stage for the action
     */
   def shell(name: String,
-            configuration: Configuration,
-            yarnConfig: YarnConfig,
-            prepareOption: Option[ActionPrepare] = None,
             scriptName: String,
             scriptLocation: String,
             commandLineArgs: Seq[String],
             envVars: Seq[String],
             files: Seq[String],
-            captureOutput: Boolean)(implicit credentialsOption: Option[Credentials]): Node =
+            captureOutput: Boolean,
+            jobXmlOption: Option[String],
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
+            prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
     ShellAction(name,
                 scriptName,
                 scriptLocation,
@@ -220,14 +214,14 @@ object Actions {
                 envVars,
                 files,
                 captureOutput,
+                jobXmlOption,
                 configuration,
                 yarnConfig,
                 prepareOption)
 
   /**
-    * Oozie Spark action
+    * Oozie Spark action definition
     * @param name the name of the action
-    * @param sparkSettings the spark settings location
     * @param sparkMasterURL the url of the spark master
     * @param sparkMode the mode the spark job should run in
     * @param sparkJobName the name of the spark job
@@ -235,15 +229,12 @@ object Actions {
     * @param sparkJar the location of the spark jar
     * @param sparkOptions options for the spark job
     * @param commandLineArgs command line arguments for the spark job
-    * @param prepareOption an optional ActionPrepare phase for the action
+    * @param jobXmlOption optional job.xml path
+    * @param prepareOption an optional prepare phase for the action
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
     */
   def spark(name: String,
-            configuration: Configuration,
-            yarnConfig: YarnConfig,
-            prepareOption: Option[ActionPrepare] = None,
-            sparkSettings: String,
             sparkMasterURL: String,
             sparkMode: String,
             sparkJobName: String,
@@ -251,9 +242,12 @@ object Actions {
             sparkJar: String,
             sparkOptions: String,
             commandLineArgs: Seq[String],
-            files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
+            files: Seq[String],
+            jobXmlOption: Option[String],
+            prepareOption: Option[ActionPrepare],
+            configuration: Configuration,
+            yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     SparkAction(name,
-                sparkSettings,
                 sparkMasterURL,
                 sparkMode,
                 sparkJobName,
@@ -262,6 +256,7 @@ object Actions {
                 sparkOptions,
                 commandLineArgs,
                 files,
+                jobXmlOption,
                 prepareOption,
                 configuration,
                 yarnConfig)
@@ -269,36 +264,40 @@ object Actions {
   /**
     * Oozie Sqoop action definition
     * @param name the name of the action
-    * @param command the sqoop command
+    * @param command an optional sqoop command (default)
     * @param files files to include with the action
+    * @param jobXmlOption optional job.xml path
     * @param configuration configuration to provide to the action
     * @param yarnConfig the yarn configuration
-    * @param prepareOption an optional ActionPrepare step
+    * @param prepareOption an optional prepare step
     */
   def sqoopAction(name: String,
                   configuration: Configuration,
                   yarnConfig: YarnConfig,
                   prepareOption: Option[ActionPrepare],
+                  jobXmlOption: Option[String],
                   command: String,
                   files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
-    SqoopAction(name, Some(command), Seq.empty, files, configuration, yarnConfig, prepareOption)
+    SqoopAction(name, Some(command), Seq.empty, files, jobXmlOption, configuration, yarnConfig, prepareOption)
 
   /**
     * Oozie Sqoop action definition
     * @param name the name of the action
     * @param args arguments to specify to sqoop (ignored if command is specified)
     * @param files files to include with the action
+    * @param jobXmlOption optional job.xml path
     * @param configuration configuration to provide to the action
     * @param yarnConfig the yarn configuration
-    * @param prepareOption an optional ActionPrepare step
+    * @param prepareOption an optional prepare step
     */
   def sqoopAction(name: String,
                   configuration: Configuration,
                   yarnConfig: YarnConfig,
                   prepareOption: Option[ActionPrepare],
+                  jobXmlOption: Option[String],
                   args: Seq[String],
                   files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
-    SqoopAction(name, None, args, files, configuration, yarnConfig, prepareOption)
+    SqoopAction(name, None, args, files, jobXmlOption, configuration, yarnConfig, prepareOption)
 
   /**
     * Oozie SSH action

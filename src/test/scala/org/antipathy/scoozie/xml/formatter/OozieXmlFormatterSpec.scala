@@ -29,19 +29,22 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
 
     val emailAction = EmailAction(name = "emailAction",
                                   to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
                                   subject = "message subject",
-                                  body = "message body")
+                                  body = "message body",
+                                  contentTypeOption = None)
       .okTo(kill)
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -50,7 +53,6 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -59,6 +61,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -66,7 +69,8 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val hiveAction = HiveAction(name = "hiveAction",
-                                hiveSettingsXML = "/path/to/settings.xml",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
                                 scriptName = "someScript.hql",
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
@@ -81,6 +85,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = yarnConfig)
 
@@ -88,7 +93,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
 
     val result = formatter.format(workflow)
 
-    result should be("""<workflow-app name="sampleWorkflow" xmlns="uri:oozie:workflow:0.4">
+    result should be("""<workflow-app name="sampleWorkflow" xmlns="uri:oozie:workflow:0.5">
                        |    <global>
                        |        <job-tracker>${jobTracker}</job-tracker>
                        |        <name-node>${nameNode}</name-node>
@@ -107,10 +112,10 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <path start="hiveAction"/>
                        |    </fork>
                        |    <action name="sparkAction" cred="hive-credentials">
-                       |        <spark xmlns="uri:oozie:spark-action:1.0">
+                       |        <spark xmlns="uri:oozie:spark-action:0.1">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
-                       |            <job-xml>${sparkAction_sparkSettings}</job-xml>
+                       |            <job-xml>${sparkAction_jobXml}</job-xml>
                        |            <master>${sparkAction_sparkMasterURL}</master>
                        |            <mode>${sparkAction_sparkMode}</mode>
                        |            <name>${sparkAction_sparkJobName}</name>
@@ -122,10 +127,10 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <error to="emailAction"/>
                        |    </action>
                        |    <action name="hiveAction" cred="hive-credentials">
-                       |        <hive xmlns="uri:oozie:hive-action:0.2">
+                       |        <hive xmlns="uri:oozie:hive-action:0.5">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
-                       |            <job-xml>${hiveAction_hiveSettingsXML}</job-xml>
+                       |            <job-xml>${hiveAction_jobXml}</job-xml>
                        |            <script>${hiveAction_scriptName}</script>
                        |            <file>${hiveAction_scriptLocation}</file>
                        |        </hive>
@@ -134,7 +139,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |    </action>
                        |    <join name="mainJoin" to="shellAction"/>
                        |    <action name="shellAction" cred="hive-credentials">
-                       |        <shell xmlns="uri:oozie:shell-action:0.1">
+                       |        <shell xmlns="uri:oozie:shell-action:0.2">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
                        |            <exec>${shellAction_scriptName}</exec>
@@ -145,7 +150,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <error to="emailAction"/>
                        |    </action>
                        |    <action name="emailAction">
-                       |        <email xmlns="uri:oozie:email-action:0.1">
+                       |        <email xmlns="uri:oozie:email-action:0.2">
                        |            <to>${emailAction_to}</to>
                        |            <subject>${emailAction_subject}</subject>
                        |            <body>${emailAction_body}</body>
