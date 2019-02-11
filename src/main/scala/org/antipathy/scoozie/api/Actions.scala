@@ -222,7 +222,6 @@ object Actions {
   /**
     * Oozie Spark action definition
     * @param name the name of the action
-    * @param sparkSettings the spark settings location
     * @param sparkMasterURL the url of the spark master
     * @param sparkMode the mode the spark job should run in
     * @param sparkJobName the name of the spark job
@@ -236,7 +235,6 @@ object Actions {
     * @param yarnConfig Yarn configuration for this action
     */
   def spark(name: String,
-            sparkSettings: String,
             sparkMasterURL: String,
             sparkMode: String,
             sparkJobName: String,
@@ -250,7 +248,6 @@ object Actions {
             configuration: Configuration,
             yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     SparkAction(name,
-                sparkSettings,
                 sparkMasterURL,
                 sparkMode,
                 sparkJobName,

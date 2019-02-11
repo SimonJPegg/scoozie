@@ -53,7 +53,6 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -62,7 +61,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -86,6 +85,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = yarnConfig)
 
@@ -115,7 +115,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <spark xmlns="uri:oozie:spark-action:0.1">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
-                       |            <job-xml>${sparkAction_sparkSettings}</job-xml>
+                       |            <job-xml>${sparkAction_jobXml}</job-xml>
                        |            <master>${sparkAction_sparkMasterURL}</master>
                        |            <mode>${sparkAction_sparkMode}</mode>
                        |            <name>${sparkAction_sparkJobName}</name>

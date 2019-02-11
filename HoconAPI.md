@@ -45,6 +45,7 @@ workflow {
       credentials2:"value2"
     }
   }
+  job-xml: "/path/to/job.xml" //optional
   transitions: [ //array of action objects that comprise the workflow transitions
     {
       type:"start"  //type is required for all actions
@@ -366,7 +367,6 @@ Spark:
 {
   name: ""
   type: "spark"
-  spark-settings: ""
   spark-master-url: ""
   spark-mode: ""
   spark-job-name: ""

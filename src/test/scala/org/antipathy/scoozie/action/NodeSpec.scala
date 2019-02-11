@@ -32,7 +32,6 @@ class NodeSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val sparkAction = SparkAction(name = "SomeAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -41,7 +40,7 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Configuration(
                                     Seq(Property(name = "SomeProp1", "SomeValue1"),
@@ -150,7 +149,6 @@ class NodeSpec extends FlatSpec with Matchers {
     implicit val credentialsOption: Option[Credentials] = None
 
     val sparkAction = SparkAction(name = "SomeAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -159,7 +157,7 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Configuration(
                                     Seq(Property(name = "SomeProp1", "SomeValue1"),
@@ -177,10 +175,10 @@ class NodeSpec extends FlatSpec with Matchers {
     val result = (sparkAction okTo emailAction errorTo emailAction).toXML
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<action name="SomeAction">
-          <spark xmlns="uri:oozie:spark-action:1.0">
+          <spark xmlns="uri:oozie:spark-action:0.1">
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
-            <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
+            <job-xml>{"${SomeAction_jobXml}"}</job-xml>
             <configuration>
               <property>
                 <name>SomeProp1</name>
@@ -216,7 +214,6 @@ class NodeSpec extends FlatSpec with Matchers {
     )
 
     val sparkAction = SparkAction(name = "SomeAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -225,7 +222,7 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Configuration(
                                     Seq(Property(name = "SomeProp1", "SomeValue1"),
@@ -243,10 +240,10 @@ class NodeSpec extends FlatSpec with Matchers {
     val result = (sparkAction okTo emailAction errorTo emailAction).toXML
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<action name="SomeAction" cred="hive-credentials">
-          <spark xmlns="uri:oozie:spark-action:1.0">
+          <spark xmlns="uri:oozie:spark-action:0.1">
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
-            <job-xml>{"${SomeAction_sparkSettings}"}</job-xml>
+            <job-xml>{"${SomeAction_jobXml}"}</job-xml>
             <configuration>
               <property>
                 <name>SomeProp1</name>

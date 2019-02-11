@@ -592,7 +592,6 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |      {
                          |        name:"sparkAction"
                          |        type:"spark"
-                         |        spark-master-url: "masterurl"
                          |        spark-mode: "mode"
                          |        spark-job-name: "Jobname"
                          |        main-class: "somemainclass"

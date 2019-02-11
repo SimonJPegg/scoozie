@@ -36,7 +36,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                              |      {
                                              |        name:"sparkAction"
                                              |        type:"spark"
-                                             |        spark-settings: "someSettings"
+                                             |        job-xml: "someSettings"
                                              |        spark-master-url: "masterurl"
                                              |        spark-mode: "mode"
                                              |        spark-job-name: "Jobname"
@@ -168,7 +168,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
+              <job-xml>{"${sparkAction_jobXml}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
               <mode>{"${sparkAction_sparkMode}"}</mode>
               <name>{"${sparkAction_sparkJobName}"}</name>
@@ -241,13 +241,13 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |someworkflow_property1="value2"
                                      |someworkflow_property2="value3"
                                      |someworkflow_property3="value4"
+                                     |sparkAction_jobXml=someSettings
                                      |sparkAction_mainClass=somemainclass
                                      |sparkAction_sparkJar=spark.jar
                                      |sparkAction_sparkJobName=Jobname
                                      |sparkAction_sparkMasterURL=masterurl
                                      |sparkAction_sparkMode=mode
-                                     |sparkAction_sparkOptions=spark-options
-                                     |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                     |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     Scoozie.Test.validate(result)
   }
@@ -284,7 +284,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                              |      {
                                              |        name:"sparkAction"
                                              |        type:"spark"
-                                             |        spark-settings: "someSettings"
+                                             |        job-xml: "someSettings"
                                              |        spark-master-url: "masterurl"
                                              |        spark-mode: "mode"
                                              |        spark-job-name: "Jobname"
@@ -434,7 +434,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                 <delete path="${sparkAction_prepare_delete}"/>
                 <mkdir path="${sparkAction_prepare_makedir}"/>
               </prepare>
-              <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
+              <job-xml>{"${sparkAction_jobXml}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
               <mode>{"${sparkAction_sparkMode}"}</mode>
               <name>{"${sparkAction_sparkJobName}"}</name>
@@ -493,6 +493,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |someworkflow_property1="value2"
                                      |someworkflow_property2="value3"
                                      |someworkflow_property3="value4"
+                                     |sparkAction_jobXml=someSettings
                                      |sparkAction_mainClass=somemainclass
                                      |sparkAction_prepare_delete="deletePath"
                                      |sparkAction_prepare_makedir="makePath"
@@ -500,8 +501,7 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |sparkAction_sparkJobName=Jobname
                                      |sparkAction_sparkMasterURL=masterurl
                                      |sparkAction_sparkMode=mode
-                                     |sparkAction_sparkOptions=spark-options
-                                     |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                     |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     Scoozie.Test.validate(result)
   }

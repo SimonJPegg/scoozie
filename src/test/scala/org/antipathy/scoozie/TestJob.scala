@@ -17,7 +17,6 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   private val kill = Scoozie.Actions.kill("Workflow failed")
 
   private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
-                                                  sparkSettings = "/path/to/spark/settings",
                                                   sparkMasterURL = "masterURL",
                                                   sparkMode = "mode",
                                                   sparkJobName = "JobName",
@@ -26,7 +25,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   sparkOptions = "spark options",
                                                   commandLineArgs = Seq(),
                                                   files = Seq(),
-                                                  jobXmlOption = None,
+                                                  jobXmlOption = Some("/path/to/spark/settings"),
                                                   prepareOption = None,
                                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                                   yarnConfig = yarnConfig)
@@ -89,6 +88,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   override val workflow: Workflow = Scoozie.workflow(name = "ExampleWorkflow",
                                                      path = "/path/to/workflow.xml",
                                                      transitions = transitions,
+                                                     jobXmlOption = None,
                                                      configuration = Scoozie.Configuration.emptyConfiguration,
                                                      yarnConfig = yarnConfig)
 

@@ -1,14 +1,16 @@
 package org.antipathy.scoozie.workflow
 
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
+
 import scala.language.existentials
 import scala.xml.Elem
 import org.antipathy.scoozie.action.control._
+
 import scala.collection.immutable._
 import org.antipathy.scoozie.configuration.Credential
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.action.{Nameable, Node, SubWorkflowAction}
-import org.antipathy.scoozie.properties.JobProperties
+import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.xml.XmlSerializable
 
 /**
@@ -16,6 +18,7 @@ import org.antipathy.scoozie.xml.XmlSerializable
   * @param name the name of the workflow
   * @param path The path to this workflow
   * @param transitions the actions within the workflow
+  * @param jobXmlOption optional job.xml path
   * @param credentialsOption optional credentials for this workflow
   * @param configuration configuration for this workflow
   * @param yarnConfig The yarn configuration for this workflow
@@ -23,11 +26,16 @@ import org.antipathy.scoozie.xml.XmlSerializable
 case class Workflow(override val name: String,
                     path: String,
                     transitions: Node,
+                    jobXmlOption: Option[String],
                     configuration: Configuration,
                     yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
     with Nameable
+    with OozieProperties
     with JobProperties {
+
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
   private val (mappedCredentials, mappedCredProps) =
     credentialsOption.map(_.withActionProperties(name)) match {
@@ -46,6 +54,10 @@ case class Workflow(override val name: String,
       <global>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
+        {if (jobXmlOption.isDefined) {
+          <job-xml>{jobXmlProperty.keys}</job-xml>
+          }
+        }
         {if (mappedConfig.configProperties.nonEmpty) {
             mappedConfig.toXML
           }
@@ -97,8 +109,8 @@ case class Workflow(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  private def properties: Map[String, String] =
-    mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions)
+  override def properties: Map[String, String] =
+    mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions) ++ jobXmlProperty
 
   override def jobProperties: String = {
     val pattern = "\\w+".r

@@ -52,7 +52,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -61,7 +60,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -85,6 +84,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration = Configuration(
                               Seq(Property(name = "workflowprop1", value = "workflowpropvalue1"),
                                   Property(name = "workflowprop2", value = "workflowpropvalue2"))
@@ -124,7 +124,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
+              <job-xml>{"${sparkAction_jobXml}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
               <mode>{"${sparkAction_sparkMode}"}</mode>
               <name>{"${sparkAction_sparkJobName}"}</name>
@@ -187,13 +187,13 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                        |sampleWorkflow_property1=workflowpropvalue2
                                        |shellAction_scriptLocation=/path/to/script.sh
                                        |shellAction_scriptName=script.sh
+                                       |sparkAction_jobXml=/path/to/spark/settings
                                        |sparkAction_mainClass=org.antipathy.Main
                                        |sparkAction_sparkJar=/path/to/jar
                                        |sparkAction_sparkJobName=JobName
                                        |sparkAction_sparkMasterURL=masterURL
                                        |sparkAction_sparkMode=mode
-                                       |sparkAction_sparkOptions=spark options
-                                       |sparkAction_sparkSettings=/path/to/spark/settings""".stripMargin)
+                                       |sparkAction_sparkOptions=spark options""".stripMargin)
 
   }
 
@@ -235,7 +235,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -244,7 +243,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -269,6 +268,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(decision),
+                            jobXmlOption = Some("/path/to/job.xml"),
                             configuration = Scoozie.Configuration.emptyConfiguration,
                             yarnConfig = yarnConfig)
 
@@ -277,6 +277,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
+            <job-xml>{"${sampleWorkflow_jobXml}"}</job-xml>
           </global>
           <credentials>
             <credential name="hive-credentials" type="hive">
@@ -318,7 +319,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${sparkAction_sparkSettings}"}</job-xml>
+              <job-xml>{"${sparkAction_jobXml}"}</job-xml>
               <master>{"${sparkAction_sparkMasterURL}"}</master>
               <mode>{"${sparkAction_sparkMode}"}</mode>
               <name>{"${sparkAction_sparkJobName}"}</name>
@@ -356,15 +357,16 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                        |jobTracker=jobTracker
                                        |nameNode=nameNode
                                        |sampleWorkflow_credentialProperty0=value
+                                       |sampleWorkflow_jobXml=/path/to/job.xml
                                        |shellAction_scriptLocation=/path/to/script.sh
                                        |shellAction_scriptName=script.sh
+                                       |sparkAction_jobXml=/path/to/spark/settings
                                        |sparkAction_mainClass=org.antipathy.Main
                                        |sparkAction_sparkJar=/path/to/jar
                                        |sparkAction_sparkJobName=JobName
                                        |sparkAction_sparkMasterURL=masterURL
                                        |sparkAction_sparkMode=mode
-                                       |sparkAction_sparkOptions=spark options
-                                       |sparkAction_sparkSettings=/path/to/spark/settings""".stripMargin)
+                                       |sparkAction_sparkOptions=spark options""".stripMargin)
   }
 
 }

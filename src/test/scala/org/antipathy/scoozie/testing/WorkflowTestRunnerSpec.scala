@@ -47,6 +47,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(shellAction),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -91,6 +92,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(shellAction),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -136,7 +138,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -145,7 +146,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -169,6 +170,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -215,7 +217,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -224,7 +225,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -248,6 +249,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -293,7 +295,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction2 = SparkAction(name = "sparkAction2",
-                                   sparkSettings = "/path/to/spark/settings",
                                    sparkMasterURL = "masterURL",
                                    sparkMode = "mode",
                                    sparkJobName = "JobName",
@@ -302,7 +303,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    sparkOptions = "spark options",
                                    commandLineArgs = Seq(),
                                    files = Seq(),
-                                   jobXmlOption = None,
+                                   jobXmlOption = Some("/path/to/spark/settings"),
                                    prepareOption = None,
                                    configuration = Scoozie.Configuration.emptyConfiguration,
                                    yarnConfig = yarnConfig)
@@ -310,7 +311,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -319,7 +319,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -355,6 +355,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -418,7 +419,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val sparkAction2 = SparkAction(name = "sparkAction2",
-                                   sparkSettings = "/path/to/spark/settings",
                                    sparkMasterURL = "masterURL",
                                    sparkMode = "mode",
                                    sparkJobName = "JobName",
@@ -427,7 +427,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    sparkOptions = "spark options",
                                    commandLineArgs = Seq(),
                                    files = Seq(),
-                                   jobXmlOption = None,
+                                   jobXmlOption = Some("/path/to/spark/settings"),
                                    prepareOption = None,
                                    configuration = Scoozie.Configuration.emptyConfiguration,
                                    yarnConfig = yarnConfig)
@@ -435,7 +435,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -444,7 +443,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -468,6 +467,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -519,7 +519,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val join = Join("mainJoin", shellAction)
 
     val sparkAction2 = SparkAction(name = "sparkAction2",
-                                   sparkSettings = "/path/to/spark/settings",
                                    sparkMasterURL = "masterURL",
                                    sparkMode = "mode",
                                    sparkJobName = "JobName",
@@ -528,7 +527,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    sparkOptions = "spark options",
                                    commandLineArgs = Seq(),
                                    files = Seq(),
-                                   jobXmlOption = None,
+                                   jobXmlOption = Some("/path/to/spark/settings"),
                                    prepareOption = None,
                                    configuration = Scoozie.Configuration.emptyConfiguration,
                                    yarnConfig = yarnConfig)
@@ -536,7 +535,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(emailAction)
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -545,7 +543,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -581,6 +579,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = Start().okTo(fork),
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -607,7 +606,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val kill = Kill("workflow failed")
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -616,7 +614,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -654,6 +652,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = transitions,
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -675,7 +674,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val kill = Kill("workflow failed")
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -684,7 +682,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -730,6 +728,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = transitions,
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -748,7 +747,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val kill = Kill("workflow failed")
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -757,7 +755,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -803,6 +801,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = transitions,
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)
@@ -822,7 +821,6 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val kill = Kill("workflow failed")
 
     val sparkAction = SparkAction(name = "sparkAction",
-                                  sparkSettings = "/path/to/spark/settings",
                                   sparkMasterURL = "masterURL",
                                   sparkMode = "mode",
                                   sparkJobName = "JobName",
@@ -831,7 +829,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
-                                  jobXmlOption = None,
+                                  jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -877,6 +875,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "",
                             transitions = transitions,
+                            jobXmlOption = None,
                             configuration =
                               Configuration(Seq(Property(name = "workflowprop", value = "workflowpropvalue"))),
                             yarnConfig = yarnConfig)

@@ -39,7 +39,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
             <spark xmlns="uri:oozie:spark-action:1.0">
               <job-tracker>{"${jobTracker}"}</job-tracker>
               <name-node>{"${nameNode}"}</name-node>
-              <job-xml>{"${doASparkThing_sparkSettings}"}</job-xml>
+              <job-xml>{"${doASparkThing_jobXml}"}</job-xml>
               <master>{"${doASparkThing_sparkMasterURL}"}</master>
               <mode>{"${doASparkThing_sparkMode}"}</mode>
               <name>{"${doASparkThing_sparkJobName}"}</name>
@@ -115,13 +115,13 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                            |doAJavaThing_prepare_delete=/some/path
                                            |doAShellThing_scriptLocation=/path/to/script.sh
                                            |doAShellThing_scriptName=script.sh
+                                           |doASparkThing_jobXml=/path/to/spark/settings
                                            |doASparkThing_mainClass=org.antipathy.Main
                                            |doASparkThing_sparkJar=/path/to/jar
                                            |doASparkThing_sparkJobName=JobName
                                            |doASparkThing_sparkMasterURL=masterURL
                                            |doASparkThing_sparkMode=mode
                                            |doASparkThing_sparkOptions=spark options
-                                           |doASparkThing_sparkSettings=/path/to/spark/settings
                                            |jobTracker=yarn
                                            |nameNode=nameservice1""".stripMargin)
   }

@@ -90,8 +90,7 @@ object SchemaService {
                           "distcp-action-0.2.xsd",
                           "oozie-sla-0.1.xsd",
                           "oozie-sla-0.2.xsd",
-                          "spark-action-0.1.xsd",
-                          "git-action-1.0.xsd")
+                          "spark-action-0.1.xsd")
 
   val coOrdSchemaNames = Set("oozie-coordinator-0.1.xsd",
                              "oozie-coordinator-0.2.xsd",

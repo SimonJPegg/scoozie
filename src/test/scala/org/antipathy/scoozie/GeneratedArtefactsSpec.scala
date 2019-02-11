@@ -25,6 +25,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <global>
         |        <job-tracker>${jobTracker}</job-tracker>
         |        <name-node>${nameNode}</name-node>
+        |        <job-xml>${someworkflow_jobXml}</job-xml>
         |        <configuration>
         |            <property>
         |                <name>workflow1</name>
@@ -91,7 +92,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |                <delete path="${sparkAction_prepare_delete}"/>
         |                <mkdir path="${sparkAction_prepare_makedir}"/>
         |            </prepare>
-        |            <job-xml>${sparkAction_sparkSettings}</job-xml>
+        |            <job-xml>${sparkAction_jobXml}</job-xml>
         |            <master>${sparkAction_sparkMasterURL}</master>
         |            <mode>${sparkAction_sparkMode}</mode>
         |            <name>${sparkAction_sparkJobName}</name>
@@ -141,10 +142,12 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |someworkflow_credentialProperty1="value2"
                                                                        |someworkflow_credentialProperty2="value3"
                                                                        |someworkflow_credentialProperty3="value4"
+                                                                       |someworkflow_jobXml=/path/to/job.xml
                                                                        |someworkflow_property0="value1"
                                                                        |someworkflow_property1="value2"
                                                                        |someworkflow_property2="value3"
                                                                        |someworkflow_property3="value4"
+                                                                       |sparkAction_jobXml=someSettings
                                                                        |sparkAction_mainClass=somemainclass
                                                                        |sparkAction_prepare_delete="deletePath"
                                                                        |sparkAction_prepare_makedir="makePath"
@@ -152,8 +155,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |sparkAction_sparkJobName=Jobname
                                                                        |sparkAction_sparkMasterURL=masterurl
                                                                        |sparkAction_sparkMode=mode
-                                                                       |sparkAction_sparkOptions=spark-options
-                                                                       |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                                                       |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     outputPath.delete()
   }
@@ -269,7 +271,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |                <delete path="${sparkAction_prepare_delete}"/>
         |                <mkdir path="${sparkAction_prepare_makedir}"/>
         |            </prepare>
-        |            <job-xml>${sparkAction_sparkSettings}</job-xml>
+        |            <job-xml>${sparkAction_jobXml}</job-xml>
         |            <master>${sparkAction_sparkMasterURL}</master>
         |            <mode>${sparkAction_sparkMode}</mode>
         |            <name>${sparkAction_sparkJobName}</name>
@@ -332,6 +334,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |someworkflow_property1="value2"
                                                                        |someworkflow_property2="value3"
                                                                        |someworkflow_property3="value4"
+                                                                       |sparkAction_jobXml=someSettings
                                                                        |sparkAction_mainClass=somemainclass
                                                                        |sparkAction_prepare_delete="deletePath"
                                                                        |sparkAction_prepare_makedir="makePath"
@@ -339,8 +342,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |sparkAction_sparkJobName=Jobname
                                                                        |sparkAction_sparkMasterURL=masterurl
                                                                        |sparkAction_sparkMode=mode
-                                                                       |sparkAction_sparkOptions=spark-options
-                                                                       |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                                                       |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     outputPath.delete()
   }
@@ -456,7 +458,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |                <delete path="${sparkAction_prepare_delete}"/>
         |                <mkdir path="${sparkAction_prepare_makedir}"/>
         |            </prepare>
-        |            <job-xml>${sparkAction_sparkSettings}</job-xml>
+        |            <job-xml>${sparkAction_jobXml}</job-xml>
         |            <master>${sparkAction_sparkMasterURL}</master>
         |            <mode>${sparkAction_sparkMode}</mode>
         |            <name>${sparkAction_sparkJobName}</name>
@@ -519,6 +521,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |someworkflow_property1="value2"
                                                                        |someworkflow_property2="value3"
                                                                        |someworkflow_property3="value4"
+                                                                       |sparkAction_jobXml=someSettings
                                                                        |sparkAction_mainClass=somemainclass
                                                                        |sparkAction_prepare_delete="deletePath"
                                                                        |sparkAction_prepare_makedir="makePath"
@@ -526,8 +529,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
                                                                        |sparkAction_sparkJobName=Jobname
                                                                        |sparkAction_sparkMasterURL=masterurl
                                                                        |sparkAction_sparkMode=mode
-                                                                       |sparkAction_sparkOptions=spark-options
-                                                                       |sparkAction_sparkSettings=someSettings""".stripMargin)
+                                                                       |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     outputPath.delete()
   }

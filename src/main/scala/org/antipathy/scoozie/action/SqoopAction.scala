@@ -38,8 +38,9 @@ class SqoopAction(override val name: String,
 
   private val argsProperties = buildSequenceProperties(name, "arguments", args)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val commandProperty = formatProperty(s"${name}_command")
-
+  private val commandProperty = buildStringOptionProperty(name, "command", command)
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val configurationProperties = configuration.withActionProperties(name)
   private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
   private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
@@ -53,7 +54,8 @@ class SqoopAction(override val name: String,
     filesProperties ++
     configurationProperties._2 ++
     prepareProperties ++
-    command.map(prop => Map(commandProperty -> prop)).getOrElse(Map())
+    jobXmlProperty ++
+    commandProperty
 
   /**
     * The XML namespace for an action element
@@ -69,14 +71,18 @@ class SqoopAction(override val name: String,
       {yarnConfig.nameNodeXML}
       {if (prepareOptionMapped.isDefined) {
         prepareOptionMapped.get.toXML
+        }
       }
+      {if (jobXmlOption.isDefined) {
+          <job-xml>{jobXmlProperty.keys}</job-xml>
+        }
       }
       {if (configurationProperties._1.configProperties.nonEmpty) {
           configurationProperties._1.toXML
         }
       }
       { if (command.isDefined) {
-          <command>{commandProperty}</command>
+          <command>{commandProperty.keys}</command>
         } else {
           argsProperties.keys.map(Arg(_).toXML)
         }

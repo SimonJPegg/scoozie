@@ -13,7 +13,6 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
 /**
   * Oozie Spark action definition
   * @param name the name of the action
-  * @param sparkSettings the spark settings location
   * @param sparkMasterURL the url of the spark master
   * @param sparkMode the mode the spark job should run in
   * @param sparkJobName the name of the spark job
@@ -27,7 +26,6 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
   * @param yarnConfig Yarn configuration for this action
   */
 final class SparkAction(override val name: String,
-                        sparkSettings: String,
                         sparkMasterURL: String,
                         sparkMode: String,
                         sparkJobName: String,
@@ -42,7 +40,6 @@ final class SparkAction(override val name: String,
                         yarnConfig: YarnConfig)
     extends Action {
 
-  private val sparkSettingsProperty = formatProperty(s"${name}_sparkSettings")
   private val sparkMasterURLProperty = formatProperty(s"${name}_sparkMasterURL")
   private val sparkModeProperty = formatProperty(s"${name}_sparkMode")
   private val sparkJobNameProperty = formatProperty(s"${name}_sparkJobName")
@@ -52,6 +49,8 @@ final class SparkAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
+  private val jobXmlProperty =
+    buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
@@ -70,8 +69,7 @@ final class SparkAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(sparkSettingsProperty -> sparkSettings,
-        sparkMasterURLProperty -> sparkMasterURL,
+    Map(sparkMasterURLProperty -> sparkMasterURL,
         sparkModeProperty -> sparkMode,
         sparkJobNameProperty -> sparkJobName,
         mainClassProperty -> mainClass,
@@ -80,7 +78,8 @@ final class SparkAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties._2
+    mappedConfigAndProperties._2 ++
+    jobXmlProperty
 
   /**
     * The XML for this node
@@ -93,7 +92,10 @@ final class SparkAction(override val name: String,
           prepareOptionMapped.get.toXML
         }
       }
-      <job-xml>{sparkSettingsProperty}</job-xml>
+      {if (jobXmlOption.isDefined) {
+          <job-xml>{jobXmlProperty.keys}</job-xml>
+        }
+      }
       {if (mappedConfig.configProperties.nonEmpty) {
          mappedConfig.toXML
         }
@@ -118,7 +120,6 @@ object SparkAction {
     * Create a new instance of this action
     */
   def apply(name: String,
-            sparkSettings: String,
             sparkMasterURL: String,
             sparkMode: String,
             sparkJobName: String,
@@ -133,7 +134,6 @@ object SparkAction {
             yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
       new SparkAction(name,
-                      sparkSettings,
                       sparkMasterURL,
                       sparkMode,
                       sparkJobName,
@@ -154,7 +154,6 @@ object SparkAction {
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
     try {
       SparkAction(name = config.getString("name"),
-                  sparkSettings = config.getString("spark-settings"),
                   sparkMasterURL = config.getString("spark-master-url"),
                   sparkMode = config.getString("spark-mode"),
                   sparkJobName = config.getString("spark-job-name"),
