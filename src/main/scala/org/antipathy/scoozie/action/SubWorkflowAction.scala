@@ -30,7 +30,7 @@ final class SubWorkflowAction(override val name: String,
   /**
     * The XML namespace for an action element
     */
-  override val xmlns: Option[String] = Some("uri:oozie:ssh-action:0.2")
+  override val xmlns: Option[String] = None
 
   /**
     * Get the Oozie properties for this object
