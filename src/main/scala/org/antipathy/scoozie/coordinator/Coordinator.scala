@@ -2,9 +2,10 @@ package org.antipathy.scoozie.coordinator
 
 import org.antipathy.scoozie.action.Nameable
 import org.antipathy.scoozie.configuration.Configuration
-import org.antipathy.scoozie.properties.JobProperties
+import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.xml.XmlSerializable
+import scala.collection.immutable._
 import scala.xml.Elem
 import scala.language.existentials
 
@@ -27,19 +28,36 @@ case class Coordinator(override val name: String,
                        configuration: Configuration)
     extends XmlSerializable
     with Nameable
+    with OozieProperties
     with JobProperties {
 
   private val (mappedConfig, mappedProperties) = configuration.withActionProperties(name)
+
+  private val frequencyProperty = formatProperty(s"${name}_frequency")
+  private val startProperty = formatProperty(s"${name}_start")
+  private val endProperty = formatProperty(s"${name}_end")
+  private val timezoneProperty = formatProperty(s"${name}_timezone")
+  private val workflowPathProperty = formatProperty(s"${name}_workflow_path")
+
+  /**
+    * Get the Oozie properties for this object
+    */
+  override def properties: Map[String, String] =
+    Map(frequencyProperty -> frequency,
+        startProperty -> start,
+        endProperty -> end,
+        timezoneProperty -> timezone,
+        workflowPathProperty -> workflow.path) ++
+    mappedProperties
 
   /**
     * Get the job properties
     */
   override def jobProperties: String = {
     val pattern = "\\w+".r
-    mappedProperties.flatMap {
+    properties.flatMap {
       case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
-    }.toSet.toSeq.sorted.mkString(System.lineSeparator()) +
-    System.lineSeparator()
+    }.toSet.toSeq.sorted.mkString(System.lineSeparator())
   }
 
   /**
@@ -47,14 +65,14 @@ case class Coordinator(override val name: String,
     */
   override def toXML: Elem =
     <coordinator-app name={name}
-                     frequency={frequency}
-                     start={start}
-                     end={end}
-                     timezone={timezone}
+                     frequency={frequencyProperty}
+                     start={startProperty}
+                     end={endProperty}
+                     timezone={timezoneProperty}
                      xmlns="uri:oozie:coordinator:0.4">
       <action>
         <workflow>
-          <app-path>{workflow.path}</app-path>
+          <app-path>{workflowPathProperty}</app-path>
           {if (mappedConfig.configProperties.nonEmpty) {
               mappedConfig.toXML
             }
@@ -64,3 +82,4 @@ case class Coordinator(override val name: String,
     </coordinator-app>
 
 }
+object Coordinator {}

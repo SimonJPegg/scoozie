@@ -173,10 +173,10 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="someFreq" start="someStart" end="someEnd" timezone="someTimezone" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
-        |            <app-path>somepath</app-path>
+        |            <app-path>${someCoordinator_workflow_path}</app-path>
         |            <configuration>
         |                <property>
         |                    <name>prop1</name>
@@ -308,10 +308,15 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |</workflow-app>""".stripMargin
     )
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """someCoordinator_property0="value1"
+      """someCoordinator_end=someEnd
+        |someCoordinator_frequency=someFreq
+        |someCoordinator_property0="value1"
         |someCoordinator_property1="value2"
         |someCoordinator_property2="value3"
         |someCoordinator_property3="value4"
+        |someCoordinator_start=someStart
+        |someCoordinator_timezone=someTimezone
+        |someCoordinator_workflow_path=somepath
         |errorEmail_body=yep
         |errorEmail_subject=hello
         |errorEmail_to=a@a.com
@@ -357,10 +362,10 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="someFreq" start="someStart" end="someEnd" timezone="someTimezone" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
-        |            <app-path>somepath</app-path>
+        |            <app-path>${someCoordinator_workflow_path}</app-path>
         |            <configuration>
         |                <property>
         |                    <name>prop1</name>
@@ -492,10 +497,15 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |</workflow-app>""".stripMargin
     )
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """someCoordinator_property0="value1"
+      """someCoordinator_end=someEnd
+        |someCoordinator_frequency=someFreq
+        |someCoordinator_property0="value1"
         |someCoordinator_property1="value2"
         |someCoordinator_property2="value3"
         |someCoordinator_property3="value4"
+        |someCoordinator_start=someStart
+        |someCoordinator_timezone=someTimezone
+        |someCoordinator_workflow_path=somepath
         |errorEmail_body=yep
         |errorEmail_subject=hello
         |errorEmail_to=a@a.com

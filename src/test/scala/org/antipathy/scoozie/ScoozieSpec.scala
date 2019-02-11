@@ -96,8 +96,13 @@ class ScoozieSpec extends FlatSpec with Matchers {
         </workflow-app>)
     )
 
-    testWorkflow.jobProperties should be("""ExampleCoOrdinator_property0=value1
+    testWorkflow.jobProperties should be("""ExampleCoOrdinator_end=end
+                                           |ExampleCoOrdinator_frequency=startFreq
+                                           |ExampleCoOrdinator_property0=value1
                                            |ExampleCoOrdinator_property1=value2
+                                           |ExampleCoOrdinator_start=start
+                                           |ExampleCoOrdinator_timezone=timeZome
+                                           |ExampleCoOrdinator_workflow_path=/path/to/workflow.xml
                                            |alertFailure_body=message body
                                            |alertFailure_subject=message subject
                                            |alertFailure_to=a@a.com,b@b.com
@@ -146,13 +151,13 @@ class ScoozieSpec extends FlatSpec with Matchers {
     val testWorkflow = new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
     Utility.trim(testWorkflow.coordinator.toXML) should be(Utility.trim(<coordinator-app
         name="ExampleCoOrdinator"
-        frequency="startFreq"
-        start="start" end="end"
-        timezone="timeZome"
+        frequency="${ExampleCoOrdinator_frequency}"
+        start="${ExampleCoOrdinator_start}" end="${ExampleCoOrdinator_end}"
+        timezone="${ExampleCoOrdinator_timezone}"
         xmlns="uri:oozie:coordinator:0.4">
           <action>
             <workflow>
-              <app-path>/path/to/workflow.xml</app-path>
+              <app-path>{"${ExampleCoOrdinator_workflow_path}"}</app-path>
               <configuration>
                 <property><name>prop1</name>
                   <value>{"${ExampleCoOrdinator_property0}"}</value>

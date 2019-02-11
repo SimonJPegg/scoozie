@@ -31,14 +31,14 @@ class CoordinatorSpec extends FlatSpec with Matchers {
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<coordinator-app
         name="SomeCoOrd"
-        frequency="${coord:days(1)}"
-        start="2009-01-02T08:00Z"
-        end="2009-01-04T08:00Z"
-        timezone="America/Los_Angeles"
+        frequency="${SomeCoOrd_frequency}"
+        start="${SomeCoOrd_start}"
+        end="${SomeCoOrd_end}"
+        timezone="${SomeCoOrd_timezone}"
         xmlns="uri:oozie:coordinator:0.1">
         <action>
           <workflow>
-            <app-path>/path/to/workflow.xml</app-path>
+            <app-path>{"${SomeCoOrd_workflow_path}"}</app-path>
           </workflow>
         </action>
       </coordinator-app>))
@@ -62,18 +62,23 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                              workflow = workflow,
                              configuration = Configuration(Seq(Property("some", "value"))))
 
-    result.jobProperties should be("SomeCoOrd_property0=value\n")
+    result.jobProperties should be("""SomeCoOrd_end=2009-01-04T08:00Z
+                                     |SomeCoOrd_frequency=${coord:days(1)}
+                                     |SomeCoOrd_property0=value
+                                     |SomeCoOrd_start=2009-01-02T08:00Z
+                                     |SomeCoOrd_timezone=America/Los_Angeles
+                                     |SomeCoOrd_workflow_path=/path/to/workflow.xml""".stripMargin)
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app
       name="SomeCoOrd"
-      frequency="${coord:days(1)}"
-      start="2009-01-02T08:00Z"
-      end="2009-01-04T08:00Z"
-      timezone="America/Los_Angeles"
+      frequency="${SomeCoOrd_frequency}"
+      start="${SomeCoOrd_start}"
+      end="${SomeCoOrd_end}"
+      timezone="${SomeCoOrd_timezone}"
       xmlns="uri:oozie:coordinator:0.4">
         <action>
           <workflow>
-            <app-path>/path/to/workflow.xml</app-path>
+            <app-path>{"${SomeCoOrd_workflow_path}"}</app-path>
             <configuration>
               <property>
                 <name>some</name>
