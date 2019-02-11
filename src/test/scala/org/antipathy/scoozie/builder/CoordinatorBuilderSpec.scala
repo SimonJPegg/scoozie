@@ -135,14 +135,14 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
     result.workflow.path should be("somepath")
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app name="someCoordinator"
-                       frequency="someFreq"
-                       start="someStart"
-                       end="someEnd"
-                       timezone="someTimezone"
+                       frequency={"${someCoordinator_frequency}"}
+                       start={"${someCoordinator_start}"}
+                       end={"${someCoordinator_end}"}
+                       timezone={"${someCoordinator_timezone}"}
                        xmlns="uri:oozie:coordinator:0.4">
         <action>
           <workflow>
-            <app-path>somepath</app-path>
+            <app-path>{"${someCoordinator_workflow_path}"}</app-path>
             <configuration>
               <property>
                 <name>prop1</name>
@@ -165,10 +165,15 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
         </action>
       </coordinator-app>))
 
-    result.jobProperties should be("""someCoordinator_property0="value1"
+    result.jobProperties should be("""someCoordinator_end=someEnd
+                                     |someCoordinator_frequency=someFreq
+                                     |someCoordinator_property0="value1"
                                      |someCoordinator_property1="value2"
                                      |someCoordinator_property2="value3"
-                                     |someCoordinator_property3="value4"""".stripMargin + "\n")
+                                     |someCoordinator_property3="value4"
+                                     |someCoordinator_start=someStart
+                                     |someCoordinator_timezone=someTimezone
+                                     |someCoordinator_workflow_path=somepath""".stripMargin)
 
     Scoozie.Test.validate(result)
   }
