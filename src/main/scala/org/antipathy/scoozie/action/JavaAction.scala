@@ -1,14 +1,15 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration._
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
+import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.util._
+import scala.xml.Elem
 
 /**
   * Oozie Java action definition
@@ -75,10 +76,7 @@ final class JavaAction(override val name: String,
     <java>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
-        {if (prepareOptionMapped.isDefined) {
-            prepareOptionMapped.get.toXML
-          }
-        }
+        {prepareOptionMapped.map(_.toXML).orNull}
         {if (jobXmlOption.isDefined) {
             <job-xml>{jobXmlProperty.keys}</job-xml>
           }
@@ -136,7 +134,7 @@ object JavaAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
+    Try {
       JavaAction(name = config.getString("name"),
                  mainClass = config.getString("main-class"),
                  javaJar = config.getString("java-jar"),
@@ -152,8 +150,9 @@ object JavaAction {
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
                  prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } match {
+      case Success(node) => node
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
     }
 }

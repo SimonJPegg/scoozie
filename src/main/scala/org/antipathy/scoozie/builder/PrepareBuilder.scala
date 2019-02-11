@@ -1,11 +1,12 @@
 package org.antipathy.scoozie.builder
 
 import com.typesafe.config.Config
-import org.antipathy.scoozie.action.prepare.Prepare
-import scala.collection.immutable._
-import scala.collection.JavaConverters._
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
+import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.exception.UnknownStepException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
 
 /**
   * object for building prepare steps for actions

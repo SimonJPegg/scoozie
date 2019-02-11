@@ -1,14 +1,15 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration._
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
+import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.util._
+import scala.xml.Elem
 
 /**
   * Oozie Java action definition
@@ -63,9 +64,6 @@ class PigAction(override val name: String,
     */
   override val xmlns: Option[String] = None
 
-  <xs:element name="argument" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="file" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-
   /**
     * The XML for this node
     */
@@ -73,10 +71,7 @@ class PigAction(override val name: String,
     <pig>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.get.toXML
-        }
-      }
+      {prepareOptionMapped.map(_.toXML).orNull}
       {if (jobXmlOption.isDefined) {
           <job-xml>{jobXmlProperty.keys}</job-xml>
         }
@@ -116,7 +111,7 @@ object PigAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
+    Try {
       PigAction(name = config.getString("name"),
                 script = config.getString("script"),
                 params = Seq(config.getStringList("params").asScala: _*),
@@ -126,8 +121,9 @@ object PigAction {
                 configuration = ConfigurationBuilder.buildConfiguration(config),
                 yarnConfig,
                 prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } match {
+      case Success(value) => value
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
     }
 }

@@ -1,10 +1,10 @@
 package org.antipathy.scoozie.action
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
-import org.antipathy.scoozie.configuration.Credentials
-import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class ShellActionSpec extends FlatSpec with Matchers {
 

@@ -17,7 +17,8 @@ private[scoozie] class ResourceResolver extends LSResourceResolver {
                                publicId: String,
                                systemId: String,
                                baseURI: String): LSInput = {
-    val nonNullSystemId = if (systemId == null) {
+    import org.antipathy.scoozie.Scoozie
+    val nonNullSystemId = if (systemId == Scoozie.Null) {
       FilenameUtils.getName(baseURI)
     } else {
       systemId

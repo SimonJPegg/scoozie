@@ -1,6 +1,7 @@
 package org.antipathy.scoozie
 
 import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 import scala.xml.Utility
 

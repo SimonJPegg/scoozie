@@ -1,8 +1,8 @@
 package org.antipathy.scoozie
 
-import org.scalatest.{FlatSpec, Matchers}
 import better.files._
 import org.antipathy.scoozie.io.ArtefactWriter
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable.Map
 

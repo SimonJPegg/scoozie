@@ -1,15 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Configuration, YarnConfig}
-import scala.collection.immutable._
-import org.antipathy.scoozie.configuration.Arg
-import org.antipathy.scoozie.configuration.Credentials
 import com.typesafe.config.Config
+import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration.{Arg, Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.util._
 
 /**
   * DistCP action definition
@@ -58,10 +57,7 @@ class DistCPAction(override val name: String,
     <distcp xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.get.toXML
-         }
-      }
+      {prepareOptionMapped.map(_.toXML).orNull}
       {if (configurationProperties._1.configProperties.nonEmpty) {
           configurationProperties._1.toXML
         }
@@ -78,6 +74,7 @@ class DistCPAction(override val name: String,
   * Companion object
   */
 object DistCPAction {
+  import scala.util.Try
 
   /**
     * Create a new instance of this action
@@ -94,16 +91,16 @@ object DistCPAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
+    Try {
       DistCPAction(name = config.getString("name"),
                    arguments = Seq(config.getStringList("arguments").asScala: _*),
                    javaOptions = config.getString("java-options"),
                    configuration = ConfigurationBuilder.buildConfiguration(config),
                    yarnConfig = yarnConfig,
                    prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } match {
+      case Success(node) => node
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
     }
-
 }

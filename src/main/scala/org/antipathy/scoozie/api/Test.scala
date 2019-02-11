@@ -1,4 +1,5 @@
 package org.antipathy.scoozie.api
+
 import org.antipathy.scoozie.Scoozie.{Formatting => TestFormatting}
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.testing.WorkflowTestRunner

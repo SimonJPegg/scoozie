@@ -1,8 +1,9 @@
 package org.antipathy.scoozie.xml.validator
 
 import java.io.StringReader
-import org.antipathy.scoozie.xml.validator.SchemaType.SchemaType
+
 import javax.xml.transform.stream.StreamSource
+import org.antipathy.scoozie.xml.validator.SchemaType.SchemaType
 import org.antipathy.scoozie.xml.validator.schema.SchemaService
 
 /**

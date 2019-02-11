@@ -1,8 +1,9 @@
 package org.antipathy.scoozie.action
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.configuration.Credentials
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class DistCPActionSpec extends FlatSpec with Matchers {

@@ -1,8 +1,8 @@
 package org.antipathy.scoozie.builder
 
-import org.scalatest.{FlatSpec, Matchers}
 import com.typesafe.config.ConfigFactory
 import org.antipathy.scoozie.Scoozie
+import org.scalatest.{FlatSpec, Matchers}
 
 class WorkflowBuilderSpec extends FlatSpec with Matchers {
 

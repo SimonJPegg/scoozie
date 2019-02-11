@@ -1,10 +1,11 @@
 package org.antipathy.scoozie
 
-import org.scalatest.{FlatSpec, Matchers}
 import better.files._
-import org.antipathy.scoozie.io.ArtefactWriter
-import scala.util.control.NonFatal
 import org.antipathy.scoozie.exception.TransitionException
+import org.antipathy.scoozie.io.ArtefactWriter
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.util._
 
 class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
@@ -541,10 +542,11 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     val artefacts = Scoozie.fromConfig(configPath)
 
     an[TransitionException] should be thrownBy {
-      try {
+      Try {
         artefacts.saveToPath(outputPath.path)
-      } catch {
-        case NonFatal(e) =>
+      } match {
+        case Success(v) => v
+        case Failure(e) =>
           e.getMessage should be("""Expected transition:
                                    |start -> sparkAction -> end
                                    |Actual transition:

@@ -4,11 +4,12 @@ import javax.xml.XMLConstants
 import javax.xml.transform.Source
 import javax.xml.transform.stream.StreamSource
 import javax.xml.validation.{Schema, SchemaFactory, Validator}
-import org.antipathy.scoozie.xml.validator.xml.NoXMLEntityResolver
+import org.antipathy.scoozie.exception.NoSchemaException
 import org.antipathy.scoozie.xml.validator.SchemaType
 import org.antipathy.scoozie.xml.validator.SchemaType.SchemaType
+import org.antipathy.scoozie.xml.validator.xml.NoXMLEntityResolver
+
 import scala.collection.immutable._
-import org.antipathy.scoozie.exception.NoSchemaException
 
 /**
   * Re-implementation of the Oozie SchemaService class
@@ -17,7 +18,7 @@ private[scoozie] class SchemaService {
 
   private val xmlEntityResolver = new NoXMLEntityResolver
   private val wfSchema: Schema = loadSchema(SchemaService.wfSchemaNames)
-  private var coordSchema: Schema = loadSchema(SchemaService.coOrdSchemaNames)
+  private val coordSchema: Schema = loadSchema(SchemaService.coOrdSchemaNames)
 
   /**
     * Returns validator for schema

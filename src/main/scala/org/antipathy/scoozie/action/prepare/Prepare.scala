@@ -1,10 +1,10 @@
 package org.antipathy.scoozie.action.prepare
 
-import scala.xml.Elem
-import scala.collection.immutable.Map
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
 import org.antipathy.scoozie.xml.XmlSerializable
-import scala.collection.immutable._
+
+import scala.collection.immutable.{Map, _}
+import scala.xml.Elem
 
 /**
   * Ooize actions prepare definition
@@ -25,6 +25,8 @@ case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
       case m: MakeDir =>
         val p = "${" + s"${actionName}_prepare_makedir" + "}"
         (MakeDir(p), p -> m.path)
+      case unknown =>
+        throw new IllegalArgumentException(s"${unknown.getClass.getSimpleName} is not a valid prepare step")
     }
     (this.copy(mappedProps.map(_._1)), mappedProps.map(_._2).toMap)
   }

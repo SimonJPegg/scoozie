@@ -1,13 +1,14 @@
 package org.antipathy.scoozie.testing
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.action._
-import org.antipathy.scoozie.configuration._
-import org.antipathy.scoozie.action.control._
-import scala.collection.immutable._
-import org.antipathy.scoozie.workflow.Workflow
-import org.antipathy.scoozie.exception.TransitionException
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action._
+import org.antipathy.scoozie.action.control._
+import org.antipathy.scoozie.configuration._
+import org.antipathy.scoozie.exception.TransitionException
+import org.antipathy.scoozie.workflow.Workflow
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
 

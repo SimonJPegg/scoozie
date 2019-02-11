@@ -1,8 +1,7 @@
 package org.antipathy.scoozie.api
 
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
-import org.antipathy.scoozie.action.prepare.PrepareFSAction
-import org.antipathy.scoozie.action.prepare.{Prepare => ActionPrepare}
+import org.antipathy.scoozie.action.prepare.{PrepareFSAction, Prepare => ActionPrepare}
 
 import scala.collection.immutable.Seq
 

@@ -2,8 +2,9 @@ package org.antipathy.scoozie.configuration
 
 import org.antipathy.scoozie.properties.OozieProperties
 import org.antipathy.scoozie.xml.XmlSerializable
-import scala.xml.Elem
+
 import scala.collection.immutable.Map
+import scala.xml.Elem
 
 /**
   * Oozie credentials definition

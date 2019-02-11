@@ -3,8 +3,8 @@ package org.antipathy.scoozie.action.control
 import org.antipathy.scoozie.action.{Action, Node}
 import org.scalatest.{FlatSpec, Matchers}
 
-import scala.xml.Elem
 import scala.collection.immutable.Map
+import scala.xml.Elem
 
 class DecisionSpec extends FlatSpec with Matchers {
 

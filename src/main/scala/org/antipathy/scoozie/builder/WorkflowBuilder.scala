@@ -3,6 +3,7 @@ package org.antipathy.scoozie.builder
 import com.typesafe.config.Config
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.workflow.Workflow
+
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
 

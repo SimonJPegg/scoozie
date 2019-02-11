@@ -1,17 +1,15 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Configuration, YarnConfig}
-import scala.collection.immutable._
-import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Arg
-import org.antipathy.scoozie.configuration.File
-import org.antipathy.scoozie.configuration.Credentials
 import com.typesafe.config.Config
+import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.util._
+import scala.xml.Elem
 
 /**
   * Oozie Sqoop action definition
@@ -69,10 +67,7 @@ class SqoopAction(override val name: String,
     <sqoop xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-        prepareOptionMapped.get.toXML
-        }
-      }
+      {prepareOptionMapped.map(_.toXML).orNull}
       {if (jobXmlOption.isDefined) {
           <job-xml>{jobXmlProperty.keys}</job-xml>
         }
@@ -113,7 +108,7 @@ object SqoopAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
+    Try {
       SqoopAction(name = config.getString("name"),
                   command = if (config.hasPath("command")) Some(config.getString("command")) else None,
                   args =
@@ -126,8 +121,9 @@ object SqoopAction {
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
                   prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } match {
+      case Success(value) => value
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
     }
 }

@@ -1,11 +1,12 @@
 package org.antipathy.scoozie.coordinator
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
-import scala.collection.immutable._
-import org.antipathy.scoozie.action.control.Start
-import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action.control.Start
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
+import org.antipathy.scoozie.workflow.Workflow
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class CoordinatorSpec extends FlatSpec with Matchers {
 

@@ -1,12 +1,13 @@
 package org.antipathy.scoozie.action
 
-import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Args
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration.Args
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.util._
+import scala.xml.Elem
 
 /**
   * Oozie SSH action
@@ -73,7 +74,7 @@ object SshAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    try {
+    Try {
       SshAction(name = config.getString("name"),
                 host = config.getString("host"),
                 command = config.getString("command"),
@@ -81,8 +82,9 @@ object SshAction {
                   config.getBoolean("capture-output")
                 } else false,
                 args = Seq(config.getStringList("command-line-arguments").asScala: _*))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } match {
+      case Success(value) => value
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
     }
 }

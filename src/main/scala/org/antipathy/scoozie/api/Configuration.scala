@@ -1,7 +1,13 @@
 package org.antipathy.scoozie.api
 
-import org.antipathy.scoozie.configuration.{Credential, Credentials, Property, YarnConfig}
-import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration}
+import org.antipathy.scoozie.configuration.{
+  Credential,
+  Credentials,
+  Property,
+  YarnConfig,
+  Configuration => ActionConfiguration
+}
+
 import scala.collection.immutable.{Map, Seq}
 
 /**

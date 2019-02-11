@@ -1,13 +1,13 @@
 package org.antipathy.scoozie.builder
 
-import org.scalatest.{FlatSpec, Matchers}
 import com.typesafe.config.ConfigFactory
-import org.antipathy.scoozie.configuration.Credentials
-import org.antipathy.scoozie.configuration.YarnConfig
+import org.antipathy.scoozie.action.control._
+import org.antipathy.scoozie.configuration.{Credentials, YarnConfig}
+import org.antipathy.scoozie.exception._
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
-import org.antipathy.scoozie.action.control._
-import org.antipathy.scoozie.exception._
 
 class TransactionBuilderSpec extends FlatSpec with Matchers {
 
@@ -73,36 +73,43 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |    ]""".stripMargin
 
     val config = Seq(ConfigFactory.parseString(configString).getConfigList("transitions").asScala: _*)
-
     val startNode = TransitionBuilder.build(config, yarnConfig)
     startNode.name should be("start")
+
     startNode.failureTransition should be(None)
+    startNode.successTransition.isDefined should be(true)
+    startNode.successTransition.foreach { sparkAction =>
+      sparkAction.name should be("sparkAction")
+      sparkAction.successTransition.get.name should be("shellAction")
+      sparkAction.failureTransition.get.name should be("errorEmail")
 
-    val sparkAction = startNode.successTransition.get
-    sparkAction.name should be("sparkAction")
-    sparkAction.successTransition.get.name should be("shellAction")
-    sparkAction.failureTransition.get.name should be("errorEmail")
+      sparkAction.successTransition.isDefined should be(true)
+      sparkAction.successTransition.foreach { shellAction =>
+        shellAction.name should be("shellAction")
+        shellAction.successTransition.get.name should be("end")
+        shellAction.failureTransition.get.name should be("errorEmail")
 
-    val shellAction = sparkAction.successTransition.get
-    shellAction.name should be("shellAction")
-    shellAction.successTransition.get.name should be("end")
-    shellAction.failureTransition.get.name should be("errorEmail")
-
-    val emailAction = shellAction.failureTransition.get
-    emailAction.name should be("errorEmail")
-    emailAction.successTransition.get.name should be("kill")
-    emailAction.failureTransition.get.name should be("kill")
-
-    val endAction = shellAction.successTransition.get
-    endAction.name should be("end")
-    endAction.successTransition should be(None)
-    endAction.failureTransition should be(None)
-
-    val killAction = emailAction.successTransition.get
-    killAction.name should be("kill")
-    killAction.successTransition should be(None)
-    killAction.failureTransition should be(None)
-
+        shellAction.successTransition.isDefined should be(true)
+        shellAction.successTransition.foreach { endAction =>
+          endAction.name should be("end")
+          endAction.successTransition should be(None)
+          endAction.failureTransition should be(None)
+        }
+        shellAction.failureTransition.isDefined should be(true)
+        shellAction.failureTransition.foreach { emailAction =>
+          emailAction.name should be("errorEmail")
+          emailAction.successTransition.get.name should be("kill")
+          emailAction.failureTransition.get.name should be("kill")
+          emailAction.failureTransition.isDefined should be(true)
+          emailAction.successTransition.isDefined should be(true)
+          emailAction.successTransition.foreach { killAction =>
+            killAction.name should be("kill")
+            killAction.successTransition should be(None)
+            killAction.failureTransition should be(None)
+          }
+        }
+      }
+    }
   }
 
   it should "build a workflow with a fork" in {
@@ -187,50 +194,61 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |    ]""".stripMargin
 
     val config = Seq(ConfigFactory.parseString(configString).getConfigList("transitions").asScala: _*)
-
     val startNode = TransitionBuilder.build(config, yarnConfig)
     startNode.name should be("start")
     startNode.failureTransition should be(None)
-
-    val forkNode = startNode.successTransition.get
-    forkNode.action.name should be("mainFork")
-    forkNode.action.asInstanceOf[Fork].transitionPaths.map(_.name) should be(Seq("sparkAction", "hiveAction"))
-
-    val sparkAction = forkNode.action.asInstanceOf[Fork].transitionPaths.toSet.filter(_.name == "sparkAction").head
-    sparkAction.name should be("sparkAction")
-    sparkAction.successTransition.get.name should be("mainJoin")
-    sparkAction.failureTransition.get.name should be("errorEmail")
-
-    val hiveAction = forkNode.action.asInstanceOf[Fork].transitionPaths.toSet.filter(_.name == "hiveAction").head
-    hiveAction.name should be("hiveAction")
-    hiveAction.successTransition.get.name should be("mainJoin")
-    hiveAction.failureTransition.get.name should be("errorEmail")
-
-    val joinAction = hiveAction.successTransition.get
-    joinAction.name should be("mainJoin")
-    joinAction.failureTransition should be(None)
-    joinAction.successTransition.get.name should be("shellAction")
-    joinAction.action.asInstanceOf[Join].transitionTo.name should be("shellAction")
-
-    val shellAction = joinAction.successTransition.get
-    shellAction.name should be("shellAction")
-    shellAction.successTransition.get.name should be("end")
-    shellAction.failureTransition.get.name should be("errorEmail")
-
-    val emailAction = shellAction.failureTransition.get
-    emailAction.name should be("errorEmail")
-    emailAction.successTransition.get.name should be("kill")
-    emailAction.failureTransition.get.name should be("kill")
-
-    val endAction = shellAction.successTransition.get
-    endAction.name should be("end")
-    endAction.successTransition should be(None)
-    endAction.failureTransition should be(None)
-
-    val killAction = emailAction.successTransition.get
-    killAction.name should be("kill")
-    killAction.successTransition should be(None)
-    killAction.failureTransition should be(None)
+    startNode.successTransition.foreach { forkNode =>
+      forkNode.action.name should be("mainFork")
+      forkNode.action.asInstanceOf[Fork].transitionPaths.map(_.name) should be(Seq("sparkAction", "hiveAction"))
+      val sparkNode = forkNode.action.asInstanceOf[Fork].transitionPaths.toSet.find(_.name == "sparkAction")
+      sparkNode.isDefined should be(true)
+      sparkNode.foreach { sparkAction =>
+        sparkAction.name should be("sparkAction")
+        sparkAction.successTransition.isDefined should be(true)
+        sparkAction.successTransition.foreach(_.name should be("mainJoin"))
+        sparkAction.failureTransition.isDefined should be(true)
+        sparkAction.failureTransition.foreach(_.name should be("errorEmail"))
+      }
+      val hiveNode = forkNode.action.asInstanceOf[Fork].transitionPaths.toSet.find(_.name == "hiveAction")
+      hiveNode.isDefined should be(true)
+      hiveNode.foreach { hiveAction =>
+        hiveAction.name should be("hiveAction")
+        hiveAction.successTransition.isDefined should be(true)
+        hiveAction.successTransition.foreach(_.name should be("mainJoin"))
+        hiveAction.failureTransition.isDefined should be(true)
+        hiveAction.failureTransition.foreach(_.name should be("errorEmail"))
+        hiveAction.successTransition.foreach { joinAction =>
+          joinAction.name should be("mainJoin")
+          joinAction.failureTransition should be(None)
+          joinAction.action.asInstanceOf[Join].transitionTo.name should be("shellAction")
+          joinAction.successTransition.isDefined should be(true)
+          joinAction.successTransition.foreach { shellAction =>
+            shellAction.name should be("shellAction")
+            shellAction.successTransition.isDefined should be(true)
+            shellAction.successTransition.foreach { endAction =>
+              endAction.name should be("end")
+              endAction.successTransition should be(None)
+              endAction.failureTransition should be(None)
+            }
+            shellAction.failureTransition.isDefined should be(true)
+            shellAction.failureTransition.foreach { emailAction =>
+              emailAction.name should be("errorEmail")
+              emailAction.successTransition.isDefined should be(true)
+              emailAction.successTransition.foreach(_.name should be("kill"))
+              emailAction.failureTransition.isDefined should be(true)
+              emailAction.failureTransition.foreach(_.name should be("kill"))
+              emailAction.successTransition.foreach { killAction =>
+                killAction.name should be("kill")
+                killAction.successTransition should be(None)
+                killAction.failureTransition should be(None)
+              }
+            }
+            shellAction.successTransition.get.name should be("end")
+            shellAction.failureTransition.get.name should be("errorEmail")
+          }
+        }
+      }
+    }
 
   }
 
@@ -315,53 +333,63 @@ class TransactionBuilderSpec extends FlatSpec with Matchers {
                          |    ]""".stripMargin
 
     val config = Seq(ConfigFactory.parseString(configString).getConfigList("transitions").asScala: _*)
-
     val startNode = TransitionBuilder.build(config, yarnConfig)
     startNode.name should be("start")
     startNode.failureTransition should be(None)
 
-    val decisionNode = startNode.successTransition.get
-    decisionNode.name should be("decisionNode")
-    decisionNode.action.asInstanceOf[Decision].defaultPath.name should be("sparkAction")
-    decisionNode.action.asInstanceOf[Decision].transitionPaths.map(_.name).toSet should be(
-      Set("sparkAction", "hiveAction")
-    )
-
-    decisionNode.successTransition should be(None)
-    decisionNode.failureTransition should be(None)
-
-    val sparkAction =
-      decisionNode.action.asInstanceOf[Decision].transitionPaths.toSet.filter(_.name == "sparkAction").head
-    sparkAction.name should be("sparkAction")
-    sparkAction.successTransition.get.name should be("shellAction")
-    sparkAction.failureTransition.get.name should be("errorEmail")
-
-    val hiveAction =
-      decisionNode.action.asInstanceOf[Decision].transitionPaths.toSet.filter(_.name == "hiveAction").head
-    hiveAction.name should be("hiveAction")
-    hiveAction.successTransition.get.name should be("shellAction")
-    hiveAction.failureTransition.get.name should be("errorEmail")
-
-    val shellAction = sparkAction.successTransition.get
-    shellAction.name should be("shellAction")
-    shellAction.successTransition.get.name should be("end")
-    shellAction.failureTransition.get.name should be("errorEmail")
-
-    val emailAction = hiveAction.failureTransition.get
-    emailAction.name should be("errorEmail")
-    emailAction.successTransition.get.name should be("kill")
-    emailAction.failureTransition.get.name should be("kill")
-
-    val endAction = shellAction.successTransition.get
-    endAction.name should be("end")
-    endAction.successTransition should be(None)
-    endAction.failureTransition should be(None)
-
-    val killAction = emailAction.successTransition.get
-    killAction.name should be("kill")
-    killAction.successTransition should be(None)
-    killAction.failureTransition should be(None)
-
+    startNode.successTransition.isDefined should be(true)
+    startNode.successTransition.foreach { decisionNode =>
+      decisionNode.name should be("decisionNode")
+      decisionNode.action.asInstanceOf[Decision].defaultPath.name should be("sparkAction")
+      decisionNode.action.asInstanceOf[Decision].transitionPaths.map(_.name).toSet should be(
+        Set("sparkAction", "hiveAction")
+      )
+      decisionNode.successTransition should be(None)
+      decisionNode.failureTransition should be(None)
+      val sparkNode = decisionNode.action.asInstanceOf[Decision].transitionPaths.toSet.find(_.name == "sparkAction")
+      sparkNode.isDefined should be(true)
+      sparkNode.foreach { sparkAction =>
+        sparkAction.name should be("sparkAction")
+        sparkAction.successTransition.isDefined should be(true)
+        sparkAction.successTransition.foreach(_.name should be("shellAction"))
+        sparkAction.failureTransition.isDefined should be(true)
+        sparkAction.failureTransition.foreach(_.name should be("errorEmail"))
+        sparkAction.successTransition.foreach { shellAction =>
+          shellAction.name should be("shellAction")
+          shellAction.successTransition.isDefined should be(true)
+          shellAction.successTransition.foreach(_.name should be("end"))
+          shellAction.failureTransition.isDefined should be(true)
+          shellAction.failureTransition.foreach(_.name should be("errorEmail"))
+          shellAction.successTransition.foreach { endAction =>
+            endAction.name should be("end")
+            endAction.successTransition should be(None)
+            endAction.failureTransition should be(None)
+          }
+        }
+      }
+      val hiveNode =
+        decisionNode.action.asInstanceOf[Decision].transitionPaths.toSet.find(_.name == "hiveAction")
+      hiveNode.isDefined should be(true)
+      hiveNode.foreach { hiveAction =>
+        hiveAction.name should be("hiveAction")
+        hiveAction.successTransition.isDefined should be(true)
+        hiveAction.successTransition.foreach(_.name should be("shellAction"))
+        hiveAction.failureTransition.isDefined should be(true)
+        hiveAction.failureTransition.foreach(_.name should be("errorEmail"))
+        hiveAction.failureTransition.foreach { emailAction =>
+          emailAction.name should be("errorEmail")
+          emailAction.successTransition.isDefined should be(true)
+          emailAction.successTransition.foreach(_.name should be("kill"))
+          emailAction.failureTransition.isDefined should be(true)
+          emailAction.failureTransition.foreach(_.name should be("kill"))
+          emailAction.successTransition.foreach { killAction =>
+            killAction.name should be("kill")
+            killAction.successTransition should be(None)
+            killAction.failureTransition should be(None)
+          }
+        }
+      }
+    }
   }
 
   it should "raise an error when no default for a decision node is specified" in {

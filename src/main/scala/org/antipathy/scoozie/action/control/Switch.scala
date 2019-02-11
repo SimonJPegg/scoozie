@@ -2,6 +2,7 @@ package org.antipathy.scoozie.action.control
 
 import org.antipathy.scoozie.action.Node
 import org.antipathy.scoozie.xml.XmlSerializable
+
 import scala.xml.Elem
 
 /**

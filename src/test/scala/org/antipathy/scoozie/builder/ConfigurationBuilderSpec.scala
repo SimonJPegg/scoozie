@@ -1,9 +1,10 @@
 package org.antipathy.scoozie.builder
 
-import org.scalatest.{FlatSpec, Matchers}
 import com.typesafe.config.ConfigFactory
-import scala.collection.immutable._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class ConfigurationBuilderSpec extends FlatSpec with Matchers {
 
@@ -50,14 +51,17 @@ class ConfigurationBuilderSpec extends FlatSpec with Matchers {
                                                                                    |    }""".stripMargin))
 
     result.isDefined should be(true)
-    result.get.credential.name should be("someCredentials")
-    result.get.credential.credentialsType should be("credentialsType")
-    result.get.properties should be(
-      Map("credentials1" -> "\"value1\"",
-          "credentials2" -> "\"value2\"",
-          "credentials3" -> "\"value3\"",
-          "credentials4" -> "\"value4\"")
-    )
+    result.foreach { item =>
+      item.credential.name should be("someCredentials")
+      item.credential.credentialsType should be("credentialsType")
+      item.properties should be(
+        Map("credentials1" -> "\"value1\"",
+            "credentials2" -> "\"value2\"",
+            "credentials3" -> "\"value3\"",
+            "credentials4" -> "\"value4\"")
+      )
+    }
+
   }
 
   it should "build an empty credentials option when no credentials are supplied" in {

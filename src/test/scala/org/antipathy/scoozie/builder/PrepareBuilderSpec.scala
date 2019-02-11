@@ -1,8 +1,8 @@
 package org.antipathy.scoozie.builder
 
-import org.scalatest.{FlatSpec, Matchers}
 import com.typesafe.config.ConfigFactory
 import org.antipathy.scoozie.action.filesystem._
+import org.scalatest.{FlatSpec, Matchers}
 
 class PrepareBuilderSpec extends FlatSpec with Matchers {
 
@@ -21,10 +21,13 @@ class PrepareBuilderSpec extends FlatSpec with Matchers {
                                                                   |}
       """.stripMargin))
     result.isDefined should be(true)
-    result.get.actions.length should be(2)
-    result.get.actions.foreach {
-      case Delete(path)  => path should be("\"deletePath\"")
-      case MakeDir(path) => path should be("\"makePath\"")
+    result.foreach { item =>
+      item.actions.length should be(2)
+      item.actions.foreach {
+        case Delete(path)  => path should be("\"deletePath\"")
+        case MakeDir(path) => path should be("\"makePath\"")
+      }
     }
+
   }
 }

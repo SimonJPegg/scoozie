@@ -1,9 +1,9 @@
 package org.antipathy.scoozie.action.control
 
 import org.antipathy.scoozie.action.{Action, Node}
-import scala.xml.Elem
 import scala.collection.immutable
 import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie decision control node

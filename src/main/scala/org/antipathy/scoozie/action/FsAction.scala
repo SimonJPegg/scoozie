@@ -1,17 +1,17 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.filesystem._
-import scala.xml.Elem
-import org.antipathy.scoozie.exception.UnknownActionException
-import com.typesafe.config.Config
-import scala.collection.JavaConverters._
 import java.util
-import org.antipathy.scoozie.exception.UnknownStepException
-import scala.collection.immutable.Seq
-import com.typesafe.config.ConfigException
-import org.antipathy.scoozie.configuration.Configuration
-import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import com.typesafe.config.Config
+import org.antipathy.scoozie.action.filesystem._
 import org.antipathy.scoozie.builder.ConfigurationBuilder
+import org.antipathy.scoozie.configuration.Configuration
+import org.antipathy.scoozie.exception.{ConfigurationMissingException, UnknownActionException, UnknownStepException}
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable.Seq
+import scala.util._
+import scala.xml.Elem
 
 /**
   * Oozie filesystem action definition
@@ -92,16 +92,17 @@ object FsAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    try {
+    Try {
       FsAction(name = config.getString("name"),
                actions = buildFSSteps(config.getConfigList("steps")),
                jobXmlOption = if (config.hasPath("job-xml")) {
                  Some(config.getString("job-xml"))
                } else None,
                configuration = ConfigurationBuilder.buildConfiguration(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } match {
+      case Success(node) => node
+      case Failure(exception) =>
+        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString("name")}")
     }
 
   /**

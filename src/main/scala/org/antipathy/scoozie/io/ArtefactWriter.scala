@@ -1,7 +1,6 @@
 package org.antipathy.scoozie.io
 
 import better.files._
-import org.antipathy.scoozie.Scoozie
 
 /**
   * Trait for writing oozie artefacts to file

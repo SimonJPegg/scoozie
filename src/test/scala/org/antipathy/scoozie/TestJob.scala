@@ -3,6 +3,7 @@ package org.antipathy.scoozie
 import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.workflow.Workflow
+
 import scala.collection.immutable.{Map, Seq}
 
 /**

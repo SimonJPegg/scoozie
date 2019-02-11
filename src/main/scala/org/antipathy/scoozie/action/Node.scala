@@ -7,6 +7,7 @@ import org.antipathy.scoozie.properties.OozieProperties
 import org.antipathy.scoozie.xml.XmlSerializable
 import scala.collection.immutable.Map
 import scala.xml.Elem
+import org.antipathy.scoozie.Scoozie
 
 /**
   * Wapper class for oozie actions, used to define transitions
@@ -62,7 +63,7 @@ private[scoozie] case class Node(
     if (successTransition.isEmpty) {
       throw new TransitionException("No node has been defined to start from")
     } else {
-      <start to={successTransition.get.action.name} />
+      <start to={successTransition.map(_.action.name).orNull} />
     }
 
   /**
@@ -78,10 +79,10 @@ private[scoozie] case class Node(
     }
 
     <action name ={action.name}
-      cred={if (action.requiresCredentials) credentialsOption.map(_.credential.name).orNull else null}>
+      cred={if (action.requiresCredentials) credentialsOption.map(_.credential.name).orNull else Scoozie.Null}>
       {action.toXML}
-      <ok to= {successTransition.get.action.name}/>
-      <error to = {failureTransition.get.action.name}/>
+      <ok to= {successTransition.map(_.action.name).orNull} />
+      <error to = {failureTransition.map(_.action.name).orNull}/>
     </action>
   }
 

@@ -1,11 +1,12 @@
 package org.antipathy.scoozie.action
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.action.control._
-import scala.xml.Elem
-import scala.collection.immutable._
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception._
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
+import scala.xml.Elem
 
 class NodeSpec extends FlatSpec with Matchers {
 

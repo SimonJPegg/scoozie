@@ -1,8 +1,8 @@
 package org.antipathy.scoozie.action
 
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
 import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
-import org.antipathy.scoozie.configuration.Credentials
+
 import scala.collection.immutable._
 
 class SubWorkflowActionSpec extends FlatSpec with Matchers {

@@ -5,9 +5,10 @@ import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.xml.XmlSerializable
+
 import scala.collection.immutable._
-import scala.xml.Elem
 import scala.language.existentials
+import scala.xml.Elem
 
 /**
   * Oozie coOrdinator definition
@@ -82,4 +83,3 @@ case class Coordinator(override val name: String,
     </coordinator-app>
 
 }
-object Coordinator {}

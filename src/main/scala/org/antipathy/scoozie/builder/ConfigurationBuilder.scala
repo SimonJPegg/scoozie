@@ -2,12 +2,11 @@ package org.antipathy.scoozie.builder
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.Scoozie
-import org.antipathy.scoozie.configuration.Configuration
-import scala.collection.JavaConverters._
-import org.antipathy.scoozie.configuration.{Credential, Credentials}
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.configuration.{Configuration, Credential, Credentials}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
-import scala.util.control.NonFatal
+
+import scala.collection.JavaConverters._
+import scala.util._
 
 /**
   *  Object for building configuration objects from Hocon
@@ -45,8 +44,8 @@ private[scoozie] object ConfigurationBuilder {
       val credentialsConfig = config.getConfig("credentials")
       Some(
         Credentials(
-          Credential(getStringValue(credentialsConfig, "name"),
-                     getStringValue(credentialsConfig, "type"),
+          Credential(configStringValue(credentialsConfig, "name"),
+                     configStringValue(credentialsConfig, "type"),
                      buildConfiguration(credentialsConfig).configProperties)
         )
       )
@@ -55,11 +54,11 @@ private[scoozie] object ConfigurationBuilder {
   /**
     * wrap missing keys with a more helpful message
     */
-  private def getStringValue(config: Config, path: String): String =
-    try {
+  private def configStringValue(config: Config, path: String): String =
+    Try {
       config.getString(path)
-    } catch {
-      case c: ConfigException => throw new ConfigurationMissingException(s"${c.getMessage} in credentials")
-      case NonFatal(unknown)  => throw unknown
+    } match {
+      case Success(value)     => value
+      case Failure(exception) => throw new ConfigurationMissingException(s"${exception.getMessage} in credentials")
     }
 }

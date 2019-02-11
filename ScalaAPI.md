@@ -4,38 +4,37 @@
 
 Scoozie provides all its functionality via the `Scoozie` object and the following sub-objects are exposed:
 
-* `Actions`: Methods for creating the following Oozie actions are provided:
-	* DistCP
-	* Email
-	* FileSystem
-	* Hive
-	* Java
-	* Pig
-	* Shell
-	* Spark
-	* Sqoop
-	* Ssh
-	* Sub-Workflow
-	* Oozie control nodes (Start, End, Fork, Kill, Decision)
+  * `Actions`: Methods for creating the following Oozie actions are provided:
+    * DistCP
+    * Email
+    * FileSystem
+    * Hive
+    * Java
+    * Pig
+    * Shell
+    * Spark
+    * Sqoop
+    * Ssh
+    * Sub-Workflow
+    * Oozie control nodes (Start, End, Fork, Kill, Decision)
 
-
-* `FileSystem`: Provides methods for creating file system operations for FileSystem actions and an action's prepare steps:
+  * `FileSystem`: Provides methods for creating file system operations for FileSystem actions and an action's prepare steps:
 	* chmod
 	* delete
 	* mkdir
 	* move
 	* touchz
 
-* `Prepare`: Provides methods for creating prepare steps for actions
+  * `Prepare`: Provides methods for creating prepare steps for actions
 
-*  `Configuration`: Provides methods for creating credentials, properties and other configuration.
+  *  `Configuration`: Provides methods for creating credentials, properties and other configuration.
 
-* `Test`: Provides methods for testing and validating workflows
+  * `Test`: Provides methods for testing and validating workflows
 
-* `Functions`: Provides the following three sub functions:
-	* `WorkFlow`: Common oozie workflow functions such as getting the workflow id or the last error message
-	* `Basic`: Oozie string and time EL functions
-	* `Coordinator`: Oozie coordinator time functions (datasets are not currently supported)
+  * `Functions`: Provides the following three sub functions:
+    * `WorkFlow`: Common oozie workflow functions such as getting the workflow id or the last error message
+    * `Basic`: Oozie string and time EL functions
+    * `Coordinator`: Oozie coordinator time functions (datasets are not currently supported)
 
 In addition workflows and coordinators may be generated via the `Scoozie.workflow` and `Scoozie.coordinator` methods.
 
@@ -103,15 +102,14 @@ Further examples can be seen in the `WorkflowTestRunnerSpec` class. This class t
 ### Exposed traits 
 The `ScoozieCoordinator` and `ScoozieWorkflow` traits are exposed for clients of this library to implement and are the suggested method of use.  They expose methods for saving both the generated workflows and their respective properties.  Files generated via these traits will be named:
 
-* `workflow.xml`
-* `coordinator.xml`
-* `job.properties`
+  * `workflow.xml`
+  * `coordinator.xml`
+  * `job.properties`
 
 and deposited in the specified folder.
 
 ## Job properties
 In addition to generating workflows and coordinators, Scoozie will generate their corresponding job properties.  The property names in these files are also generated and follow the pattern: `actionName_propertyType` for example `someJavaAction_mainClass`.
-
 
 ### Example
 
@@ -253,4 +251,3 @@ The transitions from this class would be expressed as
 ```scala
 start -> sparkOrShell -> doASparkThing -> mainFork -> (doAJavaThing, doAHiveThing) -> mainJoin -> end
 ```
-
