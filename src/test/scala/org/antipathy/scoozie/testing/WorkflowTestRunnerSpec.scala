@@ -31,13 +31,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -74,13 +75,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -118,13 +120,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -195,13 +198,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -271,13 +275,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -381,13 +386,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -491,13 +497,14 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())

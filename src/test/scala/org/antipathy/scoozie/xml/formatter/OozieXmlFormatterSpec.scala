@@ -37,13 +37,14 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
       .errorTo(kill)
 
     val shellAction = ShellAction(name = "shellAction",
-                                  prepareOption = None,
                                   scriptName = "script.sh",
                                   scriptLocation = "/path/to/script.sh",
                                   commandLineArgs = Seq(),
                                   envVars = Seq(),
                                   files = Seq(),
                                   captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
       .okTo(End())
@@ -137,7 +138,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |    </action>
                        |    <join name="mainJoin" to="shellAction"/>
                        |    <action name="shellAction" cred="hive-credentials">
-                       |        <shell xmlns="uri:oozie:shell-action:0.1">
+                       |        <shell xmlns="uri:oozie:shell-action:0.2">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
                        |            <exec>${shellAction_scriptName}</exec>

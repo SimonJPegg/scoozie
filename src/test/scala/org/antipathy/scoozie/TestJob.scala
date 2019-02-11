@@ -37,13 +37,14 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   body = "message body")
 
   private val shellAction = Scoozie.Actions.shell(name = "doAShellThing",
-                                                  prepareOption = None,
                                                   scriptName = "script.sh",
                                                   scriptLocation = "/path/to/script.sh",
                                                   commandLineArgs = Seq(),
                                                   envVars = Seq(),
                                                   files = Seq(),
                                                   captureOutput = true,
+                                                  jobXmlOption = None,
+                                                  prepareOption = None,
                                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                                   yarnConfig = yarnConfig)
 

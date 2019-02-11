@@ -82,10 +82,7 @@ object SchemaService {
 
   val wfSchemaNames = Set("oozie-common-1.0.xsd",
                           "oozie-workflow-0.5.xsd",
-                          "shell-action-0.1.xsd",
                           "shell-action-0.2.xsd",
-                          "shell-action-0.3.xsd",
-                          "shell-action-1.0.xsd",
                           "email-action-0.2.xsd",
                           "hive-action-0.5.xsd",
                           "sqoop-action-0.2.xsd",

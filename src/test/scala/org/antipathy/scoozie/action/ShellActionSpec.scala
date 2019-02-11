@@ -14,13 +14,14 @@ class ShellActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = ShellAction(name = "SomeAction",
-                             prepareOption = None,
                              scriptName = "script.sh",
                              scriptLocation = "/path/to/script.sh",
                              commandLineArgs = Seq(),
                              envVars = Seq(),
                              files = Seq(),
                              captureOutput = false,
+                             jobXmlOption = None,
+                             prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
@@ -40,12 +41,13 @@ class ShellActionSpec extends FlatSpec with Matchers {
   it should "generate valid XML with arguments" in {
     implicit val credentialsOption: Option[Credentials] = None
     val result = ShellAction(name = "SomeAction",
-                             prepareOption = None,
                              scriptName = "script.sh",
                              scriptLocation = "/path/to/script.sh",
                              commandLineArgs = Seq("one", "two"),
                              envVars = Seq(),
                              captureOutput = false,
+                             jobXmlOption = None,
+                             prepareOption = None,
                              files = Seq(),
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
@@ -71,13 +73,14 @@ class ShellActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = ShellAction(name = "SomeAction",
-                             prepareOption = None,
                              files = Seq(),
                              scriptName = "script.sh",
                              scriptLocation = "/path/to/script.sh",
                              commandLineArgs = Seq(),
                              envVars = Seq(),
                              captureOutput = false,
+                             jobXmlOption = None,
+                             prepareOption = None,
                              configuration = Configuration(Seq(Property("name", "value"))),
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
@@ -105,13 +108,14 @@ class ShellActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = ShellAction(name = "SomeAction",
-                             prepareOption = None,
                              files = Seq(),
                              scriptName = "script.sh",
                              scriptLocation = "/path/to/script.sh",
                              commandLineArgs = Seq("one", "two"),
                              envVars = Seq("user=me"),
                              captureOutput = false,
+                             jobXmlOption = None,
+                             prepareOption = None,
                              configuration = Configuration(Seq(Property("name", "value"))),
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
@@ -145,13 +149,14 @@ class ShellActionSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
     val result = ShellAction(name = "SomeAction",
-                             prepareOption = None,
                              scriptName = "script.sh",
                              scriptLocation = "/path/to/script.sh",
                              commandLineArgs = Seq(),
                              envVars = Seq(),
                              files = Seq(),
                              captureOutput = true,
+                             jobXmlOption = None,
+                             prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
