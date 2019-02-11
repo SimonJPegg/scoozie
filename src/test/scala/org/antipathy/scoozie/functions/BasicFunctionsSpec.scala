@@ -1,4 +1,5 @@
 package org.antipathy.scoozie.functions
+
 import org.scalatest.{FlatSpec, Matchers}
 
 class BasicFunctionsSpec extends FlatSpec with Matchers {

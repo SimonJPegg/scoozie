@@ -20,7 +20,7 @@ class PigActionSpec extends FlatSpec with Matchers {
                            arguments = Seq(),
                            files = Seq(),
                            jobXmlOption = Some("/path/to/job.xml"),
-                           configuration = Scoozie.Configuration.emptyConfiguration,
+                           configuration = Scoozie.Configuration.emptyConfig,
                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
                            prepareOption = None).action
 
@@ -46,7 +46,7 @@ class PigActionSpec extends FlatSpec with Matchers {
                            arguments = Seq("aone", "atwo"),
                            files = Seq("fone", "ftwo"),
                            jobXmlOption = None,
-                           configuration = Scoozie.Configuration.emptyConfiguration,
+                           configuration = Scoozie.Configuration.emptyConfig,
                            yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"),
                            prepareOption = None).action
 

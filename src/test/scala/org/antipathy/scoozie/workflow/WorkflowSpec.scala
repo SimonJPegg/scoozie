@@ -45,7 +45,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -63,7 +63,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -75,7 +75,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -230,7 +230,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -246,7 +246,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -258,7 +258,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -270,7 +270,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                             path = "",
                             transitions = Start().okTo(decision),
                             jobXmlOption = Some("/path/to/job.xml"),
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = yarnConfig)
 
     scala.xml.Utility.trim(workflow.toXML) should be(

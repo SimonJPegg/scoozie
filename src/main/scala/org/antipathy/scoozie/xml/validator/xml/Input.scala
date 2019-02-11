@@ -1,9 +1,10 @@
 package org.antipathy.scoozie.xml.validator.xml
 
-import java.io.{BufferedInputStream, IOException, InputStream, Reader}
+import java.io.{BufferedInputStream, InputStream, Reader}
 
 import org.antipathy.scoozie.Scoozie
 import org.w3c.dom.ls.LSInput
+
 import scala.util._
 
 /**

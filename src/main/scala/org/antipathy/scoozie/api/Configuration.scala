@@ -44,7 +44,7 @@ object Configuration {
   /**
     * Empty Oozie configuration for a workflow or an action
     */
-  def emptyConfiguration: ActionConfiguration = ActionConfiguration(Seq.empty)
+  def emptyConfig: ActionConfiguration = ActionConfiguration(Seq.empty)
 
   /**
     * Create the credentials for an oozie workflow

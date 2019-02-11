@@ -22,7 +22,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = None,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
@@ -52,7 +52,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = None,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
@@ -173,7 +173,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = None,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>

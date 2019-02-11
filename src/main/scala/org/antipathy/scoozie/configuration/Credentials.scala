@@ -1,5 +1,6 @@
 package org.antipathy.scoozie.configuration
 
+import org.antipathy.scoozie.exception.ConfigurationMissingException
 import org.antipathy.scoozie.properties.OozieProperties
 import org.antipathy.scoozie.xml.XmlSerializable
 
@@ -22,6 +23,8 @@ case class Credentials(credential: Credential) extends XmlSerializable with Oozi
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_credentialProperty$index")
         (Property(name, p), p -> value)
+      case _ =>
+        throw new ConfigurationMissingException("Unknown error occurred. Please raise an issue with the developer")
     }
     (this.copy(credential.copy(properties = mappedProps.map(_._1))), mappedProps.map(_._2).toMap)
   }

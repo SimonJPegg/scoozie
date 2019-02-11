@@ -18,7 +18,7 @@ class FsActionSpec extends FlatSpec with Matchers {
                       Scoozie.FileSystem.move("movefrompath", "moveToPath"),
                       Scoozie.FileSystem.touchz("someTouchPath"),
                       Scoozie.FileSystem.chmod("chmod2Path", "somepermissions2", "true"))
-    val result = Scoozie.Actions.fs("fsAction", None, Scoozie.Configuration.emptyConfiguration, actions: _*).action
+    val result = Scoozie.Actions.fs("fsAction", None, Scoozie.Configuration.emptyConfig, actions: _*).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<fs>
         <chmod path="fsAction_chmodPath0" permissions="fsAction_chmodPermissions0" dir-files="fsAction_chmodDirFiles0"/>

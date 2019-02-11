@@ -25,7 +25,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              files = Seq(),
                              jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
-                             configuration = Scoozie.Configuration.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfig,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">
@@ -65,7 +65,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              files = Seq(),
                              jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
-                             configuration = Scoozie.Configuration.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfig,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<spark xmlns="uri:oozie:spark-action:1.0">

@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.xml.validator
 
 /**
@@ -10,3 +11,4 @@ private[scoozie] object SchemaType {
   val workflow: SchemaType = "workflow"
   val coOrdinator: SchemaType = "coordinator"
 }
+// $COVERAGE-ON$

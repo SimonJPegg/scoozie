@@ -4,7 +4,7 @@ import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.configuration._
-import org.antipathy.scoozie.exception.TransitionException
+import org.antipathy.scoozie.exception.{LoopingException, TransitionException}
 import org.antipathy.scoozie.workflow.Workflow
 import org.scalatest.{FlatSpec, Matchers}
 
@@ -40,7 +40,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -85,7 +85,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -131,7 +131,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -149,7 +149,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -161,7 +161,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -210,7 +210,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -228,7 +228,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -240,7 +240,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -288,7 +288,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -306,7 +306,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    files = Seq(),
                                    jobXmlOption = Some("/path/to/spark/settings"),
                                    prepareOption = None,
-                                   configuration = Scoozie.Configuration.emptyConfiguration,
+                                   configuration = Scoozie.Configuration.emptyConfig,
                                    yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -322,7 +322,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(sparkAction2)
       .errorTo(emailAction)
@@ -334,7 +334,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -346,7 +346,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(hiveAction2)
       .errorTo(emailAction)
@@ -400,7 +400,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -414,7 +414,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -430,7 +430,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    files = Seq(),
                                    jobXmlOption = Some("/path/to/spark/settings"),
                                    prepareOption = None,
-                                   configuration = Scoozie.Configuration.emptyConfiguration,
+                                   configuration = Scoozie.Configuration.emptyConfig,
                                    yarnConfig = yarnConfig)
       .okTo(hiveAction2)
       .errorTo(emailAction)
@@ -446,7 +446,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(sparkAction2)
       .errorTo(emailAction)
@@ -458,7 +458,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -512,7 +512,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -530,7 +530,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    files = Seq(),
                                    jobXmlOption = Some("/path/to/spark/settings"),
                                    prepareOption = None,
-                                   configuration = Scoozie.Configuration.emptyConfiguration,
+                                   configuration = Scoozie.Configuration.emptyConfig,
                                    yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -546,7 +546,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(sparkAction2)
       .errorTo(emailAction)
@@ -558,7 +558,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -570,7 +570,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(hiveAction2)
       .errorTo(emailAction)
@@ -598,7 +598,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
   }
 
   it should "detect loops in a workflow" in {
-    import org.antipathy.scoozie.exception.LoopingException
+
     implicit val credentialsOption: Option[Credentials] = None
 
     val yarnConfig =
@@ -617,7 +617,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
@@ -627,7 +627,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
@@ -637,7 +637,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
 
     val transitions = {
@@ -685,7 +685,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
     val hiveAction3 = HiveAction(name = "hiveAction3",
                                  jobXmlOption = Some("/path/to/settings.xml"),
@@ -694,7 +694,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
@@ -704,7 +704,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
@@ -714,7 +714,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
 
     val transitions = {
@@ -758,7 +758,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
     val hiveAction3 = HiveAction(name = "hiveAction3",
                                  jobXmlOption = Some("/path/to/settings.xml"),
@@ -767,7 +767,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
@@ -777,7 +777,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
@@ -787,7 +787,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
 
     val transitions = {
@@ -832,7 +832,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
     val hiveAction3 = HiveAction(name = "hiveAction3",
                                  jobXmlOption = Some("/path/to/settings.xml"),
@@ -841,7 +841,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction2 = HiveAction(name = "hiveAction2",
@@ -851,7 +851,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                  scriptLocation = "/path/to/someScript.hql",
                                  parameters = Seq(),
                                  prepareOption = None,
-                                 configuration = Scoozie.Configuration.emptyConfiguration,
+                                 configuration = Scoozie.Configuration.emptyConfig,
                                  yarnConfig = yarnConfig)
 
     val hiveAction = HiveAction(name = "hiveAction",
@@ -861,7 +861,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
 
     val transitions = {

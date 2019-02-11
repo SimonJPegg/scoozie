@@ -22,7 +22,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              captureOutput = false,
                              jobXmlOption = None,
                              prepareOption = None,
-                             configuration = Scoozie.Configuration.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfig,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
@@ -49,7 +49,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              jobXmlOption = None,
                              prepareOption = None,
                              files = Seq(),
-                             configuration = Scoozie.Configuration.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfig,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">
@@ -157,7 +157,7 @@ class ShellActionSpec extends FlatSpec with Matchers {
                              captureOutput = true,
                              jobXmlOption = None,
                              prepareOption = None,
-                             configuration = Scoozie.Configuration.emptyConfiguration,
+                             configuration = Scoozie.Configuration.emptyConfig,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<shell xmlns="uri:oozie:shell-action:0.1">

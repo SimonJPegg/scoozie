@@ -3,7 +3,7 @@ package org.antipathy.scoozie.action.prepare
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
 import org.antipathy.scoozie.xml.XmlSerializable
 
-import scala.collection.immutable.{Map, _}
+import scala.collection.immutable._
 import scala.xml.Elem
 
 /**

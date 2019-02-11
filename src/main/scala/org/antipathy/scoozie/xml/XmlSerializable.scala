@@ -1,11 +1,12 @@
 // $COVERAGE-OFF$
 package org.antipathy.scoozie.xml
 
+import scala.xml.Elem
+
 /**
   * Base trait serialisation to XML
   */
 private[scoozie] trait XmlSerializable {
-  import scala.xml.Elem
 
   /**
     * The XML for this node

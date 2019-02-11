@@ -26,6 +26,7 @@ class PrepareBuilderSpec extends FlatSpec with Matchers {
       item.actions.foreach {
         case Delete(path)  => path should be("\"deletePath\"")
         case MakeDir(path) => path should be("\"makePath\"")
+        case _ => throw new IllegalArgumentException("something funky going on here")
       }
     }
 

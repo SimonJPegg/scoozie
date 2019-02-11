@@ -9,6 +9,7 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
 import scala.util._
+import scala.xml.Elem
 
 /**
   * DistCP action definition
@@ -26,7 +27,6 @@ class DistCPAction(override val name: String,
                    yarnConfig: YarnConfig,
                    prepareOption: Option[Prepare])
     extends Action {
-  import scala.xml.Elem
 
   private val argumentsProperties = buildSequenceProperties(name, "arguments", arguments)
   private val javaOptionsProperty = formatProperty(s"${name}_javaOptions")
@@ -62,7 +62,7 @@ class DistCPAction(override val name: String,
           configurationProperties._1.toXML
         }
       }
-      {if (javaOptions.length > 0) {
+      {if (!javaOptions.isEmpty) {
           <java-opts>{javaOptionsProperty}</java-opts>
         }
       }
@@ -74,7 +74,6 @@ class DistCPAction(override val name: String,
   * Companion object
   */
 object DistCPAction {
-  import scala.util.Try
 
   /**
     * Create a new instance of this action

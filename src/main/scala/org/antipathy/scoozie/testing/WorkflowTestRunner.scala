@@ -69,17 +69,12 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
     * @param visitor the visitor to the decision
     * @return the visitor that has visited this node
     */
-  def visitDecision(decision: Decision, visitor: Visitor): Visitor = {
-    val possiblePaths =
-      decision.transitionPaths.filter(n => decisionNodes.contains(n.name))
-    if (possiblePaths.isEmpty) {
-      visitNode(decision.defaultPath, visitor)
-    } else if (possiblePaths.length == 1) {
-      visitNode(possiblePaths.head, visitor)
-    } else {
-      throw new TransitionException(s"multiple paths specified for node: ${decision.name}")
+  def visitDecision(decision: Decision, visitor: Visitor): Visitor =
+    decision.transitionPaths.filter(n => decisionNodes.contains(n.name)) match {
+      case Nil         => visitNode(decision.defaultPath, visitor)
+      case head :: Nil => visitNode(head, visitor)
+      case _           => throw new TransitionException(s"multiple paths specified for node: ${decision.name}")
     }
-  }
 
   /**
     * Navigate a fork node
@@ -94,40 +89,38 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
     val childNodes = Seq(fork.transitionPaths: _*)
     val simpleForkVisitor = visitor.copy(visited = visitor.visited ++ Seq(childNodes.map(n => n.action.name)))
     //failures in initial path
-    if (childNodes.map(_.action.name).exists(failingNodes.contains(_))) {
-      visitNode(childNodes.flatMap(_.failureTransition).head, simpleForkVisitor)
-    }
-    //simpleFork
-    else if (childNodes
-               .flatMap(_.successTransition)
-               .map(_.action)
-               .map {
-                 case _: Join => 1
-                 case _       => 0
-               }
-               .sum == childNodes.length) {
-      visitNode(childNodes.flatMap(_.successTransition).head, simpleForkVisitor)
-    }
-    //complex fork
-    else {
-      val outComes = for {
-        childNode <- childNodes
-        visitation = visitUntilJoin(childNode, Visitor(Seq()))
-        text = visitation.visited.flatten
-        node <- visitation.nextNodeOption
-        failed = visitation.failed
-      } yield (failed, node, text)
-
-      val outputString = Seq(Seq(s"(${outComes.map { l =>
-        l._3.mkString(" -> ")
-      }.mkString(", ")})"))
-
-      val thisVisitor = visitor.copy(visited = visitor.visited ++ outputString)
-      if (outComes.map(_._1).foldLeft(false)(_ || _)) {
-        visitNode(outComes.filter(_._1 == true).map(_._2).head, thisVisitor)
-      } else {
-        visitNode(outComes.map(_._2).head, thisVisitor)
+    val hasSimpleFailures = childNodes.map(_.action.name).exists(failingNodes.contains(_))
+    val isSimpleFork = childNodes
+      .flatMap(_.successTransition)
+      .map(_.action)
+      .map {
+        case _: Join => 1
+        case _       => 0
       }
+      .sum == childNodes.length
+
+    (hasSimpleFailures, isSimpleFork) match {
+      case (true, _) => visitNode(childNodes.flatMap(_.failureTransition).head, simpleForkVisitor)
+      case (_, true) => visitNode(childNodes.flatMap(_.successTransition).head, simpleForkVisitor)
+      case _ =>
+        val outComes = for {
+          childNode <- childNodes
+          visitation = visitUntilJoin(childNode, Visitor(Seq()))
+          text = visitation.visited.flatten
+          node <- visitation.nextNodeOption
+          failed = visitation.failed
+        } yield (failed, node, text)
+
+        val outputString = Seq(Seq(s"(${outComes.map { l =>
+          l._3.mkString(" -> ")
+        }.mkString(", ")})"))
+
+        val thisVisitor = visitor.copy(visited = visitor.visited ++ outputString)
+        if (outComes.map(_._1).foldLeft(false)(_ || _)) {
+          visitNode(outComes.filter(_._1 == true).map(_._2).head, thisVisitor)
+        } else {
+          visitNode(outComes.map(_._2).head, thisVisitor)
+        }
     }
   }
 

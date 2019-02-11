@@ -1,13 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.configuration.Credentials
+import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.action.control._
+import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.exception.TransitionException
 import org.antipathy.scoozie.properties.OozieProperties
 import org.antipathy.scoozie.xml.XmlSerializable
+
 import scala.collection.immutable.Map
 import scala.xml.Elem
-import org.antipathy.scoozie.Scoozie
 
 /**
   * Wapper class for oozie actions, used to define transitions

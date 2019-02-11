@@ -28,7 +28,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   files = Seq(),
                                                   jobXmlOption = Some("/path/to/spark/settings"),
                                                   prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                                  configuration = Scoozie.Configuration.emptyConfig,
                                                   yarnConfig = yarnConfig)
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
@@ -46,7 +46,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   captureOutput = true,
                                                   jobXmlOption = None,
                                                   prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                                  configuration = Scoozie.Configuration.emptyConfig,
                                                   yarnConfig = yarnConfig)
 
   private val hiveAction = Scoozie.Actions.hive(name = "doAHiveThing",
@@ -56,7 +56,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 jobXmlOption = Some("/path/to/settings.xml"),
                                                 files = Seq(),
                                                 prepareOption = None,
-                                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                                configuration = Scoozie.Configuration.emptyConfig,
                                                 yarnConfig = yarnConfig)
 
   private val javaAction = Scoozie.Actions.java(name = "doAJavaThing",
@@ -69,7 +69,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 files = Seq(),
                                                 prepareOption =
                                                   Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
-                                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                                configuration = Scoozie.Configuration.emptyConfig,
                                                 yarnConfig = yarnConfig)
 
   private val start = Scoozie.Actions.start
@@ -90,7 +90,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                      path = "/path/to/workflow.xml",
                                                      transitions = transitions,
                                                      jobXmlOption = None,
-                                                     configuration = Scoozie.Configuration.emptyConfiguration,
+                                                     configuration = Scoozie.Configuration.emptyConfig,
                                                      yarnConfig = yarnConfig)
 
   override val coordinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator",

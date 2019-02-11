@@ -12,7 +12,7 @@ private[scoozie] class ResourceResolver extends LSResourceResolver {
   /**
     * handle schema import and include statements
     */
-  override def resolveResource(`type`: String,
+  override def resolveResource(typ: String,
                                namespaceURI: String,
                                publicId: String,
                                systemId: String,

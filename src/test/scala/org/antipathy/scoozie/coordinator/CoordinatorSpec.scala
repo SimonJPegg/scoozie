@@ -20,7 +20,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
                             jobXmlOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "", nameNode = ""))
 
     val result = Coordinator(name = "SomeCoOrd",
@@ -29,7 +29,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                              end = "2009-01-04T08:00Z",
                              timezone = "America/Los_Angeles",
                              workflow = workflow,
-                             configuration = Scoozie.Configuration.emptyConfiguration).toXML
+                             configuration = Scoozie.Configuration.emptyConfig).toXML
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<coordinator-app
         name="SomeCoOrd"

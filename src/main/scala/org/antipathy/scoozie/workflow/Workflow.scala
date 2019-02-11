@@ -125,7 +125,7 @@ case class Workflow(override val name: String,
       SubWorkflowAction(name = this.name,
                         applicationPath = this.path,
                         propagateConfiguration = propagateConfiguration,
-                        configuration = Scoozie.Configuration.emptyConfiguration,
+                        configuration = Scoozie.Configuration.emptyConfig,
                         yarnConfig = yarnConfig)
     } else {
       SubWorkflowAction(name = this.name,

@@ -32,7 +32,7 @@ private[scoozie] object ConfigurationBuilder {
           }
           .toMap
       )
-    } else Scoozie.Configuration.emptyConfiguration
+    } else Scoozie.Configuration.emptyConfig
 
   /**
     * Build a credentials object from the passed in config file

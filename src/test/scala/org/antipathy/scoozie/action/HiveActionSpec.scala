@@ -21,7 +21,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = Some("/path/to/settings.xml"),
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
@@ -52,7 +52,7 @@ class HiveActionSpec extends FlatSpec with Matchers {
                             scriptLocation = "/path/to/someScript.hql",
                             parameters = Seq("tableName=\"SomeTable\"", "date=\"2019-01-13\""),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<hive xmlns="uri:oozie:hive-action:0.2">
