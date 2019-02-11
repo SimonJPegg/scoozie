@@ -37,7 +37,7 @@ case class Workflow(override val name: String,
 
   private val (mappedCredentials, mappedCredProps) =
     credentialsOption.map(_.withActionProperties(name)) match {
-      case Some((credentials, props)) => (credentials, props)
+      case Some(ActionProperties(credentials, props)) => (credentials, props)
       case None =>
         (Credentials(Credential("", "", Seq())), Map())
     }

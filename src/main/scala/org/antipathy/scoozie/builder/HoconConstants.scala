@@ -77,6 +77,7 @@ object HoconConstants {
   val to: String = "to"
   val touchz: String = "touchz"
   val transitions: String = "transitions"
+  val transitionSymbol = " -> "
   val typ: String = "type"
   val validate: String = "validate"
   val workflow: String = "workflow"

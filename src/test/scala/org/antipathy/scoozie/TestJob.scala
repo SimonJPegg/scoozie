@@ -14,7 +14,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
     with ScoozieCoordinator {
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
-  private val yarnConfig = Scoozie.Configuration.yarnConfiguration(jobTracker, nameNode)
+  private val yarnConfig = Scoozie.Configuration.yarnConfig(jobTracker, nameNode)
   private val kill = Scoozie.Actions.kill("Workflow failed")
 
   private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",

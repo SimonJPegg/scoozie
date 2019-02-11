@@ -17,7 +17,7 @@ class DistCPActionSpec extends FlatSpec with Matchers {
     val result = Scoozie.Actions
       .distCP("distCP",
               Scoozie.Configuration.emptyConfig,
-              Scoozie.Configuration.yarnConfiguration("someJobTracker", "SomeNameNode"),
+              Scoozie.Configuration.yarnConfig("someJobTracker", "SomeNameNode"),
               Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
               Seq("/some/path1", "/some/path2"),
               "-DskipTests=true")
@@ -54,7 +54,7 @@ class DistCPActionSpec extends FlatSpec with Matchers {
     val result = Scoozie.Actions
       .distCP("distCP",
               Scoozie.Configuration.configuration(additionalconfig),
-              Scoozie.Configuration.yarnConfiguration("someJobTracker", "SomeNameNode"),
+              Scoozie.Configuration.yarnConfig("someJobTracker", "SomeNameNode"),
               Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
               Seq("/some/path1", "/some/path2"),
               "-DskipTests=true")

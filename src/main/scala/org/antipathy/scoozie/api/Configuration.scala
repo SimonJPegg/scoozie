@@ -69,6 +69,6 @@ object Configuration {
     * @param nameNode The HDFS name node
     * @return a yarn configuration
     */
-  def yarnConfiguration(jobTracker: String, nameNode: String) =
+  def yarnConfig(jobTracker: String, nameNode: String) =
     YarnConfig(jobTracker, nameNode)
 }

@@ -2,6 +2,7 @@ package org.antipathy.scoozie.testing
 
 import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.action.{Action, Node}
+import org.antipathy.scoozie.builder.HoconConstants
 import org.antipathy.scoozie.exception._
 import org.antipathy.scoozie.workflow.Workflow
 
@@ -112,7 +113,7 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
         } yield (failed, node, text)
 
         val outputString = Seq(Seq(s"(${outComes.map { l =>
-          l._3.mkString(" -> ")
+          l._3.mkString(HoconConstants.transitionSymbol)
         }.mkString(", ")})"))
 
         val thisVisitor = visitor.copy(visited = visitor.visited ++ outputString)
@@ -151,7 +152,7 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
     val x = transitions.map {
       case head :: Nil => head
       case list        => s"(${list.mkString(", ")})"
-    }.mkString(" -> ")
+    }.mkString(HoconConstants.transitionSymbol)
 
     x
   }

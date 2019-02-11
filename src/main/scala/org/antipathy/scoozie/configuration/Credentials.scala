@@ -18,15 +18,16 @@ case class Credentials(credential: Credential) extends XmlSerializable with Oozi
     * @param actionName the name of the action calling this method
     * @return a copy of the configuration and its properties
     */
-  private[scoozie] def withActionProperties(actionName: String): (Credentials, Map[String, String]) = {
+  private[scoozie] def withActionProperties(actionName: String): ActionProperties[Credentials] = {
     val mappedProps = credential.properties.sortBy(_.name).zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_credentialProperty$index")
-        (Property(name, p), p -> value)
+        ActionProperties[Property](Property(name, p), Map(p -> value))
       case _ =>
         throw new ConfigurationMissingException("Unknown error occurred. Please raise an issue with the developer")
     }
-    (this.copy(credential.copy(properties = mappedProps.map(_._1))), mappedProps.map(_._2).toMap)
+    ActionProperties(this.copy(credential.copy(properties = mappedProps.map(_.mappedType))),
+                     mappedProps.flatMap(_.properties).toMap)
   }
 
   /**
@@ -43,6 +44,8 @@ case class Credentials(credential: Credential) extends XmlSerializable with Oozi
   override def properties: Map[String, String] =
     credential.properties.map {
       case Property(name, value) => name -> value
+      case _ =>
+        throw new ConfigurationMissingException("Unknown error")
     }.toMap
 
 }
