@@ -2,7 +2,7 @@
 
 [![Codacy][codacyImg2]][codacyLink]  [![CodeCovImg]][CodCovLink]  [![languageBage]][languageLink] 
 
-[![issuesBadge]][issuesLink] ![releaseBadge] ![newCommitsBadge]
+[![issuesBadge]][issuesLink] [![releaseBadge]][releaseLink] [![newCommitsBadge]][newCommitsLink]
 
 Latest versions: 
 
@@ -56,4 +56,7 @@ See the above links for more information.
 [CodCovLink]: https://www.codacy.com?utm_source=github.com&utm_medium=referral&utm_content=SimonJPegg/scoozie&utm_campaign=Badge_Coverage
 
 [releaseBadge]: https://img.shields.io/github/release/simonjpegg/scoozie.svg?style=flat
+[releaseLink]: https://github.com/SimonJPegg/scoozie/releases
+
 [newCommitsBadge]: https://img.shields.io/github/commits-since/simonjpegg/scoozie/latest.svg?style=flat
+[newCommitsLink]: https://github.com/SimonJPegg/scoozie/commits/master
