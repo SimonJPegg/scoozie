@@ -9,7 +9,7 @@ import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
 import scala.collection.JavaConverters._
 import com.typesafe.config.ConfigException
 import org.antipathy.scoozie.exception.ConfigurationMissingException
-import org.antipathy.scoozie.configuration.File
+import org.antipathy.scoozie.configuration._
 
 /**
   * Oozie Hive action definition
@@ -84,10 +84,7 @@ final class HiveAction(override val name: String,
           }
         }
         <script>{scriptNameProperty}</script>
-        {parametersProperties.map{
-            case (key,_) => <param>{key}</param>
-          }
-        }
+        {parametersProperties.map(p => Param(p._1).toXML)}
         <file>{scriptLocationProperty}</file>
         {filesProperties.map(f => File(f._1).toXML)}
       </hive>
