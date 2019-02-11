@@ -47,7 +47,7 @@ class DistCPAction(override val name: String,
   override val properties: Map[String, String] =
   Map(javaOptionsProperty -> javaOptions) ++
   argumentsProperties ++
-  configurationProperties._2 ++
+  configurationProperties.properties ++
   prepareProperties
 
   /**
@@ -58,8 +58,8 @@ class DistCPAction(override val name: String,
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
       {prepareOptionMapped.map(_.toXML).orNull}
-      {if (configurationProperties._1.configProperties.nonEmpty) {
-          configurationProperties._1.toXML
+      {if (configurationProperties.config.configProperties.nonEmpty) {
+          configurationProperties.config.toXML
         }
       }
       {if (!javaOptions.isEmpty) {

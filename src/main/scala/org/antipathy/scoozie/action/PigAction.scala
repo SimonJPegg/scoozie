@@ -42,7 +42,7 @@ class PigAction(override val name: String,
     buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val mappedConfigAndProperties =
     configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
+  private val mappedConfig = mappedConfigAndProperties.config
   private val prepareOptionAndProps =
     prepareOption.map(_.withActionProperties(name))
   private val prepareProperties =
@@ -57,7 +57,7 @@ class PigAction(override val name: String,
     paramsProperties ++
     jobXmlProperty ++
     prepareProperties ++
-    mappedConfigAndProperties._2 ++ argumentsProperties ++ filesProperties
+    mappedConfigAndProperties.properties ++ argumentsProperties ++ filesProperties
 
   /**
     * The XML namespace for an action element

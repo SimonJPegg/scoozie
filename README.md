@@ -1,6 +1,6 @@
 # Scoozie
 
-[![Codacy][codacyimg2]][codacylink]  [![codecovimg]][codcovlink]  [![languagebadge]][languagelink] 
+[![licenseimg]][licenselink]  [![Codacy][codacyimg]][codacylink]  [![codecovimg]][codcovlink]  [![languagebadge]][languagelink] 
 
 [![issuesbadge]][issueslink] [![releasebadge]][releaselink] [![newcommitsbadge]][newcommitslink]
 
@@ -13,7 +13,6 @@ Latest versions:
 An Oozie artefact builder library for scala.  it was created to allow developers  to quickly generate new Oozie artefacts without copy/pasting xml and avoiding typos in the XML they create.
 
 Scoozie was created with CDH in mind and supports oozie version 4.1.0.
-
 
 ## Usage 
 Scoozie provides two modes of interaction
@@ -40,8 +39,7 @@ See the above links for more information.
 [licenseimg]: https://img.shields.io/badge/Licence-Apache%202.0-blue.svg
 [licenselink]: ./LICENSE
 
-[codacyimg]: https://img.shields.io/codacy/grade/fdf40afa99a342b093836bfa22871c2d.svg?style=flat
-[codacyimg2]: https://api.codacy.com/project/badge/grade/fdf40afa99a342b093836bfa22871c2d
+[codacyimg]: https://api.codacy.com/project/badge/grade/fdf40afa99a342b093836bfa22871c2d
 [codacylink]: https://app.codacy.com/project/SimonJPegg/scoozie/dashboard
 
 [210mavenimg]: https://maven-badges.herokuapp.com/maven-central/org.antipathy/scoozie_2.10/badge.svg

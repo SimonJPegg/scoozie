@@ -3,7 +3,7 @@ package org.antipathy.scoozie.workflow
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.action.{Nameable, Node, SubWorkflowAction}
-import org.antipathy.scoozie.configuration.{Configuration, Credential, Credentials, YarnConfig}
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.xml.XmlSerializable
 
@@ -42,7 +42,7 @@ case class Workflow(override val name: String,
         (Credentials(Credential("", "", Seq())), Map())
     }
 
-  private val (mappedConfig, mappedProperties) = configuration.withActionProperties(name)
+  private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
 
   /**
     * The XML for this node

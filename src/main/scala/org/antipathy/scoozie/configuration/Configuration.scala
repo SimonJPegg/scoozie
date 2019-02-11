@@ -21,7 +21,7 @@ private[scoozie] case class Configuration(configProperties: Seq[Property])
     * @param actionName the name of the action calling this method
     * @return a copy of the configuration and its properties
     */
-  private[scoozie] def withActionProperties(actionName: String): (Configuration, Map[String, String]) = {
+  private[scoozie] def withActionProperties(actionName: String): ActionProperties = {
     val mappedProps = configProperties.sortBy(_.name).zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_property$index")
@@ -29,7 +29,7 @@ private[scoozie] case class Configuration(configProperties: Seq[Property])
       case _ =>
         throw new ConfigurationMissingException("Unknown error occurred. Please raise an issue with the developer")
     }
-    (this.copy(mappedProps.map(_._1)), mappedProps.map(_._2).toMap)
+    ActionProperties(this.copy(mappedProps.map(_._1)), mappedProps.map(_._2).toMap)
   }
 
   /**

@@ -48,7 +48,7 @@ class SqoopAction(override val name: String,
   override def properties: Map[String, String] =
     argsProperties ++
     filesProperties ++
-    configurationProperties._2 ++
+    configurationProperties.properties ++
     prepareProperties ++
     jobXmlProperty ++
     commandProperty
@@ -70,8 +70,8 @@ class SqoopAction(override val name: String,
           <job-xml>{jobXmlProperty.keys}</job-xml>
         }
       }
-      {if (configurationProperties._1.configProperties.nonEmpty) {
-          configurationProperties._1.toXML
+      {if (configurationProperties.config.configProperties.nonEmpty) {
+          configurationProperties.config.toXML
         }
       }
       { if (command.isDefined) {

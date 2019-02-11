@@ -46,7 +46,7 @@ final class HiveAction(override val name: String,
     prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
   private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
+  private val mappedConfig = mappedConfigAndProperties.config
 
   /**
     * Get the Oozie properties for this object
@@ -55,7 +55,7 @@ final class HiveAction(override val name: String,
     jobXmlProperty ++
     yarnConfig.properties ++
     Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++
-    prepareProperties ++ parametersProperties ++ mappedConfigAndProperties._2 ++ filesProperties
+    prepareProperties ++ parametersProperties ++ mappedConfigAndProperties.properties ++ filesProperties
 
   /**
     * The XML namespace for an action element

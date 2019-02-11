@@ -19,8 +19,8 @@ Scoozie provides all its functionality via the `Scoozie` object and the followin
     * Oozie control nodes (Start, End, Fork, Kill, Decision)
 
   * `FileSystem`: Provides methods for creating file system operations for FileSystem actions and an action's prepare steps:
-	* chmod
-	* delete
+    * chmod
+    * delete
 	* mkdir
 	* move
 	* touchz
@@ -55,7 +55,6 @@ For jobs with credentials:
 ```scala
   implicit val credentials: Option[Credentials] = Scoozie.Configuration.credentials("hive-credentials","hive", Seq(Property(name = "name", value = "value"))
 ```
-
 
 ### Testing
 Scoozie provides validation of the generated XML against the Oozie XSDs for each of the actions listed above as well as the workflow and coordinators (via the `Scoozie.Test.validate(x)` methods).  
@@ -248,6 +247,6 @@ nameNode=nameservice1
 
 The transitions from this class would be expressed as 
 
-```scala
+```$xslt
 start -> sparkOrShell -> doASparkThing -> mainFork -> (doAJavaThing, doAHiveThing) -> mainJoin -> end
 ```

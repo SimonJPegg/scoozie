@@ -1,7 +1,7 @@
 package org.antipathy.scoozie.coordinator
 
 import org.antipathy.scoozie.action.Nameable
-import org.antipathy.scoozie.configuration.Configuration
+import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.xml.XmlSerializable
@@ -32,7 +32,7 @@ case class Coordinator(override val name: String,
     with OozieProperties
     with JobProperties {
 
-  private val (mappedConfig, mappedProperties) = configuration.withActionProperties(name)
+  private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
 
   private val frequencyProperty = formatProperty(s"${name}_frequency")
   private val startProperty = formatProperty(s"${name}_start")

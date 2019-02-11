@@ -59,7 +59,7 @@ final class SparkAction(override val name: String,
     prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
   private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
   private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
+  private val mappedConfig = mappedConfigAndProperties.config
 
   /**
     * The XML namespace for an action element
@@ -79,7 +79,7 @@ final class SparkAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties._2 ++
+    mappedConfigAndProperties.properties ++
     jobXmlProperty
 
   /**

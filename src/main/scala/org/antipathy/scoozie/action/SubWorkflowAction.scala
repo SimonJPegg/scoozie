@@ -26,7 +26,7 @@ final class SubWorkflowAction(override val name: String,
 
   private val applicationPathProperty = formatProperty(s"${name}_applicationPath")
   private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
+  private val mappedConfig = mappedConfigAndProperties.config
 
   /**
     * The XML namespace for an action element
@@ -37,7 +37,7 @@ final class SubWorkflowAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override val properties
-    : Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedConfigAndProperties._2
+    : Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedConfigAndProperties.properties
 
   /**
     * The XML for this node
