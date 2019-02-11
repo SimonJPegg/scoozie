@@ -62,6 +62,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -111,7 +112,7 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                        |        <path start="hiveAction"/>
                        |    </fork>
                        |    <action name="sparkAction" cred="hive-credentials">
-                       |        <spark xmlns="uri:oozie:spark-action:1.0">
+                       |        <spark xmlns="uri:oozie:spark-action:0.1">
                        |            <job-tracker>${jobTracker}</job-tracker>
                        |            <name-node>${nameNode}</name-node>
                        |            <job-xml>${sparkAction_sparkSettings}</job-xml>

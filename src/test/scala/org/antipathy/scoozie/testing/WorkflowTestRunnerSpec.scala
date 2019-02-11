@@ -145,6 +145,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -223,6 +224,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -300,6 +302,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    sparkOptions = "spark options",
                                    commandLineArgs = Seq(),
                                    files = Seq(),
+                                   jobXmlOption = None,
                                    prepareOption = None,
                                    configuration = Scoozie.Configuration.emptyConfiguration,
                                    yarnConfig = yarnConfig)
@@ -316,6 +319,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -423,6 +427,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    sparkOptions = "spark options",
                                    commandLineArgs = Seq(),
                                    files = Seq(),
+                                   jobXmlOption = None,
                                    prepareOption = None,
                                    configuration = Scoozie.Configuration.emptyConfiguration,
                                    yarnConfig = yarnConfig)
@@ -439,6 +444,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -522,6 +528,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                    sparkOptions = "spark options",
                                    commandLineArgs = Seq(),
                                    files = Seq(),
+                                   jobXmlOption = None,
                                    prepareOption = None,
                                    configuration = Scoozie.Configuration.emptyConfiguration,
                                    yarnConfig = yarnConfig)
@@ -538,6 +545,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -608,6 +616,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -675,6 +684,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -747,6 +757,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)
@@ -820,6 +831,7 @@ class WorkflowTestRunnerSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                   yarnConfig = yarnConfig)

@@ -41,6 +41,7 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Configuration(
                                     Seq(Property(name = "SomeProp1", "SomeValue1"),
@@ -158,6 +159,7 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Configuration(
                                     Seq(Property(name = "SomeProp1", "SomeValue1"),
@@ -223,6 +225,7 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
                                   files = Seq(),
+                                  jobXmlOption = None,
                                   prepareOption = None,
                                   configuration = Configuration(
                                     Seq(Property(name = "SomeProp1", "SomeValue1"),

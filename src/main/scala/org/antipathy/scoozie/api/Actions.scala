@@ -220,7 +220,7 @@ object Actions {
                 prepareOption)
 
   /**
-    * Oozie Spark action
+    * Oozie Spark action definition
     * @param name the name of the action
     * @param sparkSettings the spark settings location
     * @param sparkMasterURL the url of the spark master
@@ -230,14 +230,12 @@ object Actions {
     * @param sparkJar the location of the spark jar
     * @param sparkOptions options for the spark job
     * @param commandLineArgs command line arguments for the spark job
-    * @param prepareOption an optional ActionPrepare phase for the action
+    * @param jobXmlOption optional job.xml path
+    * @param prepareOption an optional prepare phase for the action
     * @param configuration additional config for this action
     * @param yarnConfig Yarn configuration for this action
     */
   def spark(name: String,
-            configuration: Configuration,
-            yarnConfig: YarnConfig,
-            prepareOption: Option[ActionPrepare] = None,
             sparkSettings: String,
             sparkMasterURL: String,
             sparkMode: String,
@@ -246,7 +244,11 @@ object Actions {
             sparkJar: String,
             sparkOptions: String,
             commandLineArgs: Seq[String],
-            files: Seq[String])(implicit credentialsOption: Option[Credentials]): Node =
+            files: Seq[String],
+            jobXmlOption: Option[String],
+            prepareOption: Option[ActionPrepare],
+            configuration: Configuration,
+            yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     SparkAction(name,
                 sparkSettings,
                 sparkMasterURL,
@@ -257,6 +259,7 @@ object Actions {
                 sparkOptions,
                 commandLineArgs,
                 files,
+                jobXmlOption,
                 prepareOption,
                 configuration,
                 yarnConfig)

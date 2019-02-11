@@ -24,6 +24,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
                              files = Seq(),
+                             jobXmlOption = None,
                              prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
@@ -64,6 +65,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
+                             jobXmlOption = None,
                              prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfiguration,
                              yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
@@ -110,6 +112,8 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
                              files = Seq(),
+                             jobXmlOption = None,
+                             prepareOption = None,
                              configuration = Configuration(
                                Seq(Property(name = "SomeProp1", "SomeValue1"),
                                    Property(name = "SomeProp2", "SomeValue2"))
@@ -163,6 +167,7 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkOptions = "spark options",
                              commandLineArgs = Seq("one", "two", "three"),
                              files = Seq(),
+                             jobXmlOption = None,
                              prepareOption = None,
                              configuration = Configuration(
                                Seq(Property(name = "SomeProp1", "SomeValue1"),

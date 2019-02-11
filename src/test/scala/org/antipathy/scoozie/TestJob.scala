@@ -26,6 +26,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   sparkOptions = "spark options",
                                                   commandLineArgs = Seq(),
                                                   files = Seq(),
+                                                  jobXmlOption = None,
                                                   prepareOption = None,
                                                   configuration = Scoozie.Configuration.emptyConfiguration,
                                                   yarnConfig = yarnConfig)

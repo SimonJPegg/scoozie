@@ -21,6 +21,7 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
   * @param sparkJar the location of the spark jar
   * @param sparkOptions options for the spark job
   * @param commandLineArgs command line arguments for the spark job
+  * @param jobXmlOption optional job.xml path
   * @param prepareOption an optional prepare phase for the action
   * @param configuration additional config for this action
   * @param yarnConfig Yarn configuration for this action
@@ -35,7 +36,8 @@ final class SparkAction(override val name: String,
                         sparkOptions: String,
                         commandLineArgs: Seq[String],
                         files: Seq[String],
-                        prepareOption: Option[Prepare] = None,
+                        jobXmlOption: Option[String],
+                        prepareOption: Option[Prepare],
                         configuration: Configuration,
                         yarnConfig: YarnConfig)
     extends Action {
@@ -62,7 +64,7 @@ final class SparkAction(override val name: String,
   /**
     * The XML namespace for an action element
     */
-  override val xmlns: Option[String] = Some("uri:oozie:spark-action:1.0")
+  override val xmlns: Option[String] = Some("uri:oozie:spark-action:0.1")
 
   /**
     * Get the Oozie properties for this object
@@ -125,7 +127,8 @@ object SparkAction {
             sparkOptions: String,
             commandLineArgs: Seq[String],
             files: Seq[String],
-            prepareOption: Option[Prepare] = None,
+            jobXmlOption: Option[String],
+            prepareOption: Option[Prepare],
             configuration: Configuration,
             yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Node =
     Node(
@@ -139,6 +142,7 @@ object SparkAction {
                       sparkOptions,
                       commandLineArgs,
                       files,
+                      jobXmlOption,
                       prepareOption,
                       configuration,
                       yarnConfig)
@@ -159,6 +163,9 @@ object SparkAction {
                   sparkOptions = config.getString("spark-options"),
                   commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
                   files = Seq(config.getStringList("files").asScala: _*),
+                  jobXmlOption = if (config.hasPath("job-xml")) {
+                    Some(config.getString("job-xml"))
+                  } else None,
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
                   prepareOption = PrepareBuilder.build(config))

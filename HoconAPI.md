@@ -355,6 +355,7 @@ Shell:
   environment-variables: []
   files: []
   capture-output: true //optional
+  job-xml: "" //optional
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -375,6 +376,7 @@ Spark:
   spark-options: ""
   command-line-arguments: []
   files: []
+  job-xml: "" //optional
   configuration: {}
   prepare: {}
   ok-to: ""
