@@ -40,7 +40,7 @@ See the above links for more information.
 [licenselink]: ./LICENSE
 
 [codacyimg]: https://api.codacy.com/project/badge/grade/fdf40afa99a342b093836bfa22871c2d
-[codacylink]: https://app.codacy.com/project/SimonJPegg/scoozie/dashboard
+[codacylink]: https://app.codacy.com/project/SimonJPegg/scoozie/dashboard?branchId=11167547&token=7tOgXL8Fxmmfddq
 
 [210mavenimg]: https://maven-badges.herokuapp.com/maven-central/org.antipathy/scoozie_2.10/badge.svg
 [211mavenimg]: https://maven-badges.herokuapp.com/maven-central/org.antipathy/scoozie_2.11/badge.svg
