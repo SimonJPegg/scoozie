@@ -91,13 +91,12 @@ private[scoozie] object TransitionBuilder {
       case Failure(_) =>
         throw new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
     }
-    val defaultNode = Try {
-      nodes.filter(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)).head
-    } match {
-      case Success(value) => value
-      case Failure(_) =>
-        throw new TransitionException(s"could not find default node '$defaultName' for decision '$decisionName'")
-    }
+    val defaultNode =
+      nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)) match {
+        case Some(value) => value
+        case None =>
+          throw new TransitionException(s"could not find default node '$defaultName' for decision '$decisionName'")
+      }
     val defaultNodeWithTransitions = setTransitions(defaultNode, nodes)
     val switchesConfig = currentConfig.getConfig(HoconConstants.switches)
     val switches = switchesConfig
@@ -107,11 +106,9 @@ private[scoozie] object TransitionBuilder {
       .sortBy(_.getKey)
       .map { item =>
         val switchCase = item.getValue.render().replace("\"", "")
-        val pathNode = Try {
-          nodes.filter(n => item.getKey.equalsIgnoreCase(n.node.action.name)).head
-        } match {
-          case Success(value) => value
-          case Failure(_) =>
+        val pathNode = nodes.find(n => item.getKey.equalsIgnoreCase(n.node.action.name)) match {
+          case Some(value) => value
+          case None =>
             throw new TransitionException(s"could not find switch node '$defaultName' for decision '$decisionName'")
         }
         val switchNode = setTransitions(pathNode, nodes)
