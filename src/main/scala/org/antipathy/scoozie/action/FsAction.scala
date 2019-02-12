@@ -5,7 +5,7 @@ import java.util
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.filesystem._
 import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants}
-import org.antipathy.scoozie.configuration.Configuration
+import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
 import org.antipathy.scoozie.exception.{ConfigurationMissingException, UnknownActionException, UnknownStepException}
 
 import scala.collection.JavaConverters._
@@ -28,25 +28,26 @@ class FsAction(override val name: String,
 
   private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
-  private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = steps.zipWithIndex.map {
+  private val namedActionsAnProps: Seq[ActionProperties[FileSystemAction]] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
+      import org.antipathy.scoozie.configuration.ActionProperties
       val p = s"${name}_chmodPath$index"
       val perm = s"${name}_chmodPermissions$index"
       val dir = s"${name}_chmodDirFiles$index"
-      (Chmod(p, perm, dir), Map(p -> path, perm -> permissions, dir -> dirFiles))
+      ActionProperties[FileSystemAction](Chmod(p, perm, dir), Map(p -> path, perm -> permissions, dir -> dirFiles))
     case (Delete(path), index) =>
       val p = s"${name}_deletePath$index"
-      (Delete(p), Map(p -> path))
+      ActionProperties[FileSystemAction](Delete(p), Map(p -> path))
     case (MakeDir(path), index) =>
       val p = s"${name}_mkDirPath$index"
-      (MakeDir(p), Map(p -> path))
+      ActionProperties[FileSystemAction](MakeDir(p), Map(p -> path))
     case (Move(srcPath, targetPath), index) =>
       val src = s"${name}_moveSrcPath$index"
       val dest = s"${name}_moveTargetPath$index"
-      (Move(src, dest), Map(src -> srcPath, dest -> targetPath))
+      ActionProperties[FileSystemAction](Move(src, dest), Map(src -> srcPath, dest -> targetPath))
     case (Touchz(path), index) =>
       val p = s"${name}_touchzPath$index"
-      (Touchz(p), Map(p -> path))
+      ActionProperties[FileSystemAction](Touchz(p), Map(p -> path))
     case unknown =>
       throw new UnknownActionException(s"${unknown.getClass.getSimpleName} is not an expected FileSystem operation")
   }
@@ -60,7 +61,7 @@ class FsAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    jobXmlProperty ++ namedActionsAnProps.flatMap(_._2).toMap
+    jobXmlProperty ++ namedActionsAnProps.flatMap(_.properties).toMap
 
   /**
     * The XML for this node
@@ -70,7 +71,7 @@ class FsAction(override val name: String,
       <job-xml>{jobXmlProperty.keys}</job-xml>
       }
     }
-    {namedActionsAnProps.map(_._1.toXML)}
+    {namedActionsAnProps.map(_.mappedType.toXML)}
   </fs>
 }
 

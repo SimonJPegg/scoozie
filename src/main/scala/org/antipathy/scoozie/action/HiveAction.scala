@@ -79,9 +79,9 @@ final class HiveAction(override val name: String,
           }
         }
         <script>{scriptNameProperty}</script>
-        {parametersProperties.map(p => Param(p._1).toXML)}
+        {parametersProperties.keys.map(p => Param(p).toXML)}
         <file>{scriptLocationProperty}</file>
-        {filesProperties.map(f => File(f._1).toXML)}
+        {filesProperties.keys.map(f => File(f).toXML)}
       </hive>
 }
 

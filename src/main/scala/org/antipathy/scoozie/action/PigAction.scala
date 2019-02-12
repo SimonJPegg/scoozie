@@ -82,9 +82,9 @@ class PigAction(override val name: String,
         }
       }
       <script>{scriptProperty}</script>
-      {paramsProperties.map(p => Param(p._1).toXML)}
-      {argumentsProperties.map(p => Argument(p._1).toXML)}
-      {filesProperties.map(f => File(f._1).toXML)}
+      {paramsProperties.keys.map(p => Param(p).toXML)}
+      {argumentsProperties.keys.map(p => Argument(p).toXML)}
+      {filesProperties.keys.map(f => File(f).toXML)}
     </pig>
 }
 
