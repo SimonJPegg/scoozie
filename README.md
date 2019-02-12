@@ -10,7 +10,7 @@ Latest versions:
 * Scala 2.11:  [![Maven][211mavenimg]][mavenlink]
 * Scala 2.12:  [![Maven][212mavenimg]][mavenlink]
 
-An Oozie artefact builder library for scala.  it was created to allow developers  to quickly generate new Oozie artefacts without copy/pasting xml and avoiding typos in the XML they create.
+An Oozie artefact builder library for scala.  it was created to allow developers  to quickly generate new Oozie artefacts without copy/pasting XML and avoiding typos in the XML they create.
 
 Scoozie was created with CDH in mind and supports oozie version 4.1.0.
 

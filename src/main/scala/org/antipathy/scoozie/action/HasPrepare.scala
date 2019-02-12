@@ -12,7 +12,6 @@ import scala.xml.Elem
 private[scoozie] trait HasPrepare {
   this: Nameable =>
 
-
   def prepareOption: Option[Prepare]
 
   //map the prepare step for this action

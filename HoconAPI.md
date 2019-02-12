@@ -42,14 +42,16 @@ workflow {
     type: "credentialsType"
     configuration: {
       credentials1:"value1", //additional properties to include with credentials
-      credentials2:"value2"
+      credentials2:"value2",
+      credentials3:"value3",
+      credentials4:"value4"
     }
   }
-  job-xml: "/path/to/job.xml" //optional
+  job-xml: "/path/to/job.xml"
   transitions: [ //array of action objects that comprise the workflow transitions
     {
       type:"start"  //type is required for all actions
-      ok-to:"decisionNode" 
+      ok-to:"decisionNode"
     },
     {
       name:"decisionNode"
@@ -63,11 +65,11 @@ workflow {
     {
       name:"sparkAction"
       type:"spark"
-      spark-settings: "-Dno.bugs=true"
+      job-xml: "someSettings"
       spark-master-url: "masterurl"
       spark-mode: "mode"
       spark-job-name: "Jobname"
-      main-class: "some.main.class"
+      main-class: "somemainclass"
       spark-jar: "spark.jar"
       spark-options: "spark-options"
       command-line-arguments: []
@@ -83,10 +85,11 @@ workflow {
     {
       name:"hiveAction"
       type: "hive"
-      hive-settings-xml: "hive-conf.xml"
+      job-xml: "settings"
       script-name: "script.hql"
-      script-location: "/some/location/script.hql"
+      script-location: "/some/location"
       parameters: []
+      files: []
       configuration: {}
       ok-to: "shellAction"
       error-to: "errorEmail"
@@ -190,6 +193,7 @@ The actions listed below are currently available via the hocon API.  Unless othe
 
 Most actions allow specifying a `prepare` and a `configuration` property, these are optional, but should be specified in a key value format, e.g:
 
+
 ```hocon
 configuration: {
     prop1: value1
@@ -199,6 +203,7 @@ configuration: {
 }
 ```
 
+The `job-xml` key is also optional for any actions that specify it.
 The `prepare` option should be specified in the following format:
 
 ```hocon
@@ -300,7 +305,7 @@ Hive:
 {
   name: ""
   type: "hive"
-  job-xml: "" //optional
+  job-xml: ""
   script-name: ""
   script-location: ""
   files: []
@@ -315,7 +320,7 @@ Java:
 {
   name: ""
   type: "java"
-  job-xml: "" //optional
+  job-xml: ""
   main-class: ""
   java-jar: ""
   java-options: ""
@@ -337,7 +342,7 @@ pig:
   params: []
   arguments: []
   files: []
-  job-xml: "" //optional
+  job-xml: ""
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -355,7 +360,7 @@ Shell:
   environment-variables: []
   files: []
   capture-output: true //optional
-  job-xml: "" //optional
+  job-xml: "" 
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -375,7 +380,7 @@ Spark:
   spark-options: ""
   command-line-arguments: []
   files: []
-  job-xml: "" //optional
+  job-xml: "" 
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -390,7 +395,7 @@ Sqoop:
   command: "" //specify this or command-line-arguments
   command-line-arguments: [] //ignored if command is specified
   files: []
-  job-xml: "" //optional
+  job-xml: ""
   configuration: {}
   prepare: {}
   ok-to: ""

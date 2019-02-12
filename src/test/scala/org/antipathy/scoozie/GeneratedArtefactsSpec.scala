@@ -129,36 +129,34 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """errorEmail_body=yep
-        |errorEmail_subject=hello
-        |errorEmail_to=a@a.com
-        |hiveAction_jobXml=settings
-        |hiveAction_scriptLocation=/some/location
-        |hiveAction_scriptName=script.hql
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
-        |shellAction_scriptLocation=/some/location
-        |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_jobXml=/path/to/job.xml
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
-        |sparkAction_jobXml=someSettings
-        |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
-        |sparkAction_sparkJar=spark.jar
-        |sparkAction_sparkJobName=Jobname
-        |sparkAction_sparkMasterURL=masterurl
-        |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options""".stripMargin
-    )
+    ouputProperties.lines.mkString(System.lineSeparator()) should be("""errorEmail_body=yep
+                                                                       |errorEmail_subject=hello
+                                                                       |errorEmail_to=a@a.com
+                                                                       |hiveAction_jobXml=settings
+                                                                       |hiveAction_scriptLocation=/some/location
+                                                                       |hiveAction_scriptName=script.hql
+                                                                       |jobTracker=someNameNode
+                                                                       |nameNode=someJobTracker
+                                                                       |shellAction_scriptLocation=/some/location
+                                                                       |shellAction_scriptName=script.sh
+                                                                       |someworkflow_credentialProperty0="value1"
+                                                                       |someworkflow_credentialProperty1="value2"
+                                                                       |someworkflow_credentialProperty2="value3"
+                                                                       |someworkflow_credentialProperty3="value4"
+                                                                       |someworkflow_jobXml=/path/to/job.xml
+                                                                       |someworkflow_property0="value1"
+                                                                       |someworkflow_property1="value2"
+                                                                       |someworkflow_property2="value3"
+                                                                       |someworkflow_property3="value4"
+                                                                       |sparkAction_jobXml=someSettings
+                                                                       |sparkAction_mainClass=somemainclass
+                                                                       |sparkAction_prepare_delete="deletePath"
+                                                                       |sparkAction_prepare_makedir="makePath"
+                                                                       |sparkAction_sparkJar=spark.jar
+                                                                       |sparkAction_sparkJobName=Jobname
+                                                                       |sparkAction_sparkMasterURL=masterurl
+                                                                       |sparkAction_sparkMode=mode
+                                                                       |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     outputPath.delete()
   }
@@ -310,44 +308,42 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """someCoordinator_end=someEnd
-        |someCoordinator_frequency=someFreq
-        |someCoordinator_property0="value1"
-        |someCoordinator_property1="value2"
-        |someCoordinator_property2="value3"
-        |someCoordinator_property3="value4"
-        |someCoordinator_start=someStart
-        |someCoordinator_timezone=someTimezone
-        |someCoordinator_workflow_path=somepath
-        |errorEmail_body=yep
-        |errorEmail_subject=hello
-        |errorEmail_to=a@a.com
-        |hiveAction_jobXml=settings
-        |hiveAction_scriptLocation=/some/location
-        |hiveAction_scriptName=script.hql
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
-        |shellAction_scriptLocation=/some/location
-        |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
-        |sparkAction_jobXml=someSettings
-        |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
-        |sparkAction_sparkJar=spark.jar
-        |sparkAction_sparkJobName=Jobname
-        |sparkAction_sparkMasterURL=masterurl
-        |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options""".stripMargin
-    )
+    ouputProperties.lines.mkString(System.lineSeparator()) should be("""someCoordinator_end=someEnd
+                                                                       |someCoordinator_frequency=someFreq
+                                                                       |someCoordinator_property0="value1"
+                                                                       |someCoordinator_property1="value2"
+                                                                       |someCoordinator_property2="value3"
+                                                                       |someCoordinator_property3="value4"
+                                                                       |someCoordinator_start=someStart
+                                                                       |someCoordinator_timezone=someTimezone
+                                                                       |someCoordinator_workflow_path=somepath
+                                                                       |errorEmail_body=yep
+                                                                       |errorEmail_subject=hello
+                                                                       |errorEmail_to=a@a.com
+                                                                       |hiveAction_jobXml=settings
+                                                                       |hiveAction_scriptLocation=/some/location
+                                                                       |hiveAction_scriptName=script.hql
+                                                                       |jobTracker=someNameNode
+                                                                       |nameNode=someJobTracker
+                                                                       |shellAction_scriptLocation=/some/location
+                                                                       |shellAction_scriptName=script.sh
+                                                                       |someworkflow_credentialProperty0="value1"
+                                                                       |someworkflow_credentialProperty1="value2"
+                                                                       |someworkflow_credentialProperty2="value3"
+                                                                       |someworkflow_credentialProperty3="value4"
+                                                                       |someworkflow_property0="value1"
+                                                                       |someworkflow_property1="value2"
+                                                                       |someworkflow_property2="value3"
+                                                                       |someworkflow_property3="value4"
+                                                                       |sparkAction_jobXml=someSettings
+                                                                       |sparkAction_mainClass=somemainclass
+                                                                       |sparkAction_prepare_delete="deletePath"
+                                                                       |sparkAction_prepare_makedir="makePath"
+                                                                       |sparkAction_sparkJar=spark.jar
+                                                                       |sparkAction_sparkJobName=Jobname
+                                                                       |sparkAction_sparkMasterURL=masterurl
+                                                                       |sparkAction_sparkMode=mode
+                                                                       |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     outputPath.delete()
   }
@@ -499,44 +495,42 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """someCoordinator_end=someEnd
-        |someCoordinator_frequency=someFreq
-        |someCoordinator_property0="value1"
-        |someCoordinator_property1="value2"
-        |someCoordinator_property2="value3"
-        |someCoordinator_property3="value4"
-        |someCoordinator_start=someStart
-        |someCoordinator_timezone=someTimezone
-        |someCoordinator_workflow_path=somepath
-        |errorEmail_body=yep
-        |errorEmail_subject=hello
-        |errorEmail_to=a@a.com
-        |hiveAction_jobXml=settings
-        |hiveAction_scriptLocation=/some/location
-        |hiveAction_scriptName=script.hql
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
-        |shellAction_scriptLocation=/some/location
-        |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
-        |sparkAction_jobXml=someSettings
-        |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
-        |sparkAction_sparkJar=spark.jar
-        |sparkAction_sparkJobName=Jobname
-        |sparkAction_sparkMasterURL=masterurl
-        |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options""".stripMargin
-    )
+    ouputProperties.lines.mkString(System.lineSeparator()) should be("""someCoordinator_end=someEnd
+                                                                       |someCoordinator_frequency=someFreq
+                                                                       |someCoordinator_property0="value1"
+                                                                       |someCoordinator_property1="value2"
+                                                                       |someCoordinator_property2="value3"
+                                                                       |someCoordinator_property3="value4"
+                                                                       |someCoordinator_start=someStart
+                                                                       |someCoordinator_timezone=someTimezone
+                                                                       |someCoordinator_workflow_path=somepath
+                                                                       |errorEmail_body=yep
+                                                                       |errorEmail_subject=hello
+                                                                       |errorEmail_to=a@a.com
+                                                                       |hiveAction_jobXml=settings
+                                                                       |hiveAction_scriptLocation=/some/location
+                                                                       |hiveAction_scriptName=script.hql
+                                                                       |jobTracker=someNameNode
+                                                                       |nameNode=someJobTracker
+                                                                       |shellAction_scriptLocation=/some/location
+                                                                       |shellAction_scriptName=script.sh
+                                                                       |someworkflow_credentialProperty0="value1"
+                                                                       |someworkflow_credentialProperty1="value2"
+                                                                       |someworkflow_credentialProperty2="value3"
+                                                                       |someworkflow_credentialProperty3="value4"
+                                                                       |someworkflow_property0="value1"
+                                                                       |someworkflow_property1="value2"
+                                                                       |someworkflow_property2="value3"
+                                                                       |someworkflow_property3="value4"
+                                                                       |sparkAction_jobXml=someSettings
+                                                                       |sparkAction_mainClass=somemainclass
+                                                                       |sparkAction_prepare_delete="deletePath"
+                                                                       |sparkAction_prepare_makedir="makePath"
+                                                                       |sparkAction_sparkJar=spark.jar
+                                                                       |sparkAction_sparkJobName=Jobname
+                                                                       |sparkAction_sparkMasterURL=masterurl
+                                                                       |sparkAction_sparkMode=mode
+                                                                       |sparkAction_sparkOptions=spark-options""".stripMargin)
 
     outputPath.delete()
   }
