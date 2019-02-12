@@ -1,11 +1,12 @@
 package org.antipathy.scoozie.workflow
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.action._
-import org.antipathy.scoozie.configuration._
-import org.antipathy.scoozie.action.control._
-import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action._
+import org.antipathy.scoozie.action.control._
+import org.antipathy.scoozie.configuration._
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class WorkflowSpec extends FlatSpec with Matchers {
 
@@ -44,7 +45,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -62,7 +63,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -74,7 +75,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(join)
       .errorTo(emailAction)
@@ -229,7 +230,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   captureOutput = true,
                                   jobXmlOption = None,
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(End())
       .errorTo(emailAction)
@@ -245,7 +246,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                  configuration = Scoozie.Configuration.emptyConfig,
                                   yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -257,7 +258,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                 scriptLocation = "/path/to/someScript.hql",
                                 parameters = Seq(),
                                 prepareOption = None,
-                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                configuration = Scoozie.Configuration.emptyConfig,
                                 yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -269,7 +270,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
                             path = "",
                             transitions = Start().okTo(decision),
                             jobXmlOption = Some("/path/to/job.xml"),
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = yarnConfig)
 
     scala.xml.Utility.trim(workflow.toXML) should be(

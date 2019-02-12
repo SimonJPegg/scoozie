@@ -5,6 +5,7 @@ import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.action.filesystem.FileSystemAction
 import org.antipathy.scoozie.action.prepare.{Prepare => ActionPrepare}
 import org.antipathy.scoozie.configuration._
+
 import scala.collection.immutable.Seq
 
 /**

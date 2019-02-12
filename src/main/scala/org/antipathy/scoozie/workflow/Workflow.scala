@@ -1,17 +1,15 @@
 package org.antipathy.scoozie.workflow
 
-import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
-
-import scala.language.existentials
-import scala.xml.Elem
-import org.antipathy.scoozie.action.control._
-
-import scala.collection.immutable._
-import org.antipathy.scoozie.configuration.Credential
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.action.{Nameable, Node, SubWorkflowAction}
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.xml.XmlSerializable
+
+import scala.collection.immutable._
+import scala.language.existentials
+import scala.xml.Elem
 
 /**
   * Oozie workflow definition
@@ -39,12 +37,12 @@ case class Workflow(override val name: String,
 
   private val (mappedCredentials, mappedCredProps) =
     credentialsOption.map(_.withActionProperties(name)) match {
-      case Some((credentials, props)) => (credentials, props)
+      case Some(ActionProperties(credentials, props)) => (credentials, props)
       case None =>
         (Credentials(Credential("", "", Seq())), Map())
     }
 
-  private val (mappedConfig, mappedProperties) = configuration.withActionProperties(name)
+  private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
 
   /**
     * The XML for this node
@@ -127,7 +125,7 @@ case class Workflow(override val name: String,
       SubWorkflowAction(name = this.name,
                         applicationPath = this.path,
                         propagateConfiguration = propagateConfiguration,
-                        configuration = Scoozie.Configuration.emptyConfiguration,
+                        configuration = Scoozie.Configuration.emptyConfig,
                         yarnConfig = yarnConfig)
     } else {
       SubWorkflowAction(name = this.name,

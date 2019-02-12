@@ -1,17 +1,16 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.filesystem._
-import scala.xml.Elem
-import org.antipathy.scoozie.exception.UnknownActionException
-import com.typesafe.config.Config
-import scala.collection.JavaConverters._
 import java.util
-import org.antipathy.scoozie.exception.UnknownStepException
+
+import com.typesafe.config.Config
+import org.antipathy.scoozie.action.filesystem._
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
+import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
+import org.antipathy.scoozie.exception.{ConfigurationMissingException, UnknownActionException, UnknownStepException}
+
+import scala.collection.JavaConverters._
 import scala.collection.immutable.Seq
-import com.typesafe.config.ConfigException
-import org.antipathy.scoozie.configuration.Configuration
-import org.antipathy.scoozie.exception.ConfigurationMissingException
-import org.antipathy.scoozie.builder.ConfigurationBuilder
+import scala.xml.Elem
 
 /**
   * Oozie filesystem action definition
@@ -23,30 +22,31 @@ import org.antipathy.scoozie.builder.ConfigurationBuilder
 class FsAction(override val name: String,
                steps: Seq[FileSystemAction],
                jobXmlOption: Option[String],
-               configuration: Configuration)
-    extends Action {
+               override val configuration: Configuration)
+    extends Action
+    with HasConfig {
 
   private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
-  private val namedActionsAnProps: Seq[(FileSystemAction, Map[String, String])] = steps.zipWithIndex.map {
+  private val namedActionsAnProps: Seq[ActionProperties[FileSystemAction]] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
       val p = s"${name}_chmodPath$index"
       val perm = s"${name}_chmodPermissions$index"
       val dir = s"${name}_chmodDirFiles$index"
-      (Chmod(p, perm, dir), Map(p -> path, perm -> permissions, dir -> dirFiles))
+      ActionProperties[FileSystemAction](Chmod(p, perm, dir), Map(p -> path, perm -> permissions, dir -> dirFiles))
     case (Delete(path), index) =>
       val p = s"${name}_deletePath$index"
-      (Delete(p), Map(p -> path))
+      ActionProperties[FileSystemAction](Delete(p), Map(p -> path))
     case (MakeDir(path), index) =>
       val p = s"${name}_mkDirPath$index"
-      (MakeDir(p), Map(p -> path))
+      ActionProperties[FileSystemAction](MakeDir(p), Map(p -> path))
     case (Move(srcPath, targetPath), index) =>
       val src = s"${name}_moveSrcPath$index"
       val dest = s"${name}_moveTargetPath$index"
-      (Move(src, dest), Map(src -> srcPath, dest -> targetPath))
+      ActionProperties[FileSystemAction](Move(src, dest), Map(src -> srcPath, dest -> targetPath))
     case (Touchz(path), index) =>
       val p = s"${name}_touchzPath$index"
-      (Touchz(p), Map(p -> path))
+      ActionProperties[FileSystemAction](Touchz(p), Map(p -> path))
     case unknown =>
       throw new UnknownActionException(s"${unknown.getClass.getSimpleName} is not an expected FileSystem operation")
   }
@@ -60,7 +60,7 @@ class FsAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    jobXmlProperty ++ namedActionsAnProps.flatMap(_._2).toMap
+    jobXmlProperty ++ namedActionsAnProps.flatMap(_.properties).toMap ++ configurationProperties.properties
 
   /**
     * The XML for this node
@@ -70,7 +70,11 @@ class FsAction(override val name: String,
       <job-xml>{jobXmlProperty.keys}</job-xml>
       }
     }
-    {namedActionsAnProps.map(_._1.toXML)}
+    {if (mappedConfig.configProperties.nonEmpty) {
+        mappedConfig.toXML
+      }
+    }
+    {namedActionsAnProps.map(_.mappedType.toXML)}
   </fs>
 }
 
@@ -92,16 +96,13 @@ object FsAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    try {
-      FsAction(name = config.getString("name"),
-               actions = buildFSSteps(config.getConfigList("steps")),
-               jobXmlOption = if (config.hasPath("job-xml")) {
-                 Some(config.getString("job-xml"))
-               } else None,
+    MonadBuilder.tryOperation[Node] { () =>
+      FsAction(name = config.getString(HoconConstants.name),
+               actions = buildFSSteps(config.getConfigList(HoconConstants.steps)),
+               jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                configuration = ConfigurationBuilder.buildConfiguration(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 
   /**
@@ -109,13 +110,16 @@ object FsAction {
     */
   private def buildFSSteps(configList: util.List[_ <: Config]): Seq[FileSystemAction] =
     Seq(configList.asScala.map {
-      case delete if delete.hasPath("delete") => Delete(delete.getString("delete"))
-      case mkdir if mkdir.hasPath("mkdir")    => MakeDir(mkdir.getString("mkdir"))
-      case touchz if touchz.hasPath("touchz") => Touchz(touchz.getString("touchz"))
-      case chmod if chmod.hasPath("chmod") =>
-        Chmod(chmod.getString("chmod.path"), chmod.getString("chmod.permissions"), chmod.getString("chmod.dir-files"))
-      case move if move.hasPath("move") =>
-        Move(move.getString("move.source"), move.getString("move.target"))
+      case delete if delete.hasPath(HoconConstants.delete) => Delete(delete.getString(HoconConstants.delete))
+      case mkdir if mkdir.hasPath(HoconConstants.mkDir)    => MakeDir(mkdir.getString(HoconConstants.mkDir))
+      case touchz if touchz.hasPath(HoconConstants.touchz) => Touchz(touchz.getString(HoconConstants.touchz))
+      case chmod if chmod.hasPath(HoconConstants.chmod) =>
+        Chmod(chmod.getString(s"${HoconConstants.chmod}.${HoconConstants.path}"),
+              chmod.getString(s"${HoconConstants.chmod}.${HoconConstants.permissions}"),
+              chmod.getString(s"${HoconConstants.chmod}.${HoconConstants.dirFiles}"))
+      case move if move.hasPath(s"${HoconConstants.move}") =>
+        Move(move.getString(s"${HoconConstants.move}.${HoconConstants.source}"),
+             move.getString(s"${HoconConstants.move}.${HoconConstants.target}"))
       case unknown =>
         throw new UnknownStepException(s"$unknown is not a valid filesystem step")
     }: _*)

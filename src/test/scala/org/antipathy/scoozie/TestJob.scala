@@ -3,6 +3,7 @@ package org.antipathy.scoozie
 import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.workflow.Workflow
+
 import scala.collection.immutable.{Map, Seq}
 
 /**
@@ -13,7 +14,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
     with ScoozieCoordinator {
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
-  private val yarnConfig = Scoozie.Configuration.yarnConfiguration(jobTracker, nameNode)
+  private val yarnConfig = Scoozie.Configuration.yarnConfig(jobTracker, nameNode)
   private val kill = Scoozie.Actions.kill("Workflow failed")
 
   private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
@@ -27,7 +28,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   files = Seq(),
                                                   jobXmlOption = Some("/path/to/spark/settings"),
                                                   prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                                  configuration = Scoozie.Configuration.emptyConfig,
                                                   yarnConfig = yarnConfig)
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
@@ -45,7 +46,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   captureOutput = true,
                                                   jobXmlOption = None,
                                                   prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                                  configuration = Scoozie.Configuration.emptyConfig,
                                                   yarnConfig = yarnConfig)
 
   private val hiveAction = Scoozie.Actions.hive(name = "doAHiveThing",
@@ -55,7 +56,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 jobXmlOption = Some("/path/to/settings.xml"),
                                                 files = Seq(),
                                                 prepareOption = None,
-                                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                                configuration = Scoozie.Configuration.emptyConfig,
                                                 yarnConfig = yarnConfig)
 
   private val javaAction = Scoozie.Actions.java(name = "doAJavaThing",
@@ -68,7 +69,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 files = Seq(),
                                                 prepareOption =
                                                   Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
-                                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                                configuration = Scoozie.Configuration.emptyConfig,
                                                 yarnConfig = yarnConfig)
 
   private val start = Scoozie.Actions.start
@@ -89,7 +90,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                      path = "/path/to/workflow.xml",
                                                      transitions = transitions,
                                                      jobXmlOption = None,
-                                                     configuration = Scoozie.Configuration.emptyConfiguration,
+                                                     configuration = Scoozie.Configuration.emptyConfig,
                                                      yarnConfig = yarnConfig)
 
   override val coordinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator",

@@ -1,15 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration.{Configuration, YarnConfig}
-import scala.collection.immutable._
-import org.antipathy.scoozie.configuration.Arg
-import org.antipathy.scoozie.configuration.Credentials
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.action.prepare.Prepare
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
+import org.antipathy.scoozie.configuration.{Arg, Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * DistCP action definition
@@ -23,19 +22,15 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
 class DistCPAction(override val name: String,
                    arguments: Seq[String],
                    javaOptions: String,
-                   configuration: Configuration,
+                   override val configuration: Configuration,
                    yarnConfig: YarnConfig,
-                   prepareOption: Option[Prepare])
-    extends Action {
-  import scala.xml.Elem
+                   override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig {
 
   private val argumentsProperties = buildSequenceProperties(name, "arguments", arguments)
   private val javaOptionsProperty = formatProperty(s"${name}_javaOptions")
-
-  private val configurationProperties = configuration.withActionProperties(name)
-  private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties = prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
 
   /**
     * The XML namespace for an action element
@@ -48,7 +43,7 @@ class DistCPAction(override val name: String,
   override val properties: Map[String, String] =
   Map(javaOptionsProperty -> javaOptions) ++
   argumentsProperties ++
-  configurationProperties._2 ++
+  mappedProperties ++
   prepareProperties
 
   /**
@@ -58,15 +53,9 @@ class DistCPAction(override val name: String,
     <distcp xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.get.toXML
-         }
-      }
-      {if (configurationProperties._1.configProperties.nonEmpty) {
-          configurationProperties._1.toXML
-        }
-      }
-      {if (javaOptions.length > 0) {
+      {prepareXML}
+      {configXML}
+      {if (!javaOptions.isEmpty) {
           <java-opts>{javaOptionsProperty}</java-opts>
         }
       }
@@ -94,16 +83,14 @@ object DistCPAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      DistCPAction(name = config.getString("name"),
-                   arguments = Seq(config.getStringList("arguments").asScala: _*),
-                   javaOptions = config.getString("java-options"),
+    MonadBuilder.tryOperation[Node] { () =>
+      DistCPAction(name = config.getString(HoconConstants.name),
+                   arguments = Seq(config.getStringList(HoconConstants.arguments).asScala: _*),
+                   javaOptions = config.getString(HoconConstants.javaOptions),
                    configuration = ConfigurationBuilder.buildConfiguration(config),
                    yarnConfig = yarnConfig,
                    prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
-
 }

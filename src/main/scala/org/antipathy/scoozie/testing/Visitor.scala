@@ -1,6 +1,8 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.testing
 
 import org.antipathy.scoozie.action.Node
+
 import scala.collection.immutable.Seq
 
 /**
@@ -13,3 +15,4 @@ import scala.collection.immutable.Seq
 private[testing] case class Visitor(visited: Seq[Seq[String]],
                                     failed: Boolean = false,
                                     nextNodeOption: Option[Node] = None)
+// $COVERAGE-ON$

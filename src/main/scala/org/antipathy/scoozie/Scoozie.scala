@@ -1,12 +1,12 @@
 package org.antipathy.scoozie
 
+import java.nio.file.Path
+
+import com.typesafe.config.ConfigFactory
 import org.antipathy.scoozie.action._
-import org.antipathy.scoozie.configuration._
-import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration}
+import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration, _}
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.workflow.Workflow
-import java.nio.file.Path
-import com.typesafe.config.ConfigFactory
 
 /**
   * Entry class for Scoozie.
@@ -65,7 +65,7 @@ object Scoozie {
                path: String,
                transitions: Node,
                jobXmlOption: Option[String],
-               configuration: Configuration,
+               configuration: ActionConfiguration,
                yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Workflow =
     Workflow(name, path, transitions, jobXmlOption, configuration, yarnConfig)
 
@@ -96,4 +96,5 @@ object Scoozie {
     */
   def fromConfig(configPath: Path): GeneratedArtefacts = GeneratedArtefacts(ConfigFactory.parseFile(configPath.toFile))
 
+  private[scoozie] val Null: Null = null
 }

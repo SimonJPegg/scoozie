@@ -1,12 +1,13 @@
 package org.antipathy.scoozie.action
 
-import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Args
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
+import org.antipathy.scoozie.configuration.Args
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie SSH action
@@ -73,16 +74,13 @@ object SshAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    try {
-      SshAction(name = config.getString("name"),
-                host = config.getString("host"),
-                command = config.getString("command"),
-                captureOutput = if (config.hasPath("capture-output")) {
-                  config.getBoolean("capture-output")
-                } else false,
-                args = Seq(config.getStringList("command-line-arguments").asScala: _*))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    MonadBuilder.tryOperation[Node] { () =>
+      SshAction(name = config.getString(HoconConstants.name),
+                host = config.getString(HoconConstants.host),
+                command = config.getString(HoconConstants.command),
+                captureOutput = ConfigurationBuilder.optionalBoolean(config, HoconConstants.captureOutput),
+                args = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*))
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

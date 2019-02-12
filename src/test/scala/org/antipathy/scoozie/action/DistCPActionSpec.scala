@@ -1,8 +1,9 @@
 package org.antipathy.scoozie.action
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.configuration.Credentials
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class DistCPActionSpec extends FlatSpec with Matchers {
@@ -15,8 +16,8 @@ class DistCPActionSpec extends FlatSpec with Matchers {
 
     val result = Scoozie.Actions
       .distCP("distCP",
-              Scoozie.Configuration.emptyConfiguration,
-              Scoozie.Configuration.yarnConfiguration("someJobTracker", "SomeNameNode"),
+              Scoozie.Configuration.emptyConfig,
+              Scoozie.Configuration.yarnConfig("someJobTracker", "SomeNameNode"),
               Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
               Seq("/some/path1", "/some/path2"),
               "-DskipTests=true")
@@ -53,7 +54,7 @@ class DistCPActionSpec extends FlatSpec with Matchers {
     val result = Scoozie.Actions
       .distCP("distCP",
               Scoozie.Configuration.configuration(additionalconfig),
-              Scoozie.Configuration.yarnConfiguration("someJobTracker", "SomeNameNode"),
+              Scoozie.Configuration.yarnConfig("someJobTracker", "SomeNameNode"),
               Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path2"))),
               Seq("/some/path1", "/some/path2"),
               "-DskipTests=true")

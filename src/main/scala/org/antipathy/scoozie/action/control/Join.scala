@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.action.control
 
 import org.antipathy.scoozie.action.{Action, Node}
+
 import scala.collection.immutable.Map
 import scala.xml.Elem
 

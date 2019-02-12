@@ -12,6 +12,7 @@ artefacts.saveToPath(Paths.get("/some/output/directory/"))
 ```
 
 Depending on the content of the configuration, this will output the following files:
+
 * workflow.xml
 * coordinator.xml
 * job.properties (if a coordinator is specified, this will contain properties for both of the above files)
@@ -27,7 +28,6 @@ workflow {}
 coordinator: {} //optional
 validate {} //optional
 ```
-
 
 ### Workflow
 
@@ -167,14 +167,14 @@ validate {
 The transitions are represented as a string with the ` -> ` symbol representing a transition between two nodes.  
 No distinction is made between a successful transition or an error transition for this representation.  Forks are represented as 
 
-```
+```$xslt
+
 Start -> someFork -> (action1, action2) -> someJoin -> End
 ```
 
 For decisions, the default node is used.
 
 Further examples can be seen in the `WorkflowTestRunnerSpec` class.
-
 
 For example, the workflow specified above would have the following validation string:
 
@@ -208,7 +208,7 @@ prepare: {
 }
 ```
 
-*Control nodes*
+#### Control nodes
 
 Start:
 
@@ -247,7 +247,7 @@ Join:
     ok-to: ""
 }
 ```
-*Action nodes*
+#### Action nodes
 
 DistCP:
 ```hocon
@@ -422,7 +422,3 @@ Sub-Workflow:
   error-to: ""
 }
 ```
-
-
-
-

@@ -1,9 +1,10 @@
 package org.antipathy.scoozie
 
-import org.scalatest.{FlatSpec, Matchers}
-import scala.collection.immutable.Map
-import org.antipathy.scoozie.io.ArtefactWriter
 import better.files._
+import org.antipathy.scoozie.io.ArtefactWriter
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable.Map
 
 class ScoozieCoordinatorSpec extends FlatSpec with Matchers {
 

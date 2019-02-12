@@ -1,10 +1,10 @@
 package org.antipathy.scoozie.action.control
 
-import org.scalatest.{FlatSpec, Matchers}
 import org.antipathy.scoozie.action.{Action, Node}
+import org.antipathy.scoozie.exception.TransitionException
+import org.scalatest.{FlatSpec, Matchers}
 
 import scala.xml.Elem
-import org.antipathy.scoozie.exception.TransitionException
 
 class ForkSpec extends FlatSpec with Matchers {
 

@@ -1,16 +1,13 @@
 package org.antipathy.scoozie.builder
 
+import com.typesafe.config.Config
 import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.action.control._
-import com.typesafe.config.Config
-import org.antipathy.scoozie.exception.UnknownActionException
-import scala.collection.immutable.Seq
-import org.antipathy.scoozie.configuration.Credentials
-import org.antipathy.scoozie.configuration.YarnConfig
-import scala.util.control.NonFatal
+import org.antipathy.scoozie.configuration.{Credentials, YarnConfig}
+import org.antipathy.scoozie.exception.{UnknownActionException, _}
+
 import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
-import org.antipathy.scoozie.exception._
+import scala.collection.immutable.Seq
 
 /**
   * Object to convert Hocon action definitions into Action objects
@@ -26,38 +23,36 @@ private[scoozie] object TransitionBuilder {
     * @return a collection of Action objects
     */
   def build(configSeq: Seq[_ <: Config], yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node = {
-    val actions = Seq(configSeq.map { config =>
-      getType(config) match {
-        case "start"      => NodeWithConfig(Start(), config)
-        case "distcp"     => NodeWithConfig(DistCPAction(config, yarnConfig), config)
-        case "email"      => NodeWithConfig(EmailAction(config), config)
-        case "filesystem" => NodeWithConfig(FsAction(config), config)
-        case "hive"       => NodeWithConfig(HiveAction(config, yarnConfig), config)
-        case "java"       => NodeWithConfig(JavaAction(config, yarnConfig), config)
-        case "pig"        => NodeWithConfig(PigAction(config, yarnConfig), config)
-        case "shell"      => NodeWithConfig(ShellAction(config, yarnConfig), config)
-        case "spark"      => NodeWithConfig(SparkAction(config, yarnConfig), config)
-        case "sqoop"      => NodeWithConfig(SqoopAction(config, yarnConfig), config)
-        case "ssh"        => NodeWithConfig(SshAction(config), config)
-        case "subworflow" => NodeWithConfig(SubWorkflowAction(config, yarnConfig), config)
-        case "end"        => NodeWithConfig(End(), config)
-        case "kill"       => NodeWithConfig(Kill(config.getString("message")), config)
-        //build placeholders for fork,join and decision nodes
-        case "fork"     => NodeWithConfig(Fork(config.getString("name"), Seq.empty), config)
-        case "join"     => NodeWithConfig(Join(config.getString("name"), End()), config)
-        case "decision" => NodeWithConfig(Decision(config.getString("name"), End(), Seq.empty), config)
-        case unknown =>
-          throw new UnknownActionException(s"action type $unknown is invalid")
-      }
+    val actions = Seq(configSeq.map(c => (getType(c), c)).map {
+      case (HoconConstants.start, config)      => NodeWithConfig(Start(), config)
+      case (HoconConstants.distcp, config)     => NodeWithConfig(DistCPAction(config, yarnConfig), config)
+      case (HoconConstants.email, config)      => NodeWithConfig(EmailAction(config), config)
+      case (HoconConstants.filesystem, config) => NodeWithConfig(FsAction(config), config)
+      case (HoconConstants.hive, config)       => NodeWithConfig(HiveAction(config, yarnConfig), config)
+      case (HoconConstants.java, config)       => NodeWithConfig(JavaAction(config, yarnConfig), config)
+      case (HoconConstants.pig, config)        => NodeWithConfig(PigAction(config, yarnConfig), config)
+      case (HoconConstants.shell, config)      => NodeWithConfig(ShellAction(config, yarnConfig), config)
+      case (HoconConstants.spark, config)      => NodeWithConfig(SparkAction(config, yarnConfig), config)
+      case (HoconConstants.sqoop, config)      => NodeWithConfig(SqoopAction(config, yarnConfig), config)
+      case (HoconConstants.ssh, config)        => NodeWithConfig(SshAction(config), config)
+      case (HoconConstants.subworflow, config) => NodeWithConfig(SubWorkflowAction(config, yarnConfig), config)
+      case (HoconConstants.end, config)        => NodeWithConfig(End(), config)
+      case (HoconConstants.kill, config)       => NodeWithConfig(Kill(config.getString(HoconConstants.message)), config)
+      //build placeholders for fork,join and decision nodes
+      case (HoconConstants.fork, config) =>
+        NodeWithConfig(Fork(config.getString(HoconConstants.name), Seq.empty), config)
+      case (HoconConstants.join, config) => NodeWithConfig(Join(config.getString(HoconConstants.name), End()), config)
+      case (HoconConstants.decision, config) =>
+        NodeWithConfig(Decision(config.getString(HoconConstants.name), End(), Seq.empty), config)
+      case (unknown, _) =>
+        throw new UnknownActionException(s"action type $unknown is invalid")
     }: _*)
 
-    val startNode = try {
-      actions.filter(_.node.action.name.equalsIgnoreCase("start")).head
-    } catch {
-      case _: NoSuchElementException =>
-        throw new ConfigurationMissingException(s"Could not find start action")
+    val startNode = MonadBuilder.valueOrException[NodeWithConfig] { () =>
+      actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start))
+    } { () =>
+      new ConfigurationMissingException(s"Could not find ${HoconConstants.start} action")
     }
-
     setTransitions(startNode, actions)
   }
 
@@ -68,15 +63,16 @@ private[scoozie] object TransitionBuilder {
     val currentNode = nodeWithConfig.node
     val currentConfig = nodeWithConfig.config
 
-    currentConfig.getString("type") match {
-      case "start"        => setTransition(currentNode, currentConfig, nodes, "ok-to", currentNode.okTo)
-      case "fork"         => buildFork(currentNode, currentConfig, nodes)
-      case "join"         => buildJoin(nodes, currentNode, currentConfig)
-      case "decision"     => buildDecision(nodes, currentNode, currentConfig)
-      case "kill" | "end" => currentNode
+    currentConfig.getString(HoconConstants.typ) match {
+      case HoconConstants.start =>
+        setTransition(currentNode, currentConfig, nodes, HoconConstants.okTo, currentNode.okTo)
+      case HoconConstants.fork                      => buildFork(currentNode, currentConfig, nodes)
+      case HoconConstants.join                      => buildJoin(nodes, currentNode, currentConfig)
+      case HoconConstants.decision                  => buildDecision(nodes, currentNode, currentConfig)
+      case HoconConstants.kill | HoconConstants.end => currentNode
       case _ =>
-        val nodeWithOk = setTransition(currentNode, currentConfig, nodes, "ok-to", currentNode.okTo)
-        val nodeWithError = setTransition(nodeWithOk, currentConfig, nodes, "error-to", nodeWithOk.errorTo)
+        val nodeWithOk = setTransition(currentNode, currentConfig, nodes, HoconConstants.okTo, currentNode.okTo)
+        val nodeWithError = setTransition(nodeWithOk, currentConfig, nodes, HoconConstants.errorTo, nodeWithOk.errorTo)
         nodeWithError
     }
   }
@@ -86,20 +82,19 @@ private[scoozie] object TransitionBuilder {
     */
   private def buildDecision(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config) = {
     val decisionName = currentNode.action.name
-    val defaultName = try {
-      currentConfig.getString("default")
-    } catch {
-      case NonFatal(_) =>
-        throw new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
+    val defaultName = MonadBuilder.tryOperation[String] { () =>
+      currentConfig.getString(HoconConstants.default)
+    } { _: String =>
+      new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
     }
-    val defaultNode = try {
-      nodes.filter(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)).head
-    } catch {
-      case NonFatal(_) =>
-        throw new TransitionException(s"could not find default node '$defaultName' for decision '$decisionName'")
-    }
+    val defaultNode =
+      nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)) match {
+        case Some(value) => value
+        case None =>
+          throw new TransitionException(s"could not find default node '$defaultName' for decision '$decisionName'")
+      }
     val defaultNodeWithTransitions = setTransitions(defaultNode, nodes)
-    val switchesConfig = currentConfig.getConfig("switches")
+    val switchesConfig = currentConfig.getConfig(HoconConstants.switches)
     val switches = switchesConfig
       .entrySet()
       .asScala
@@ -107,16 +102,14 @@ private[scoozie] object TransitionBuilder {
       .sortBy(_.getKey)
       .map { item =>
         val switchCase = item.getValue.render().replace("\"", "")
-        val pathNode = try {
-          nodes.filter(n => item.getKey.equalsIgnoreCase(n.node.action.name)).head
-        } catch {
-          case NonFatal(_) =>
-            throw new TransitionException(s"could not find switch node '$defaultName' for decision '$decisionName'")
+        val pathNode = MonadBuilder.valueOrException { () =>
+          nodes.find(n => item.getKey.equalsIgnoreCase(n.node.action.name))
+        } { () =>
+          new TransitionException(s"could not find switch node '$defaultName' for decision '$decisionName'")
         }
         val switchNode = setTransitions(pathNode, nodes)
         Switch(switchNode, switchCase)
       }
-      .toSeq
     Decision(decisionName, defaultNodeWithTransitions, Seq(switches: _*))
   }
 
@@ -125,15 +118,14 @@ private[scoozie] object TransitionBuilder {
     */
   private def buildJoin(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config): Node = {
     val joinName = currentNode.action.name
-    val toName = currentConfig.getString("ok-to")
-    val toNode = try {
-      nodes.filter(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(toName)).head
-    } catch {
-      case NonFatal(_) =>
-        throw new TransitionException(s"could not find next node '$toName' for join '$joinName'")
+    val toName = currentConfig.getString(HoconConstants.okTo)
+    val toNode = MonadBuilder.valueOrException { () =>
+      nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(toName))
+    } { () =>
+      new TransitionException(s"could not find next node '$toName' for join '$joinName'")
     }
     val newJoin = Join(joinName, setTransitions(toNode, nodes))
-    setTransition(newJoin, currentConfig, nodes, "ok-to", newJoin.okTo)
+    setTransition(newJoin, currentConfig, nodes, HoconConstants.okTo, newJoin.okTo)
   }
 
   /**
@@ -141,7 +133,7 @@ private[scoozie] object TransitionBuilder {
     */
   private def buildFork(currentNode: Node, currentConfig: Config, nodes: Seq[NodeWithConfig]): Node = {
     val forkName = currentNode.action.name
-    val pathNames = currentConfig.getStringList("paths")
+    val pathNames = currentConfig.getStringList(HoconConstants.paths)
 
     if (pathNames.size() < 2) {
       throw new TransitionException("Fork 'forkName' has less than two transitions")
@@ -165,19 +157,17 @@ private[scoozie] object TransitionBuilder {
                             nodes: Seq[NodeWithConfig],
                             transitionType: String,
                             transitionFunction: Node => Node): Node = {
-    val nextNodeName = try {
+    val nextNodeName = MonadBuilder.tryOperation { () =>
       currentConfig.getString(transitionType)
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${currentConfig.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${currentConfig.getString(HoconConstants.name)}")
     }
 
-    val nextNodeWithConfig = try {
-      nodes.filter(_.node.action.name.equalsIgnoreCase(nextNodeName)).head
-    } catch {
-      case _: NoSuchElementException =>
-        throw new ConfigurationMissingException(s"Could not find node '${currentConfig
-          .getString(transitionType)}' when setting transition for ${currentConfig.getString("name")}")
+    val nextNodeWithConfig = MonadBuilder.valueOrException { () =>
+      nodes.find(_.node.action.name.equalsIgnoreCase(nextNodeName))
+    } { () =>
+      new ConfigurationMissingException(s"Could not find node '${currentConfig
+        .getString(transitionType)}' when setting transition for ${currentConfig.getString(HoconConstants.name)}")
     }
     val nextNode = setTransitions(nextNodeWithConfig, nodes)
     transitionFunction(nextNode)
@@ -190,10 +180,9 @@ private[scoozie] object TransitionBuilder {
     * @return the action type
     */
   private def getType(config: Config): String =
-    try {
-      config.getString("type").toLowerCase
-    } catch {
-      case NonFatal(_) =>
-        throw new UnknownActionException(s"no action type specified for ${config.getString("name")}")
+    MonadBuilder.tryOperation[String] { () =>
+      config.getString(HoconConstants.typ).toLowerCase
+    } { _: String =>
+      new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}")
     }
 }

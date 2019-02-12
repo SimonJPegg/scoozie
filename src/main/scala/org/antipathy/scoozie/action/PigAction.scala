@@ -1,14 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration._
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.action.prepare.Prepare
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie Java action definition
@@ -27,26 +27,19 @@ class PigAction(override val name: String,
                 params: Seq[String],
                 arguments: Seq[String],
                 files: Seq[String],
-                jobXmlOption: Option[String],
-                configuration: Configuration,
+                override val jobXmlOption: Option[String],
+                override val configuration: Configuration,
                 yarnConfig: YarnConfig,
-                prepareOption: Option[Prepare])
-    extends Action {
+                override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val scriptProperty = formatProperty(s"${name}_script")
   private val paramsProperties = buildSequenceProperties(name, "param", params)
   private val argumentsProperties = buildSequenceProperties(name, "arg", arguments)
   private val filesProperties = buildSequenceProperties(name, "file", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val mappedConfigAndProperties =
-    configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
 
   /**
     * Get the Oozie properties for this object
@@ -56,15 +49,14 @@ class PigAction(override val name: String,
     paramsProperties ++
     jobXmlProperty ++
     prepareProperties ++
-    mappedConfigAndProperties._2 ++ argumentsProperties ++ filesProperties
+    mappedProperties ++
+    argumentsProperties ++
+    filesProperties
 
   /**
     * The XML namespace for an action element
     */
   override val xmlns: Option[String] = None
-
-  <xs:element name="argument" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
-      <xs:element name="file" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
 
   /**
     * The XML for this node
@@ -73,23 +65,13 @@ class PigAction(override val name: String,
     <pig>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.get.toXML
-        }
-      }
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-
-      {if (mappedConfig.configProperties.nonEmpty) {
-          mappedConfig.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       <script>{scriptProperty}</script>
-      {paramsProperties.map(p => Param(p._1).toXML)}
-      {argumentsProperties.map(p => Argument(p._1).toXML)}
-      {filesProperties.map(f => File(f._1).toXML)}
+      {paramsProperties.keys.map(p => Param(p).toXML)}
+      {argumentsProperties.keys.map(p => Argument(p).toXML)}
+      {filesProperties.keys.map(f => File(f).toXML)}
     </pig>
 }
 
@@ -116,18 +98,17 @@ object PigAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      PigAction(name = config.getString("name"),
-                script = config.getString("script"),
-                params = Seq(config.getStringList("params").asScala: _*),
-                arguments = Seq(config.getStringList("arguments").asScala: _*),
-                files = Seq(config.getStringList("files").asScala: _*),
-                jobXmlOption = if (config.hasPath("job-xml")) Some(config.getString("job-xml")) else None,
+    MonadBuilder.tryOperation[Node] { () =>
+      PigAction(name = config.getString(HoconConstants.name),
+                script = config.getString(HoconConstants.script),
+                params = Seq(config.getStringList(HoconConstants.params).asScala: _*),
+                arguments = Seq(config.getStringList(HoconConstants.arguments).asScala: _*),
+                files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                 configuration = ConfigurationBuilder.buildConfiguration(config),
                 yarnConfig,
                 prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

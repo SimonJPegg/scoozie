@@ -1,12 +1,12 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.ConfigurationBuilder
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie sub-workflow action definition
@@ -19,13 +19,12 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
 final class SubWorkflowAction(override val name: String,
                               applicationPath: String,
                               propagateConfiguration: Boolean,
-                              configuration: Configuration,
+                              override val configuration: Configuration,
                               yarnConfig: YarnConfig)
-    extends Action {
+    extends Action
+    with HasConfig {
 
   private val applicationPathProperty = formatProperty(s"${name}_applicationPath")
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
 
   /**
     * The XML namespace for an action element
@@ -35,8 +34,7 @@ final class SubWorkflowAction(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  override val properties
-    : Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedConfigAndProperties._2
+  override val properties: Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedProperties
 
   /**
     * The XML for this node
@@ -49,7 +47,7 @@ final class SubWorkflowAction(override val name: String,
           }
         }
         {if (mappedConfig.configProperties.nonEmpty) {
-              mappedConfig.toXML
+              configXML
             }
         }
       </sub-workflow>
@@ -74,14 +72,13 @@ object SubWorkflowAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      SubWorkflowAction(name = config.getString("name"),
-                        applicationPath = config.getString("application-path"),
-                        propagateConfiguration = config.hasPath("propagate-configuration"),
+    MonadBuilder.tryOperation[Node] { () =>
+      SubWorkflowAction(name = config.getString(HoconConstants.name),
+                        applicationPath = config.getString(HoconConstants.applicationPath),
+                        propagateConfiguration = config.hasPath(HoconConstants.propagateConfiguration),
                         configuration = ConfigurationBuilder.buildConfiguration(config),
                         yarnConfig = yarnConfig)
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

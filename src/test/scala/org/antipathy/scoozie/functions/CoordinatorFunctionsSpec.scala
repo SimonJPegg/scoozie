@@ -1,4 +1,5 @@
 package org.antipathy.scoozie.functions
+
 import org.scalatest.{FlatSpec, Matchers}
 
 class CoordinatorFunctionsSpec extends FlatSpec with Matchers {

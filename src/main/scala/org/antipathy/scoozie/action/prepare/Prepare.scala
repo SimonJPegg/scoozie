@@ -1,10 +1,11 @@
 package org.antipathy.scoozie.action.prepare
 
-import scala.xml.Elem
-import scala.collection.immutable.Map
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
+import org.antipathy.scoozie.configuration.ActionProperties
 import org.antipathy.scoozie.xml.XmlSerializable
+
 import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Ooize actions prepare definition
@@ -17,16 +18,18 @@ case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
     * @param actionName the name of the action calling this method
     * @return a copy of the action and its properties
     */
-  private[scoozie] def withActionProperties(actionName: String): (Prepare, Map[String, String]) = {
+  private[scoozie] def withActionProperties(actionName: String): ActionProperties[Prepare] = {
     val mappedProps = actions.map {
       case d: Delete =>
-        val p = "${" + s"${actionName}_prepare_delete" + "}"
-        (Delete(p), p -> d.path)
+        val p = Prepare.varPrefix + s"${actionName}_prepare_delete" + Prepare.varPostfix
+        ActionProperties[PrepareFSAction](Delete(p), Map(p -> d.path))
       case m: MakeDir =>
-        val p = "${" + s"${actionName}_prepare_makedir" + "}"
-        (MakeDir(p), p -> m.path)
+        val p = Prepare.varPrefix + s"${actionName}_prepare_makedir" + Prepare.varPostfix
+        ActionProperties[PrepareFSAction](MakeDir(p), Map(p -> m.path))
+      case unknown =>
+        throw new IllegalArgumentException(s"${unknown.getClass.getSimpleName} is not a valid prepare step")
     }
-    (this.copy(mappedProps.map(_._1)), mappedProps.map(_._2).toMap)
+    ActionProperties(this.copy(mappedProps.map(_.mappedType)), mappedProps.flatMap(_.properties).toMap)
   }
 
   /**
@@ -36,4 +39,9 @@ case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
     <prepare>
       {actions.map(_.toXML)}
     </prepare>
+}
+
+object Prepare {
+  val varPrefix: String = "${"
+  val varPostfix: String = "}"
 }

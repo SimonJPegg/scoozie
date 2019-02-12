@@ -1,14 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration._
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.action.prepare.Prepare
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie Spark action definition
@@ -34,11 +34,14 @@ final class SparkAction(override val name: String,
                         sparkOptions: String,
                         commandLineArgs: Seq[String],
                         files: Seq[String],
-                        jobXmlOption: Option[String],
-                        prepareOption: Option[Prepare],
-                        configuration: Configuration,
+                        override val jobXmlOption: Option[String],
+                        override val prepareOption: Option[Prepare],
+                        override val configuration: Configuration,
                         yarnConfig: YarnConfig)
-    extends Action {
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val sparkMasterURLProperty = formatProperty(s"${name}_sparkMasterURL")
   private val sparkModeProperty = formatProperty(s"${name}_sparkMode")
@@ -49,16 +52,6 @@ final class SparkAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
 
   /**
     * The XML namespace for an action element
@@ -78,7 +71,7 @@ final class SparkAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties._2 ++
+    mappedProperties ++
     jobXmlProperty
 
   /**
@@ -88,18 +81,9 @@ final class SparkAction(override val name: String,
     <spark xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {if (prepareOptionMapped.isDefined) {
-          prepareOptionMapped.get.toXML
-        }
-      }
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-      {if (mappedConfig.configProperties.nonEmpty) {
-         mappedConfig.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       <master>{sparkMasterURLProperty}</master>
       <mode>{sparkModeProperty}</mode>
       <name>{sparkJobNameProperty}</name>
@@ -152,24 +136,21 @@ object SparkAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      SparkAction(name = config.getString("name"),
-                  sparkMasterURL = config.getString("spark-master-url"),
-                  sparkMode = config.getString("spark-mode"),
-                  sparkJobName = config.getString("spark-job-name"),
-                  mainClass = config.getString("main-class"),
-                  sparkJar = config.getString("spark-jar"),
-                  sparkOptions = config.getString("spark-options"),
-                  commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
-                  files = Seq(config.getStringList("files").asScala: _*),
-                  jobXmlOption = if (config.hasPath("job-xml")) {
-                    Some(config.getString("job-xml"))
-                  } else None,
+    MonadBuilder.tryOperation[Node] { () =>
+      SparkAction(name = config.getString(HoconConstants.name),
+                  sparkMasterURL = config.getString(HoconConstants.sparkMasterUrl),
+                  sparkMode = config.getString(HoconConstants.sparkMode),
+                  sparkJobName = config.getString(HoconConstants.sparkJobName),
+                  mainClass = config.getString(HoconConstants.mainClass),
+                  sparkJar = config.getString(HoconConstants.sparkJar),
+                  sparkOptions = config.getString(HoconConstants.sparkOptions),
+                  commandLineArgs = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*),
+                  files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                  jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
                   prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

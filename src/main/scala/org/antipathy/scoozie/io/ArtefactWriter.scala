@@ -1,7 +1,8 @@
 package org.antipathy.scoozie.io
 
+import java.nio.file.Paths
+
 import better.files._
-import org.antipathy.scoozie.Scoozie
 
 /**
   * Trait for writing oozie artefacts to file
@@ -16,7 +17,6 @@ private[scoozie] trait ArtefactWriter {
     * @param contents the file contents to write
     */
   def writeFile(outputFolder: String, fileName: String, contents: String): Unit = {
-    import java.nio.file.Paths
     val outputDir = File(Paths.get(outputFolder))
 
     val outputFile = outputDir / fileName

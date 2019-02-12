@@ -1,15 +1,13 @@
 package org.antipathy.scoozie
 
-import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.CoordinatorBuilder
-import org.antipathy.scoozie.builder.WorkflowBuilder
-import org.antipathy.scoozie.builder.TransitionStringBuilder
-import org.antipathy.scoozie.workflow.Workflow
-import org.antipathy.scoozie.coordinator.Coordinator
-import org.antipathy.scoozie.exception.TransitionException
 import java.nio.file.Path
 
+import com.typesafe.config.Config
+import org.antipathy.scoozie.builder.{CoordinatorBuilder, TransitionStringBuilder, WorkflowBuilder}
+import org.antipathy.scoozie.coordinator.Coordinator
+import org.antipathy.scoozie.exception.TransitionException
 import org.antipathy.scoozie.io.ArtefactWriter
+import org.antipathy.scoozie.workflow.Workflow
 
 /**
   * Container class for HOCON generated arefacts
@@ -25,13 +23,12 @@ final class GeneratedArtefacts(workflow: Workflow,
   def validate(): Unit = {
     Scoozie.Test.validate(workflow)
     coordinatorOption.foreach(Scoozie.Test.validate)
-    if (validationStringOption.isDefined) {
-      val validationString = validationStringOption.get
-      val traversalString = Scoozie.Test.workflowTesterWorkflowTestRunner(workflow).traversalPath
 
-      if (!validationString.equals(traversalString)) {
+    validationStringOption.foreach { vString =>
+      val traversalString = Scoozie.Test.workflowTesterWorkflowTestRunner(workflow).traversalPath
+      if (!vString.equals(traversalString)) {
         throw new TransitionException(s"""Expected transition:
-                                         |$validationString
+                                         |$vString
                                          |Actual transition:
                                          |$traversalString""".stripMargin)
       }

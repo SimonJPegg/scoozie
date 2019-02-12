@@ -1,10 +1,10 @@
 package org.antipathy.scoozie.action
 
-import org.scalatest.{FlatSpec, Matchers}
-import org.antipathy.scoozie.configuration.{Configuration, Property, YarnConfig}
-import org.antipathy.scoozie.configuration.Credentials
-import scala.collection.immutable._
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.configuration.{Configuration, Credentials, Property, YarnConfig}
+import org.scalatest.{FlatSpec, Matchers}
+
+import scala.collection.immutable._
 
 class JavaActionSpec extends FlatSpec with Matchers {
 
@@ -22,7 +22,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = None,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
@@ -52,7 +52,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = None,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>
@@ -173,7 +173,7 @@ class JavaActionSpec extends FlatSpec with Matchers {
                             jobXmlOption = None,
                             files = Seq(),
                             prepareOption = None,
-                            configuration = Scoozie.Configuration.emptyConfiguration,
+                            configuration = Scoozie.Configuration.emptyConfig,
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")).action
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<java>

@@ -1,14 +1,14 @@
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.configuration._
-import scala.xml.Elem
-import scala.collection.immutable._
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, PrepareBuilder}
-import scala.collection.JavaConverters._
-import com.typesafe.config.ConfigException
+import org.antipathy.scoozie.action.prepare.Prepare
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
+import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
+
+import scala.collection.JavaConverters._
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Oozie Java action definition
@@ -31,11 +31,14 @@ final class JavaAction(override val name: String,
                        commandLineArgs: Seq[String],
                        files: Seq[String],
                        captureOutput: Boolean,
-                       jobXmlOption: Option[String],
-                       configuration: Configuration,
+                       override val jobXmlOption: Option[String],
+                       override val configuration: Configuration,
                        yarnConfig: YarnConfig,
-                       prepareOption: Option[Prepare])
-    extends Action {
+                       override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val mainClassProperty = formatProperty(s"${name}_mainClass")
   private val javaJarProperty = formatProperty(s"${name}_javaJar")
@@ -43,15 +46,6 @@ final class JavaAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_._2).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_._1)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties._1
 
   /**
     * Get the Oozie properties for this object
@@ -61,7 +55,7 @@ final class JavaAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties._2 ++ jobXmlProperty
+    configurationProperties.properties ++ jobXmlProperty
 
   /**
     * The XML namespace for an action element
@@ -75,18 +69,9 @@ final class JavaAction(override val name: String,
     <java>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
-        {if (prepareOptionMapped.isDefined) {
-            prepareOptionMapped.get.toXML
-          }
-        }
-        {if (jobXmlOption.isDefined) {
-            <job-xml>{jobXmlProperty.keys}</job-xml>
-          }
-        }
-        {if (mappedConfig.configProperties.nonEmpty) {
-            mappedConfig.toXML
-          }
-        }
+        {prepareXML}
+        {jobXml}
+        {configXML}
         <main-class>{mainClassProperty}</main-class>
         <java-opts>{javaOptionsProperty}</java-opts>
         {commandLineArgsProperties.keys.map(Arg(_).toXML)}
@@ -136,24 +121,19 @@ object JavaAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    try {
-      JavaAction(name = config.getString("name"),
-                 mainClass = config.getString("main-class"),
-                 javaJar = config.getString("java-jar"),
-                 javaOptions = config.getString("java-options"),
-                 commandLineArgs = Seq(config.getStringList("command-line-arguments").asScala: _*),
-                 files = Seq(config.getStringList("files").asScala: _*),
-                 captureOutput = if (config.hasPath("capture-output")) {
-                   config.getBoolean("capture-output")
-                 } else false,
-                 jobXmlOption = if (config.hasPath("job-xml")) {
-                   Some(config.getString("job-xml"))
-                 } else None,
+    MonadBuilder.tryOperation[Node] { () =>
+      JavaAction(name = config.getString(HoconConstants.name),
+                 mainClass = config.getString(HoconConstants.mainClass),
+                 javaJar = config.getString(HoconConstants.javaJar),
+                 javaOptions = config.getString(HoconConstants.javaOptions),
+                 commandLineArgs = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*),
+                 files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
+                 captureOutput = ConfigurationBuilder.optionalBoolean(config, HoconConstants.captureOutput),
+                 jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
                  prepareOption = PrepareBuilder.build(config))
-    } catch {
-      case c: ConfigException =>
-        throw new ConfigurationMissingException(s"${c.getMessage} in ${config.getString("name")}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

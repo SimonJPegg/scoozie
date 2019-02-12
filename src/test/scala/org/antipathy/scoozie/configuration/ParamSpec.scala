@@ -1,4 +1,5 @@
 package org.antipathy.scoozie.configuration
+
 import org.scalatest.{FlatSpec, Matchers}
 
 class ParamSpec extends FlatSpec with Matchers {

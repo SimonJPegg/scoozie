@@ -1,9 +1,10 @@
 package org.antipathy.scoozie.action.control
 
 import org.antipathy.scoozie.action.{Action, Node}
+import org.antipathy.scoozie.exception.TransitionException
+
 import scala.collection.immutable.Map
 import scala.xml.Elem
-import org.antipathy.scoozie.exception.TransitionException
 
 /**
   * Oozie Fork control node

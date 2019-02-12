@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.xml.formatter
 
 import org.antipathy.scoozie.xml.XmlSerializable
+
 import scala.xml.PrettyPrinter
 
 /**

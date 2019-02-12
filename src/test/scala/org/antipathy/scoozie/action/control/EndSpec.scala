@@ -1,4 +1,5 @@
 package org.antipathy.scoozie.action.control
+
 import org.scalatest.{FlatSpec, Matchers}
 
 class EndSpec extends FlatSpec with Matchers {

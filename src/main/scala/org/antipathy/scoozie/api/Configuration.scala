@@ -1,7 +1,13 @@
 package org.antipathy.scoozie.api
 
-import org.antipathy.scoozie.configuration.{Credential, Credentials, Property, YarnConfig}
-import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration}
+import org.antipathy.scoozie.configuration.{
+  Credential,
+  Credentials,
+  Property,
+  YarnConfig,
+  Configuration => ActionConfiguration
+}
+
 import scala.collection.immutable.{Map, Seq}
 
 /**
@@ -38,7 +44,7 @@ object Configuration {
   /**
     * Empty Oozie configuration for a workflow or an action
     */
-  def emptyConfiguration: ActionConfiguration = ActionConfiguration(Seq.empty)
+  def emptyConfig: ActionConfiguration = ActionConfiguration(Seq.empty)
 
   /**
     * Create the credentials for an oozie workflow
@@ -63,6 +69,6 @@ object Configuration {
     * @param nameNode The HDFS name node
     * @return a yarn configuration
     */
-  def yarnConfiguration(jobTracker: String, nameNode: String) =
+  def yarnConfig(jobTracker: String, nameNode: String) =
     YarnConfig(jobTracker, nameNode)
 }

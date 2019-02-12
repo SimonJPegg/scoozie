@@ -1,10 +1,11 @@
 package org.antipathy.scoozie.properties
 
+import scala.collection.immutable.{Map, Seq}
+
 /**
   * base trait for getting Oozie properties
   */
 private[scoozie] trait OozieProperties {
-  import scala.collection.immutable.{Map, Seq}
 
   /**
     * Get the Oozie properties for this object

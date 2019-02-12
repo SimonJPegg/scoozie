@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.xml.validator.xml
 
 import java.io.IOException
+
 import org.apache.xerces.xni.XMLResourceIdentifier
 import org.apache.xerces.xni.parser.{XMLEntityResolver, XMLInputSource}
 
