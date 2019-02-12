@@ -1,8 +1,8 @@
 // $COVERAGE-OFF$
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.configuration.Configuration
-import org.antipathy.scoozie.configuration.ActionProperties
+import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
+
 import scala.xml.Elem
 
 /**

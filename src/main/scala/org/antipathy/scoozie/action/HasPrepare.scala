@@ -1,15 +1,17 @@
 // $COVERAGE-OFF$
 package org.antipathy.scoozie.action
-import scala.collection.immutable.Map
 import org.antipathy.scoozie.action.prepare.Prepare
 import org.antipathy.scoozie.configuration.ActionProperties
+
+import scala.collection.immutable.Map
+import scala.xml.Elem
 
 /**
   * Trait for building prepare properties
   */
 private[scoozie] trait HasPrepare {
   this: Nameable =>
-  import scala.xml.Elem
+
 
   def prepareOption: Option[Prepare]
 

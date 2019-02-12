@@ -2,6 +2,7 @@
 package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.properties.OozieProperties
+
 import scala.xml.Elem
 
 /**
