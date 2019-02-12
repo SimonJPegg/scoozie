@@ -3,6 +3,7 @@ package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
 
+import scala.collection.immutable.Map
 import scala.xml.Elem
 
 /**

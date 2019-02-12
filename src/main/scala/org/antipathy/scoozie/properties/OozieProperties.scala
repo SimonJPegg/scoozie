@@ -5,25 +5,12 @@ import scala.collection.immutable.{Map, Seq}
 /**
   * base trait for getting Oozie properties
   */
-private[scoozie] trait OozieProperties {
+private[scoozie] trait OozieProperties extends PropertyFormatter {
 
   /**
     * Get the Oozie properties for this object
     */
   def properties: Map[String, String]
-
-  /**
-    * expected predicate pattern for oozie switches
-    */
-  private val Pattern = """[${].*[}]""".r
-
-  /**
-    * format predicates to expected pattern
-    */
-  protected def formatProperty(property: String): String = property match {
-    case Pattern() => property
-    case _         => "${" + property + "}"
-  }
 
   /**
     * Convert a sequence of property values to a map of KV pairs
@@ -40,7 +27,7 @@ private[scoozie] trait OozieProperties {
 
   protected def buildStringOptionProperty(actionName: String,
                                           propName: String,
-                                          option: Option[String]): Map[_ <: String, String] = option match {
+                                          option: Option[String]): Map[String, String] = option match {
     case Some(p) => Map(formatProperty(s"${actionName}_$propName") -> p)
     case None    => Map()
   }

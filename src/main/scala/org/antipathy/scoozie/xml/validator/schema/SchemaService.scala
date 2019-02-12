@@ -90,10 +90,9 @@ object SchemaService {
                           "sqoop-action-0.3.xsd",
                           "ssh-action-0.2.xsd",
                           "distcp-action-0.2.xsd",
-                          "oozie-sla-0.1.xsd",
                           "oozie-sla-0.2.xsd",
                           "spark-action-0.1.xsd")
 
-  val coOrdSchemaNames = Set("oozie-coordinator-0.4.xsd", "oozie-sla-0.1.xsd", "oozie-sla-0.2.xsd")
+  val coOrdSchemaNames = Set("oozie-coordinator-0.4.xsd", "oozie-sla-0.2.xsd")
 }
 // $COVERAGE-ON$

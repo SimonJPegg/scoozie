@@ -3,6 +3,7 @@ package org.antipathy.scoozie.action
 
 import org.antipathy.scoozie.properties.OozieProperties
 
+import scala.collection.immutable.Map
 import scala.xml.Elem
 
 /**
@@ -14,7 +15,7 @@ trait HasJobXml {
   def jobXmlOption: Option[String]
 
   //map the jobXML for this action
-  protected val jobXmlProperty: Map[_ <: String, String] = buildStringOptionProperty(name, "jobXml", jobXmlOption)
+  protected val jobXmlProperty: Map[String, String] = buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
   /**
     * Render the XML for this element
