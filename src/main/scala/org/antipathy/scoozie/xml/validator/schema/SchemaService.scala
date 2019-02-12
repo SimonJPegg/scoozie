@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.xml.validator.schema
 
 import javax.xml.XMLConstants
@@ -95,3 +96,4 @@ object SchemaService {
 
   val coOrdSchemaNames = Set("oozie-coordinator-0.4.xsd", "oozie-sla-0.1.xsd", "oozie-sla-0.2.xsd")
 }
+// $COVERAGE-ON$

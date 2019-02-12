@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.api
 
 import org.antipathy.scoozie.functions.{BasicFunctions, CoordinatorFunctions, WorkflowFunctions}
@@ -225,3 +226,4 @@ object Functions {
     def cron(string: String): String = CoordinatorFunctions.cron(string)
   }
 }
+// $COVERAGE-ON$

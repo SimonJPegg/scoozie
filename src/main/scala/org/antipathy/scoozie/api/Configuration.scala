@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.api
 
 import org.antipathy.scoozie.configuration.{
@@ -72,3 +73,4 @@ object Configuration {
   def yarnConfig(jobTracker: String, nameNode: String) =
     YarnConfig(jobTracker, nameNode)
 }
+// $COVERAGE-ON$
