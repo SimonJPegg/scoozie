@@ -8,7 +8,6 @@ import org.antipathy.scoozie.exception.{UnknownActionException, _}
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.Seq
-import scala.util._
 
 /**
   * Object to convert Hocon action definitions into Action objects
@@ -49,12 +48,11 @@ private[scoozie] object TransitionBuilder {
         throw new UnknownActionException(s"action type $unknown is invalid")
     }: _*)
 
-    val startNode = actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start)) match {
-      case Some(value) => value
-      case None =>
-        throw new ConfigurationMissingException(s"Could not find ${HoconConstants.start} action")
+    val startNode = MonadBuilder.getOrException[NodeWithConfig] { () =>
+      actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start))
+    } { () =>
+      new ConfigurationMissingException(s"Could not find ${HoconConstants.start} action")
     }
-
     setTransitions(startNode, actions)
   }
 
@@ -84,12 +82,10 @@ private[scoozie] object TransitionBuilder {
     */
   private def buildDecision(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config) = {
     val decisionName = currentNode.action.name
-    val defaultName = Try {
+    val defaultName = MonadBuilder.tryOperation[String] { () =>
       currentConfig.getString(HoconConstants.default)
-    } match {
-      case Success(value) => value
-      case Failure(_) =>
-        throw new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
+    } { _: String =>
+      new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
     }
     val defaultNode =
       nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)) match {
@@ -106,10 +102,10 @@ private[scoozie] object TransitionBuilder {
       .sortBy(_.getKey)
       .map { item =>
         val switchCase = item.getValue.render().replace("\"", "")
-        val pathNode = nodes.find(n => item.getKey.equalsIgnoreCase(n.node.action.name)) match {
-          case Some(value) => value
-          case None =>
-            throw new TransitionException(s"could not find switch node '$defaultName' for decision '$decisionName'")
+        val pathNode = MonadBuilder.getOrException { () =>
+          nodes.find(n => item.getKey.equalsIgnoreCase(n.node.action.name))
+        } { () =>
+          new TransitionException(s"could not find switch node '$defaultName' for decision '$decisionName'")
         }
         val switchNode = setTransitions(pathNode, nodes)
         Switch(switchNode, switchCase)
@@ -123,12 +119,11 @@ private[scoozie] object TransitionBuilder {
   private def buildJoin(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config): Node = {
     val joinName = currentNode.action.name
     val toName = currentConfig.getString(HoconConstants.okTo)
-    val toNode =
-      nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(toName)) match {
-        case Some(value) => value
-        case None =>
-          throw new TransitionException(s"could not find next node '$toName' for join '$joinName'")
-      }
+    val toNode = MonadBuilder.getOrException { () =>
+      nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(toName))
+    } { () =>
+      new TransitionException(s"could not find next node '$toName' for join '$joinName'")
+    }
     val newJoin = Join(joinName, setTransitions(toNode, nodes))
     setTransition(newJoin, currentConfig, nodes, HoconConstants.okTo, newJoin.okTo)
   }
@@ -162,23 +157,18 @@ private[scoozie] object TransitionBuilder {
                             nodes: Seq[NodeWithConfig],
                             transitionType: String,
                             transitionFunction: Node => Node): Node = {
-    val nextNodeName = Try {
+    val nextNodeName = MonadBuilder.tryOperation { () =>
       currentConfig.getString(transitionType)
-    } match {
-      case Success(value) => value
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(
-          s"${exception.getMessage} in ${currentConfig.getString(HoconConstants.name)}"
-        )
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${currentConfig.getString(HoconConstants.name)}")
     }
 
-    val nextNodeWithConfig =
-      nodes.find(_.node.action.name.equalsIgnoreCase(nextNodeName)) match {
-        case Some(value) => value
-        case None =>
-          throw new ConfigurationMissingException(s"Could not find node '${currentConfig
-            .getString(transitionType)}' when setting transition for ${currentConfig.getString(HoconConstants.name)}")
-      }
+    val nextNodeWithConfig = MonadBuilder.getOrException { () =>
+      nodes.find(_.node.action.name.equalsIgnoreCase(nextNodeName))
+    } { () =>
+      new ConfigurationMissingException(s"Could not find node '${currentConfig
+        .getString(transitionType)}' when setting transition for ${currentConfig.getString(HoconConstants.name)}")
+    }
     val nextNode = setTransitions(nextNodeWithConfig, nodes)
     transitionFunction(nextNode)
   }
@@ -190,11 +180,9 @@ private[scoozie] object TransitionBuilder {
     * @return the action type
     */
   private def getType(config: Config): String =
-    Try {
+    MonadBuilder.tryOperation[String] { () =>
       config.getString(HoconConstants.typ).toLowerCase
-    } match {
-      case Success(value) => value
-      case Failure(_) =>
-        throw new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}")
+    } { _: String =>
+      new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}")
     }
 }

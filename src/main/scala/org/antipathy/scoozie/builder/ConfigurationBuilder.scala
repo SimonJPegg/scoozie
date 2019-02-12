@@ -6,12 +6,33 @@ import org.antipathy.scoozie.configuration.{Configuration, Credential, Credentia
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
-import scala.util._
 
 /**
   *  Object for building configuration objects from Hocon
   */
 private[scoozie] object ConfigurationBuilder {
+
+  /**
+    * Get the value at the specified path from the passed in config
+    * @param config the config to get the value from
+    * @param name the name of the key to get
+    * @return An optional value
+    */
+  def optionalString(config: Config, name: String): Option[String] =
+    if (config.hasPath(name)) {
+      Some(config.getString(name))
+    } else None
+
+  /**
+    * Get the value at the specified path from the passed in config
+    * @param config the config to get the value from
+    * @param name the name of the key to get
+    * @return An optional value
+    */
+  def optionalBoolean(config: Config, name: String): Boolean =
+    if (config.hasPath(name)) {
+      config.getBoolean(name)
+    } else false
 
   /**
     * Build a configuration object from the passed in config file
@@ -55,11 +76,9 @@ private[scoozie] object ConfigurationBuilder {
     * wrap missing keys with a more helpful message
     */
   private def configStringValue(config: Config, path: String): String =
-    Try {
+    MonadBuilder.tryOperation[String] { () =>
       config.getString(path)
-    } match {
-      case Success(value) => value
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${HoconConstants.credentials}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${HoconConstants.credentials}")
     }
 }

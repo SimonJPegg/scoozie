@@ -25,11 +25,11 @@ private[scoozie] case class Configuration(configProperties: Seq[Property])
     val mappedProps = configProperties.sortBy(_.name).zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_property$index")
-        (Property(name, p), p -> value)
+        ActionProperties[Property](Property(name, p), Map(p -> value))
       case _ =>
         throw new ConfigurationMissingException("Unknown error occurred. Please raise an issue with the developer")
     }
-    ActionProperties(this.copy(mappedProps.map(_._1)), mappedProps.map(_._2).toMap)
+    ActionProperties(this.copy(mappedProps.map(_.mappedType)), mappedProps.flatMap(_.properties).toMap)
   }
 
   /**

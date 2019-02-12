@@ -1,13 +1,12 @@
 package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.HoconConstants
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
 import org.antipathy.scoozie.configuration.Args
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
-import scala.util._
 import scala.xml.Elem
 
 /**
@@ -75,17 +74,13 @@ object SshAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    Try {
+    MonadBuilder.tryOperation[Node] { () =>
       SshAction(name = config.getString(HoconConstants.name),
                 host = config.getString(HoconConstants.host),
                 command = config.getString(HoconConstants.command),
-                captureOutput = if (config.hasPath(HoconConstants.captureOutput)) {
-                  config.getBoolean(HoconConstants.captureOutput)
-                } else false,
+                captureOutput = ConfigurationBuilder.optionalBoolean(config, HoconConstants.captureOutput),
                 args = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*))
-    } match {
-      case Success(value) => value
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

@@ -2,7 +2,7 @@ package org.antipathy.scoozie.testing
 
 import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.action.{Action, Node}
-import org.antipathy.scoozie.builder.HoconConstants
+import org.antipathy.scoozie.builder.{HoconConstants, MonadBuilder}
 import org.antipathy.scoozie.exception._
 import org.antipathy.scoozie.workflow.Workflow
 
@@ -101,8 +101,10 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
       .sum == childNodes.length
 
     (hasSimpleFailures, isSimpleFork) match {
-      case (true, _) => visitNode(childNodes.flatMap(_.failureTransition).head, simpleForkVisitor)
-      case (_, true) => visitNode(childNodes.flatMap(_.successTransition).head, simpleForkVisitor)
+      case (true, _) =>
+        visitPotentialNode(fork.name, childNodes.flatMap(_.failureTransition).headOption, simpleForkVisitor)
+      case (_, true) =>
+        visitPotentialNode(fork.name, childNodes.flatMap(_.successTransition).headOption, simpleForkVisitor)
       case _ =>
         val outComes = for {
           childNode <- childNodes
@@ -110,19 +112,28 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
           text = visitation.visited.flatten
           node <- visitation.nextNodeOption
           failed = visitation.failed
-        } yield (failed, node, text)
+        } yield WorkflowTestRunner.OutCome(failed, node, text)
 
         val outputString = Seq(Seq(s"(${outComes.map { l =>
-          l._3.mkString(HoconConstants.transitionSymbol)
+          l.transitionString.mkString(HoconConstants.transitionSymbol)
         }.mkString(", ")})"))
 
         val thisVisitor = visitor.copy(visited = visitor.visited ++ outputString)
-        if (outComes.map(_._1).foldLeft(false)(_ || _)) {
-          visitNode(outComes.filter(_._1 == true).map(_._2).head, thisVisitor)
+        if (outComes.map(_.isFailed).foldLeft(false)(_ || _)) {
+          visitPotentialNode(fork.name, outComes.filter(_.isFailed == true).map(_.node).headOption, thisVisitor)
         } else {
-          visitNode(outComes.map(_._2).head, thisVisitor)
+          visitPotentialNode(fork.name, outComes.map(_.node).headOption, thisVisitor)
         }
     }
+  }
+
+  private def visitPotentialNode(nodeName: String, nodeOption: Option[Node], visitor: Visitor): Visitor = {
+    val nextNode = MonadBuilder.getOrException { () =>
+      nodeOption
+    } { () =>
+      new TransitionException(s"Could not find next node for $nodeName")
+    }
+    visitNode(nextNode, visitor)
   }
 
   /**
@@ -148,18 +159,17 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
   /**
     * format the output string
     */
-  private def buildOutputString(transitions: Seq[Seq[String]]): String = {
-    val x = transitions.map {
+  private def buildOutputString(transitions: Seq[Seq[String]]): String =
+    transitions.map {
       case head :: Nil => head
       case list        => s"(${list.mkString(", ")})"
     }.mkString(HoconConstants.transitionSymbol)
 
-    x
-  }
-
 }
 
 object WorkflowTestRunner {
+
+  private[WorkflowTestRunner] case class OutCome(isFailed: Boolean, node: Node, transitionString: Seq[String])
 
   def apply(workflow: Workflow,
             failingNodes: Seq[String] = Seq.empty[String],

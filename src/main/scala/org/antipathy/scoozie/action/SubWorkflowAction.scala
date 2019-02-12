@@ -1,12 +1,11 @@
 package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
 import org.antipathy.scoozie.configuration.{Configuration, Credentials, YarnConfig}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.immutable._
-import scala.util._
 import scala.xml.Elem
 
 /**
@@ -75,15 +74,13 @@ object SubWorkflowAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    Try {
+    MonadBuilder.tryOperation[Node] { () =>
       SubWorkflowAction(name = config.getString(HoconConstants.name),
                         applicationPath = config.getString(HoconConstants.applicationPath),
                         propagateConfiguration = config.hasPath(HoconConstants.propagateConfiguration),
                         configuration = ConfigurationBuilder.buildConfiguration(config),
                         yarnConfig = yarnConfig)
-    } match {
-      case Success(value) => value
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

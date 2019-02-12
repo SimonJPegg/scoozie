@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.action.prepare
 
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
+import org.antipathy.scoozie.configuration.ActionProperties
 import org.antipathy.scoozie.xml.XmlSerializable
 
 import scala.collection.immutable._
@@ -11,7 +12,6 @@ import scala.xml.Elem
   * @param actions the prepare actions
   */
 case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
-  import org.antipathy.scoozie.configuration.ActionProperties
 
   /**
     * Copy this action substituting the values for property names

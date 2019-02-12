@@ -33,7 +33,6 @@ private[scoozie] object PrepareBuilder {
           case unknown =>
             throw new UnknownStepException(s"$unknown is not a valid ${HoconConstants.prepare} step")
         }
-        .toSeq
       Some(Prepare(Seq(steps: _*)))
     } else {
       None

@@ -2,13 +2,12 @@ package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.prepare.Prepare
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, PrepareBuilder}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder, PrepareBuilder}
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
-import scala.util._
 import scala.xml.Elem
 
 /**
@@ -118,21 +117,17 @@ object HiveAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config, yarnConfig: YarnConfig)(implicit credentials: Option[Credentials]): Node =
-    Try {
+    MonadBuilder.tryOperation[Node] { () =>
       HiveAction(name = config.getString(HoconConstants.name),
                  scriptName = config.getString(HoconConstants.scriptName),
                  scriptLocation = config.getString(HoconConstants.scriptLocation),
                  parameters = Seq(config.getStringList(HoconConstants.parameters).asScala: _*),
-                 jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
-                   Some(config.getString(HoconConstants.jobXml))
-                 } else None,
+                 jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                  files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
                  configuration = ConfigurationBuilder.buildConfiguration(config),
                  yarnConfig,
                  prepareOption = PrepareBuilder.build(config))
-    } match {
-      case Success(node) => node
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }

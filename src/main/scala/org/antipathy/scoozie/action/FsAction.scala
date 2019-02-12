@@ -4,13 +4,12 @@ import java.util
 
 import com.typesafe.config.Config
 import org.antipathy.scoozie.action.filesystem._
-import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants}
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
 import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
 import org.antipathy.scoozie.exception.{ConfigurationMissingException, UnknownActionException, UnknownStepException}
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable.Seq
-import scala.util._
 import scala.xml.Elem
 
 /**
@@ -30,7 +29,6 @@ class FsAction(override val name: String,
 
   private val namedActionsAnProps: Seq[ActionProperties[FileSystemAction]] = steps.zipWithIndex.map {
     case (Chmod(path, permissions, dirFiles), index) =>
-      import org.antipathy.scoozie.configuration.ActionProperties
       val p = s"${name}_chmodPath$index"
       val perm = s"${name}_chmodPermissions$index"
       val dir = s"${name}_chmodDirFiles$index"
@@ -93,17 +91,13 @@ object FsAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    Try {
+    MonadBuilder.tryOperation[Node] { () =>
       FsAction(name = config.getString(HoconConstants.name),
                actions = buildFSSteps(config.getConfigList(HoconConstants.steps)),
-               jobXmlOption = if (config.hasPath(HoconConstants.jobXml)) {
-                 Some(config.getString(HoconConstants.jobXml))
-               } else None,
+               jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                configuration = ConfigurationBuilder.buildConfiguration(config))
-    } match {
-      case Success(node) => node
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 
   /**

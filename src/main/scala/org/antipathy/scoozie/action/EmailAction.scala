@@ -1,12 +1,11 @@
 package org.antipathy.scoozie.action
 
 import com.typesafe.config.Config
-import org.antipathy.scoozie.builder.HoconConstants
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
-import scala.util._
 import scala.xml.Elem
 
 /**
@@ -89,18 +88,14 @@ object EmailAction {
     * Create a new instance of this action from a configuration
     */
   def apply(config: Config): Node =
-    Try {
+    MonadBuilder.tryOperation { () =>
       EmailAction(to = Seq(config.getStringList(HoconConstants.to).asScala: _*),
                   cc = Seq(config.getStringList(HoconConstants.cc).asScala: _*),
                   name = config.getString(HoconConstants.name),
                   subject = config.getString(HoconConstants.subject),
                   body = config.getString(HoconConstants.body),
-                  contentTypeOption = if (config.hasPath(HoconConstants.contentType)) {
-                    Some(config.getString(HoconConstants.contentType))
-                  } else None)
-    } match {
-      case Success(value) => value
-      case Failure(exception) =>
-        throw new ConfigurationMissingException(s"${exception.getMessage} in ${config.getString(HoconConstants.name)}")
+                  contentTypeOption = ConfigurationBuilder.optionalString(config, HoconConstants.contentType))
+    } { s: String =>
+      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
     }
 }
