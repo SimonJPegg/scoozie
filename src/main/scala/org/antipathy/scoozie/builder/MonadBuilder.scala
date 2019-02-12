@@ -1,10 +1,11 @@
 package org.antipathy.scoozie.builder
 
+import scala.util.{Failure, Success, Try}
+
 /**
   * Class for accessing values contained in Monads
   */
 private[scoozie] object MonadBuilder {
-  import scala.util.{Failure, Success, Try}
 
   /**
     * Attempt the passed in operation and raise an error if failure occurs
@@ -29,7 +30,7 @@ private[scoozie] object MonadBuilder {
     * @tparam T The type of the returned object
     * @return the value of the optional type
     */
-  def getOrException[T](operation: () => Option[T])(errorFunction: () => RuntimeException): T =
+  def valueOrException[T](operation: () => Option[T])(errorFunction: () => RuntimeException): T =
     operation() match {
       case Some(value) => value
       case None        => throw errorFunction()

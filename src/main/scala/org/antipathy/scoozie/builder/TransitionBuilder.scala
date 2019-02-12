@@ -48,7 +48,7 @@ private[scoozie] object TransitionBuilder {
         throw new UnknownActionException(s"action type $unknown is invalid")
     }: _*)
 
-    val startNode = MonadBuilder.getOrException[NodeWithConfig] { () =>
+    val startNode = MonadBuilder.valueOrException[NodeWithConfig] { () =>
       actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start))
     } { () =>
       new ConfigurationMissingException(s"Could not find ${HoconConstants.start} action")
@@ -102,7 +102,7 @@ private[scoozie] object TransitionBuilder {
       .sortBy(_.getKey)
       .map { item =>
         val switchCase = item.getValue.render().replace("\"", "")
-        val pathNode = MonadBuilder.getOrException { () =>
+        val pathNode = MonadBuilder.valueOrException { () =>
           nodes.find(n => item.getKey.equalsIgnoreCase(n.node.action.name))
         } { () =>
           new TransitionException(s"could not find switch node '$defaultName' for decision '$decisionName'")
@@ -119,7 +119,7 @@ private[scoozie] object TransitionBuilder {
   private def buildJoin(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config): Node = {
     val joinName = currentNode.action.name
     val toName = currentConfig.getString(HoconConstants.okTo)
-    val toNode = MonadBuilder.getOrException { () =>
+    val toNode = MonadBuilder.valueOrException { () =>
       nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(toName))
     } { () =>
       new TransitionException(s"could not find next node '$toName' for join '$joinName'")
@@ -163,7 +163,7 @@ private[scoozie] object TransitionBuilder {
       new ConfigurationMissingException(s"$s in ${currentConfig.getString(HoconConstants.name)}")
     }
 
-    val nextNodeWithConfig = MonadBuilder.getOrException { () =>
+    val nextNodeWithConfig = MonadBuilder.valueOrException { () =>
       nodes.find(_.node.action.name.equalsIgnoreCase(nextNodeName))
     } { () =>
       new ConfigurationMissingException(s"Could not find node '${currentConfig

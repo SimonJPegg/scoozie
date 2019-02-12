@@ -22,18 +22,15 @@ import scala.xml.Elem
 class DistCPAction(override val name: String,
                    arguments: Seq[String],
                    javaOptions: String,
-                   configuration: Configuration,
+                   override val configuration: Configuration,
                    yarnConfig: YarnConfig,
-                   prepareOption: Option[Prepare])
-    extends Action {
+                   override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig {
 
   private val argumentsProperties = buildSequenceProperties(name, "arguments", arguments)
   private val javaOptionsProperty = formatProperty(s"${name}_javaOptions")
-
-  private val configurationProperties = configuration.withActionProperties(name)
-  private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties = prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
 
   /**
     * The XML namespace for an action element
@@ -46,7 +43,7 @@ class DistCPAction(override val name: String,
   override val properties: Map[String, String] =
   Map(javaOptionsProperty -> javaOptions) ++
   argumentsProperties ++
-  configurationProperties.properties ++
+  mappedProperties ++
   prepareProperties
 
   /**
@@ -56,11 +53,8 @@ class DistCPAction(override val name: String,
     <distcp xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {prepareOptionMapped.map(_.toXML).orNull}
-      {if (configurationProperties.mappedType.configProperties.nonEmpty) {
-          configurationProperties.mappedType.toXML
-        }
-      }
+      {prepareXML}
+      {configXML}
       {if (!javaOptions.isEmpty) {
           <java-opts>{javaOptionsProperty}</java-opts>
         }

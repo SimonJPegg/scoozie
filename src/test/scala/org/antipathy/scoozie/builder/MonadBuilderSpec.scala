@@ -25,7 +25,7 @@ class MonadBuilderSpec extends FlatSpec with Matchers {
   }
 
   it should "return the value of an optional when it contains one" in {
-    MonadBuilder.getOrException { () =>
+    MonadBuilder.valueOrException { () =>
       Some("StringValue")
     } { () =>
       new RuntimeException("hmmm")
@@ -34,7 +34,7 @@ class MonadBuilderSpec extends FlatSpec with Matchers {
 
   it should "raise an error when an optional is empty" in {
     an[RuntimeException] should be thrownBy {
-      MonadBuilder.getOrException { () =>
+      MonadBuilder.valueOrException { () =>
         None
       } { () =>
         new RuntimeException("hmmm")

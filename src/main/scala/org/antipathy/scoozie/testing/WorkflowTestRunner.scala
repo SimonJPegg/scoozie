@@ -128,7 +128,7 @@ class WorkflowTestRunner(workflow: Workflow, failingNodes: Seq[String], decision
   }
 
   private def visitPotentialNode(nodeName: String, nodeOption: Option[Node], visitor: Visitor): Visitor = {
-    val nextNode = MonadBuilder.getOrException { () =>
+    val nextNode = MonadBuilder.valueOrException { () =>
       nodeOption
     } { () =>
       new TransitionException(s"Could not find next node for $nodeName")

@@ -22,8 +22,9 @@ import scala.xml.Elem
 class FsAction(override val name: String,
                steps: Seq[FileSystemAction],
                jobXmlOption: Option[String],
-               configuration: Configuration)
-    extends Action {
+               override val configuration: Configuration)
+    extends Action
+    with HasConfig {
 
   private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
 
@@ -59,7 +60,7 @@ class FsAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    jobXmlProperty ++ namedActionsAnProps.flatMap(_.properties).toMap
+    jobXmlProperty ++ namedActionsAnProps.flatMap(_.properties).toMap ++ configurationProperties.properties
 
   /**
     * The XML for this node
@@ -67,6 +68,10 @@ class FsAction(override val name: String,
   override def toXML: Elem = <fs>
     {if (jobXmlOption.isDefined) {
       <job-xml>{jobXmlProperty.keys}</job-xml>
+      }
+    }
+    {if (mappedConfig.configProperties.nonEmpty) {
+        mappedConfig.toXML
       }
     }
     {namedActionsAnProps.map(_.mappedType.toXML)}

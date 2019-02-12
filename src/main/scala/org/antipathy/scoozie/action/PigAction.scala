@@ -27,26 +27,19 @@ class PigAction(override val name: String,
                 params: Seq[String],
                 arguments: Seq[String],
                 files: Seq[String],
-                jobXmlOption: Option[String],
-                configuration: Configuration,
+                override val jobXmlOption: Option[String],
+                override val configuration: Configuration,
                 yarnConfig: YarnConfig,
-                prepareOption: Option[Prepare])
-    extends Action {
+                override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val scriptProperty = formatProperty(s"${name}_script")
   private val paramsProperties = buildSequenceProperties(name, "param", params)
   private val argumentsProperties = buildSequenceProperties(name, "arg", arguments)
   private val filesProperties = buildSequenceProperties(name, "file", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val mappedConfigAndProperties =
-    configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.mappedType
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
 
   /**
     * Get the Oozie properties for this object
@@ -56,7 +49,9 @@ class PigAction(override val name: String,
     paramsProperties ++
     jobXmlProperty ++
     prepareProperties ++
-    mappedConfigAndProperties.properties ++ argumentsProperties ++ filesProperties
+    mappedProperties ++
+    argumentsProperties ++
+    filesProperties
 
   /**
     * The XML namespace for an action element
@@ -70,16 +65,9 @@ class PigAction(override val name: String,
     <pig>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {prepareOptionMapped.map(_.toXML).orNull}
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-
-      {if (mappedConfig.configProperties.nonEmpty) {
-          mappedConfig.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       <script>{scriptProperty}</script>
       {paramsProperties.keys.map(p => Param(p).toXML)}
       {argumentsProperties.keys.map(p => Argument(p).toXML)}

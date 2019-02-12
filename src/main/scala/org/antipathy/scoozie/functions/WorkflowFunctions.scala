@@ -5,6 +5,9 @@ package org.antipathy.scoozie.functions
   */
 object WorkflowFunctions {
 
+  private val variablePrefix: String = "${"
+  private val variablePostFix: String = ")}"
+
   /**
     * returns the workflow job ID for the current workflow job.
     */
@@ -13,7 +16,7 @@ object WorkflowFunctions {
   /**
     * returns the workflow application name for the current workflow job.
     */
-  val name: String = variablePrefix + "wf:name( " + variablePostFix
+  val name: String = variablePrefix + "wf:name(" + variablePostFix
 
   /**
     * returns the workflow application path for the current workflow job.
@@ -97,8 +100,6 @@ object WorkflowFunctions {
     * returns the external status for an action node, or an empty string if the action has not
     * being executed or it has not completed yet.
     */
-  def actionExternalStatus(nodeName: String): String = variablePrefix + "wf:actionExternalStatus(" + nodeName + variablePostFix
-
-  private val variablePrefix: String = "${"
-  private val variablePostFix: String = ")}"
+  def actionExternalStatus(nodeName: String): String =
+    variablePrefix + "wf:actionExternalStatus(" + nodeName + variablePostFix
 }

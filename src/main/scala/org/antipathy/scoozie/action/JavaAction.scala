@@ -31,11 +31,14 @@ final class JavaAction(override val name: String,
                        commandLineArgs: Seq[String],
                        files: Seq[String],
                        captureOutput: Boolean,
-                       jobXmlOption: Option[String],
-                       configuration: Configuration,
+                       override val jobXmlOption: Option[String],
+                       override val configuration: Configuration,
                        yarnConfig: YarnConfig,
-                       prepareOption: Option[Prepare])
-    extends Action {
+                       override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val mainClassProperty = formatProperty(s"${name}_mainClass")
   private val javaJarProperty = formatProperty(s"${name}_javaJar")
@@ -43,15 +46,6 @@ final class JavaAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * Get the Oozie properties for this object
@@ -61,7 +55,7 @@ final class JavaAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties.properties ++ jobXmlProperty
+    configurationProperties.properties ++ jobXmlProperty
 
   /**
     * The XML namespace for an action element
@@ -75,15 +69,9 @@ final class JavaAction(override val name: String,
     <java>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
-        {prepareOptionMapped.map(_.toXML).orNull}
-        {if (jobXmlOption.isDefined) {
-            <job-xml>{jobXmlProperty.keys}</job-xml>
-          }
-        }
-        {if (mappedConfig.configProperties.nonEmpty) {
-            mappedConfig.toXML
-          }
-        }
+        {prepareXML}
+        {jobXml}
+        {configXML}
         <main-class>{mainClassProperty}</main-class>
         <java-opts>{javaOptionsProperty}</java-opts>
         {commandLineArgsProperties.keys.map(Arg(_).toXML)}

@@ -8,7 +8,6 @@ import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
 import scala.collection.immutable._
-import scala.util._
 import scala.xml.Elem
 
 /**
@@ -35,11 +34,14 @@ final class SparkAction(override val name: String,
                         sparkOptions: String,
                         commandLineArgs: Seq[String],
                         files: Seq[String],
-                        jobXmlOption: Option[String],
-                        prepareOption: Option[Prepare],
-                        configuration: Configuration,
+                        override val jobXmlOption: Option[String],
+                        override val prepareOption: Option[Prepare],
+                        override val configuration: Configuration,
                         yarnConfig: YarnConfig)
-    extends Action {
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val sparkMasterURLProperty = formatProperty(s"${name}_sparkMasterURL")
   private val sparkModeProperty = formatProperty(s"${name}_sparkMode")
@@ -50,16 +52,6 @@ final class SparkAction(override val name: String,
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * The XML namespace for an action element
@@ -79,7 +71,7 @@ final class SparkAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    mappedConfigAndProperties.properties ++
+    mappedProperties ++
     jobXmlProperty
 
   /**
@@ -89,15 +81,9 @@ final class SparkAction(override val name: String,
     <spark xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {prepareOptionMapped.map(_.toXML).orNull}
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-      {if (mappedConfig.configProperties.nonEmpty) {
-         mappedConfig.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       <master>{sparkMasterURLProperty}</master>
       <mode>{sparkModeProperty}</mode>
       <name>{sparkJobNameProperty}</name>

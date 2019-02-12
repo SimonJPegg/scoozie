@@ -32,11 +32,14 @@ final class ShellAction(override val name: String,
                         envVars: Seq[String],
                         files: Seq[String],
                         captureOutput: Boolean,
-                        jobXmlOption: Option[String],
-                        configuration: Configuration,
+                        override val jobXmlOption: Option[String],
+                        override val configuration: Configuration,
                         yarnConfig: YarnConfig,
-                        prepareOption: Option[Prepare])
-    extends Action {
+                        override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
@@ -45,24 +48,18 @@ final class ShellAction(override val name: String,
   private val envVarsProperties =
     buildSequenceProperties(name, "envVars", envVars)
   private val filesProperties = buildSequenceProperties(name, "files", files)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++ prepareProperties ++
+    Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++
+    prepareProperties ++
     commandLineArgsProperties ++
     envVarsProperties ++
-    mappedConfigAndProperties.properties ++ jobXmlProperty ++ filesProperties
+    mappedProperties ++
+    jobXmlProperty ++
+    filesProperties
 
   /**
     * The XML namespace for an action element
@@ -77,15 +74,9 @@ final class ShellAction(override val name: String,
     <shell xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {prepareOptionMapped.map(_.toXML).orNull}
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-      {if (mappedConfig.configProperties.nonEmpty) {
-          mappedConfig.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       <exec>{scriptNameProperty}</exec>
       {commandLineArgsProperties.keys.map(Argument(_).toXML)}
       {envVarsProperties.keys.map(EnvVar(_).toXML)}

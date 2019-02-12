@@ -25,21 +25,18 @@ class SqoopAction(override val name: String,
                   command: Option[String],
                   args: Seq[String],
                   files: Seq[String],
-                  jobXmlOption: Option[String],
-                  configuration: Configuration,
+                  override val jobXmlOption: Option[String],
+                  override val configuration: Configuration,
                   yarnConfig: YarnConfig,
-                  prepareOption: Option[Prepare])
-    extends Action {
+                  override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
   private val argsProperties = buildSequenceProperties(name, "arguments", args)
   private val filesProperties = buildSequenceProperties(name, "files", files)
   private val commandProperty = buildStringOptionProperty(name, "command", command)
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
-  private val configurationProperties = configuration.withActionProperties(name)
-  private val prepareOptionAndProps = prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties = prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
 
   /**
     * Get the Oozie properties for this object
@@ -64,15 +61,9 @@ class SqoopAction(override val name: String,
     <sqoop xmlns={xmlns.orNull}>
       {yarnConfig.jobTrackerXML}
       {yarnConfig.nameNodeXML}
-      {prepareOptionMapped.map(_.toXML).orNull}
-      {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-        }
-      }
-      {if (configurationProperties.mappedType.configProperties.nonEmpty) {
-          configurationProperties.mappedType.toXML
-        }
-      }
+      {prepareXML}
+      {jobXml}
+      {configXML}
       { if (command.isDefined) {
           <command>{commandProperty.keys}</command>
         } else {

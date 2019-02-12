@@ -26,26 +26,21 @@ final class HiveAction(override val name: String,
                        scriptName: String,
                        scriptLocation: String,
                        parameters: Seq[String],
-                       jobXmlOption: Option[String],
+                       override val jobXmlOption: Option[String],
                        files: Seq[String],
-                       configuration: Configuration,
+                       override val configuration: Configuration,
                        yarnConfig: YarnConfig,
-                       prepareOption: Option[Prepare])
-    extends Action {
+                       override val prepareOption: Option[Prepare])
+    extends Action
+    with HasPrepare
+    with HasConfig
+    with HasJobXml {
 
-  private val jobXmlProperty = buildStringOptionProperty(name, "jobXml", jobXmlOption)
   private val scriptNameProperty = formatProperty(s"${name}_scriptName")
   private val scriptLocationProperty = formatProperty(s"${name}_scriptLocation")
   private val parametersProperties =
     buildSequenceProperties(name, "parameter", parameters)
   private val filesProperties = buildSequenceProperties(name, "file", files)
-  private val prepareOptionAndProps =
-    prepareOption.map(_.withActionProperties(name))
-  private val prepareProperties =
-    prepareOptionAndProps.map(_.properties).getOrElse(Map[String, String]())
-  private val prepareOptionMapped = prepareOptionAndProps.map(_.mappedType)
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * Get the Oozie properties for this object
@@ -54,7 +49,7 @@ final class HiveAction(override val name: String,
     jobXmlProperty ++
     yarnConfig.properties ++
     Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++
-    prepareProperties ++ parametersProperties ++ mappedConfigAndProperties.properties ++ filesProperties
+    prepareProperties ++ parametersProperties ++ configurationProperties.properties ++ filesProperties
 
   /**
     * The XML namespace for an action element
@@ -68,15 +63,9 @@ final class HiveAction(override val name: String,
     <hive xmlns={xmlns.orNull}>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
-        {prepareOptionMapped.map(_.toXML).orNull}
-        {if (jobXmlOption.isDefined) {
-              <job-xml>{jobXmlProperty.keys}</job-xml>
-            }
-        }
-        {if (mappedConfig.configProperties.nonEmpty) {
-            mappedConfig.toXML
-          }
-        }
+        {prepareXML}
+        {jobXml}
+        {configXML}
         <script>{scriptNameProperty}</script>
         {parametersProperties.keys.map(p => Param(p).toXML)}
         <file>{scriptLocationProperty}</file>

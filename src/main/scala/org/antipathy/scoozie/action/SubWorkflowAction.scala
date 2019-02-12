@@ -19,13 +19,12 @@ import scala.xml.Elem
 final class SubWorkflowAction(override val name: String,
                               applicationPath: String,
                               propagateConfiguration: Boolean,
-                              configuration: Configuration,
+                              override val configuration: Configuration,
                               yarnConfig: YarnConfig)
-    extends Action {
+    extends Action
+    with HasConfig {
 
   private val applicationPathProperty = formatProperty(s"${name}_applicationPath")
-  private val mappedConfigAndProperties = configuration.withActionProperties(name)
-  private val mappedConfig = mappedConfigAndProperties.mappedType
 
   /**
     * The XML namespace for an action element
@@ -35,8 +34,7 @@ final class SubWorkflowAction(override val name: String,
   /**
     * Get the Oozie properties for this object
     */
-  override val properties
-    : Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedConfigAndProperties.properties
+  override val properties: Map[String, String] = Map(applicationPathProperty -> applicationPath) ++ mappedProperties
 
   /**
     * The XML for this node
@@ -49,7 +47,7 @@ final class SubWorkflowAction(override val name: String,
           }
         }
         {if (mappedConfig.configProperties.nonEmpty) {
-              mappedConfig.toXML
+              configXML
             }
         }
       </sub-workflow>
