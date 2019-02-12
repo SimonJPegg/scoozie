@@ -49,11 +49,9 @@ private[scoozie] object TransitionBuilder {
         throw new UnknownActionException(s"action type $unknown is invalid")
     }: _*)
 
-    val startNode = Try {
-      actions.filter(_.node.action.name.equalsIgnoreCase(HoconConstants.start)).head
-    } match {
-      case Success(value) => value
-      case Failure(_) =>
+    val startNode = actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start)) match {
+      case Some(value) => value
+      case None =>
         throw new ConfigurationMissingException(s"Could not find ${HoconConstants.start} action")
     }
 
