@@ -46,7 +46,7 @@ private[scoozie] object TransitionBuilder {
         NodeWithConfig(Decision(config.getString(HoconConstants.name), End(), Seq.empty), config)
       case (unknown, _) =>
         throw new UnknownActionException(s"action type $unknown is invalid")
-    }: _*)
+    }: _*).map(SLABuilder.addSLA)
 
     val startNode = MonadBuilder.valueOrException[NodeWithConfig] { () =>
       actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start))
@@ -80,7 +80,7 @@ private[scoozie] object TransitionBuilder {
   /**
     *  (re)build a decision node with the correct transitions.
     */
-  private def buildDecision(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config) = {
+  private def buildDecision(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config): Node = {
     val decisionName = currentNode.action.name
     val defaultName = MonadBuilder.tryOperation[String] { () =>
       currentConfig.getString(HoconConstants.default)

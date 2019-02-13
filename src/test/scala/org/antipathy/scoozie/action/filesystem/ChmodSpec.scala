@@ -10,7 +10,7 @@ class ChmodSpec extends FlatSpec with Matchers {
     val result = Chmod(path = "/Some/Path", permissions = "755", dirFiles = "false").toXML
 
     scala.xml.Utility.trim(result) should be(
-      scala.xml.Utility.trim(<chmod path="/Some/Path" permissions="755" dir-files="false" />)
+      scala.xml.Utility.trim(<chmod path="${/Some/Path}" permissions="${755}" dir-files="${false}" />)
     )
   }
 

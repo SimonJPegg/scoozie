@@ -260,7 +260,7 @@ DistCP:
   name: ""
   type: "distcp"
   arguments: []
-  java-options: []
+  java-options: ""
   configuration: {}
   prepare: {}
   ok-to: ""
@@ -288,14 +288,14 @@ FileSystem:
   type: "filesystem"
   job-xml: ""
   configuration: {}
-  steps: {
+  steps: [
     //any of
-    delete: ""
-    mkdir: ""
-    touchz: ""
-    chmod: {path:"", permissions:"", dir-files:"" //note: Strings }
-    move: {source:"",  target:"" }
-  }
+    {delete: ""},
+    {mkdir: ""},
+    {touchz: ""},
+    {chmod: {path:"", permissions:"", dir-files:""}}, //note: Strings 
+    {move: {source:"",  target:"" }}
+  ]
   ok-to: ""
   error-to: ""
 }

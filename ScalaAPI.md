@@ -123,7 +123,15 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   
   private val yarnConfig = Scoozie.Configuration.yarnConfiguration(jobTracker, nameNode)
   private val kill = Scoozie.Actions.kill("Workflow failed")
-
+  
+  val sparkSLA = Scoozie.SLA.create(nominalTime = "nominal_time",
+        shouldStart = Some("10 * MINUTES"),
+        shouldEnd = Some("30 * MINUTES"),
+        maxDuration = Some("30 * MINUTES"),
+        alertEvents = Scoozie.SLA.Alerts.all,
+        alertContacts = Seq("some@one.com")
+      )
+      
   private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
                                                   sparkSettings = "/path/to/spark/settings",
                                                   sparkMasterURL = "masterURL",
@@ -136,7 +144,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                   files = Seq(),
                                                   prepareOption = None,
                                                   configuration = Scoozie.Configuration.emptyConfiguration,
-                                                  yarnConfig = yarnConfig)
+                                                  yarnConfig = yarnConfig).withSLA(sparkSLA)
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
                                                   to = Seq("a@a.com", "b@b.com"),

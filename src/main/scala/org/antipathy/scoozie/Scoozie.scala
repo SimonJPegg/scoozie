@@ -47,6 +47,11 @@ object Scoozie {
   val Prepare: api.Prepare.type = api.Prepare
 
   /**
+    * Methods for creating SLAs
+    */
+  val SLA: api.SLA.type = api.SLA
+
+  /**
     * Methods for testing Oozie workflows
     */
   val Test: api.Test.type = api.Test
@@ -94,7 +99,8 @@ object Scoozie {
     * @param configPath the path to build the artefacts from
     * @return a GeneratedArtefacts object containing a workflow, optional coordinator and job properties
     */
-  def fromConfig(configPath: Path): GeneratedArtefacts = GeneratedArtefacts(ConfigFactory.parseFile(configPath.toFile))
+  def fromConfig(configPath: Path): GeneratedArtefacts =
+    GeneratedArtefacts(ConfigFactory.parseFile(configPath.toFile).resolve())
 
   private[scoozie] val Null: Null = null
 }

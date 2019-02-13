@@ -100,7 +100,7 @@ object SqoopAction {
       SqoopAction(name = config.getString(HoconConstants.name),
                   command = ConfigurationBuilder.optionalString(config, HoconConstants.command),
                   args =
-                    if (config.hasPath(HoconConstants.command))
+                    if (!config.hasPath(HoconConstants.command))
                       Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*)
                     else Seq(),
                   files = Seq(config.getStringList(HoconConstants.files).asScala: _*),

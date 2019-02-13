@@ -14,8 +14,8 @@ class PrepareSpec extends FlatSpec with Matchers {
       Prepare(Seq(Delete("/Some/Path"), MakeDir("/Some/Path"))).toXML
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<prepare>
-      <delete path="/Some/Path"/>
-      <mkdir path="/Some/Path"/>
+      <delete path="${/Some/Path}"/>
+      <mkdir path="${/Some/Path}"/>
     </prepare>))
   }
 

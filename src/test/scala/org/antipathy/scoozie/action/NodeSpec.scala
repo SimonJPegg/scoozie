@@ -3,6 +3,7 @@ package org.antipathy.scoozie.action
 import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception._
+import org.antipathy.scoozie.sla._
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable._
@@ -146,6 +147,7 @@ class NodeSpec extends FlatSpec with Matchers {
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<join name="SomeJoin" to="SomeNode" />))
   }
+
   it should "generate correct xml for an action with no credentials" in {
     implicit val credentialsOption: Option[Credentials] = None
 
@@ -268,5 +270,105 @@ class NodeSpec extends FlatSpec with Matchers {
           <ok to="email"/>
           <error to="email"/>
         </action>))
+  }
+
+  it should "generate correct xml for an action with an sla" in {
+
+    implicit val credentialsOption: Option[Credentials] = Some(
+      Credentials(
+        Credential(name = "hive-credentials",
+                   credentialsType = "hive",
+                   properties = Seq(Property("hive2.jdbc.url", "jdbc:hive2://hiveserver2;ssl=true;")))
+      )
+    )
+
+    val sparkActionNoSLA = SparkAction(name = "SomeAction",
+                                       sparkMasterURL = "masterURL",
+                                       sparkMode = "mode",
+                                       sparkJobName = "JobName",
+                                       mainClass = "org.antipathy.Main",
+                                       sparkJar = "/path/to/jar",
+                                       sparkOptions = "spark options",
+                                       commandLineArgs = Seq("one", "two", "three"),
+                                       files = Seq(),
+                                       jobXmlOption = Some("/path/to/spark/settings"),
+                                       prepareOption = None,
+                                       configuration = Configuration(
+                                         Seq(Property(name = "SomeProp1", "SomeValue1"),
+                                             Property(name = "SomeProp2", "SomeValue2"))
+                                       ),
+                                       yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode"))
+
+    val sla = OozieSLA(nominalTime = "nominal_time",
+                       shouldStart = Some("10 * MINUTES"),
+                       shouldEnd = Some("30 * MINUTES"),
+                       maxDuration = Some("30 * MINUTES"))
+
+    val sparkAction = sparkActionNoSLA.withSLA(sla)
+
+    val emailAction = EmailAction(name = "email",
+                                  to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq("c@c.com", "d@d.com"),
+                                  subject = "message subject",
+                                  body = "message body",
+                                  contentTypeOption = None)
+
+    val result = sparkAction okTo emailAction errorTo emailAction
+
+    scala.xml.Utility.trim(result.toXML) should be(
+      scala.xml.Utility.trim(<action name="SomeAction" cred="hive-credentials">
+      <spark xmlns="uri:oozie:spark-action:0.1">
+        <job-tracker>{"${jobTracker}"}</job-tracker>
+        <name-node>{"${nameNode}"}</name-node>
+        <job-xml>{"${SomeAction_jobXml}"}</job-xml>
+        <configuration>
+          <property>
+            <name>SomeProp1</name>
+            <value>{"${SomeAction_property0}"}</value>
+          </property>
+          <property>
+            <name>SomeProp2</name>
+            <value>{"${SomeAction_property1}"}</value>
+          </property>
+        </configuration>
+        <master>{"${SomeAction_sparkMasterURL}"}</master>
+        <mode>{"${SomeAction_sparkMode}"}</mode>
+        <name>{"${SomeAction_sparkJobName}"}</name>
+        <class>{"${SomeAction_mainClass}"}</class>
+        <jar>{"${SomeAction_sparkJar}"}</jar>
+        <spark-opts>{"${SomeAction_sparkOptions}"}</spark-opts>
+        <arg>{"${SomeAction_commandLineArg0}"}</arg>
+        <arg>{"${SomeAction_commandLineArg1}"}</arg>
+        <arg>{"${SomeAction_commandLineArg2}"}</arg>
+      </spark>
+      <ok to="email"/>
+      <error to="email"/>
+      <sla:info>
+        <sla:nominal-time>{"${SomeAction_sla_nominalTime}"}</sla:nominal-time>
+        <sla:should-start>{"${SomeAction_sla_shouldStart}"}</sla:should-start>
+        <sla:should-end>{"${SomeAction_sla_shouldStart}"}</sla:should-end>
+        <sla:max-duration>{"${SomeAction_sla_maxDuration}"}</sla:max-duration>
+      </sla:info>
+    </action>)
+    )
+
+    result.properties should be(
+      Map("${SomeAction_property1}" -> "SomeValue2",
+          "${SomeAction_sparkMode}" -> "mode",
+          "${SomeAction_sla_shouldStart}" -> "10 * MINUTES",
+          "${SomeAction_commandLineArg0}" -> "one",
+          "${SomeAction_jobXml}" -> "/path/to/spark/settings",
+          "${SomeAction_sparkMasterURL}" -> "masterURL",
+          "${SomeAction_commandLineArg2}" -> "three",
+          "${SomeAction_sla_maxDuration}" -> "30 * MINUTES",
+          "${SomeAction_sparkJobName}" -> "JobName",
+          "${SomeAction_mainClass}" -> "org.antipathy.Main",
+          "${SomeAction_sparkOptions}" -> "spark options",
+          "${SomeAction_sla_shouldEnd}" -> "30 * MINUTES",
+          "${SomeAction_property0}" -> "SomeValue1",
+          "${SomeAction_sla_nominalTime}" -> "nominal_time",
+          "${SomeAction_commandLineArg1}" -> "two",
+          "${SomeAction_sparkJar}" -> "/path/to/jar")
+    )
   }
 }

@@ -1,9 +1,13 @@
 package org.antipathy.scoozie.sla
 
+import com.typesafe.config.Config
 import org.antipathy.scoozie.action.Nameable
+import org.antipathy.scoozie.builder.{ConfigurationBuilder, HoconConstants, MonadBuilder}
+import org.antipathy.scoozie.configuration.ActionProperties
+import org.antipathy.scoozie.exception.InvalidConfigurationException
 import org.antipathy.scoozie.properties.OozieProperties
 import org.antipathy.scoozie.xml.XmlSerializable
-import org.antipathy.scoozie.configuration.ActionProperties
+
 import scala.collection.immutable._
 import scala.xml.Elem
 
@@ -34,13 +38,13 @@ import scala.xml.Elem
   * @param upstreamApps List of upstream applications affected by SLA being missed.
   */
 case class OozieSLA(nominalTime: String,
-                    shouldStart: Option[String],
-                    shouldEnd: Option[String],
-                    maxDuration: Option[String],
-                    alertEvents: Seq[SLAAlert],
-                    alertContacts: Seq[String],
-                    notificationMsg: Option[String],
-                    upstreamApps: Seq[String],
+                    shouldStart: Option[String] = None,
+                    shouldEnd: Option[String] = None,
+                    maxDuration: Option[String] = None,
+                    alertEvents: Seq[SLAAlert] = Seq.empty[SLAAlert],
+                    alertContacts: Seq[String] = Seq.empty[String],
+                    notificationMsg: Option[String] = None,
+                    upstreamApps: Seq[String] = Seq.empty[String],
                     override val name: String = "_sla")
     extends XmlSerializable
     with OozieProperties
@@ -51,18 +55,20 @@ case class OozieSLA(nominalTime: String,
   private val shouldEndProperty = buildStringOptionProperty(name, "shouldEnd", shouldEnd)
   private val maxDurationProperty = buildStringOptionProperty(name, "maxDuration", maxDuration)
   private val alertEventsProperty =
-    buildStringOptionProperty(name, s"alertEvents", Some(alertEvents.map(_.name).mkString(",")))
+    buildSequenceToSingleValueProperty(name, s"alertEvents", alertEvents.map(_.name))
   private val alertContactsProperty =
-    buildStringOptionProperty(name, s"alertContacts", Some(alertContacts.mkString(",")))
+    buildSequenceToSingleValueProperty(name, s"alertContacts", alertContacts)
   private val notificationMsgProperty = buildStringOptionProperty(name, s"notificationMsg", notificationMsg)
   private val upstreamAppsProperty =
-    buildStringOptionProperty(name, s"upstreamApps", Some(upstreamApps.mkString(",")))
+    buildSequenceToSingleValueProperty(name, s"upstreamApps", upstreamApps)
 
   /**
     * Add the owning node name to this SLA object
     */
-  def withActionName(actionName: String): ActionProperties[OozieSLA] =
-    ActionProperties(this.copy(name = s"$actionName${this.name}"), this.properties)
+  def withActionName(actionName: String): ActionProperties[OozieSLA] = {
+    val mappedSLA = this.copy(name = s"$actionName${this.name}")
+    ActionProperties(mappedSLA, mappedSLA.properties)
+  }
 
   /**
     * Get the Oozie properties for this object
@@ -90,5 +96,24 @@ case class OozieSLA(nominalTime: String,
     {notificationMsgProperty.keys.map(k => <sla:notification-msg>{formatProperty(k)}</sla:notification-msg>)}
     {upstreamAppsProperty.keys.map(k => <sla:upstream-apps>{formatProperty(k)}</sla:upstream-apps>)}
   </sla:info>
+}
 
+object OozieSLA {
+
+  def apply(config: Config, ownerName: String): OozieSLA =
+    MonadBuilder.tryOperation { () =>
+      OozieSLA(nominalTime = config.getString(HoconConstants.nominalTime),
+               shouldStart = ConfigurationBuilder.optionalString(config, HoconConstants.shouldStart),
+               shouldEnd = ConfigurationBuilder.optionalString(config, HoconConstants.shouldEnd),
+               maxDuration = ConfigurationBuilder.optionalString(config, HoconConstants.maxDuration),
+               alertEvents = ConfigurationBuilder
+                 .optionalStringCollection(config, HoconConstants.alertEvents)
+                 .map(SLAAlert.fromName),
+               alertContacts = ConfigurationBuilder.optionalStringCollection(config, HoconConstants.alertContacts),
+               notificationMsg = ConfigurationBuilder.optionalString(config, HoconConstants.notificationMsg),
+               upstreamApps = ConfigurationBuilder.optionalStringCollection(config, HoconConstants.upstreamApps),
+      )
+    } { s: String =>
+      new InvalidConfigurationException(s"$s in SLA contstruction for $ownerName")
+    }
 }

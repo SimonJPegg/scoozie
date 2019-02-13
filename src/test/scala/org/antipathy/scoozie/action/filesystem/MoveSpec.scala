@@ -10,7 +10,7 @@ class MoveSpec extends FlatSpec with Matchers {
     val result = Move(srcPath = "/Some/Path", targetPath = "/some/other/path").toXML
 
     scala.xml.Utility.trim(result) should be(
-      scala.xml.Utility.trim(<move source="/Some/Path" target="/some/other/path" />)
+      scala.xml.Utility.trim(<move source="${/Some/Path}" target="${/some/other/path}" />)
     )
   }
 
