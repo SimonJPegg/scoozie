@@ -141,7 +141,7 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
                        start={"${someCoordinator_start}"}
                        end={"${someCoordinator_end}"}
                        timezone={"${someCoordinator_timezone}"}
-                       xmlns="uri:oozie:coordinator:0.4">
+                       xmlns="uri:oozie:coordinator:0.4" xmlns:sla="uri:oozie:sla:0.2">
         <action>
           <workflow>
             <app-path>{"${someCoordinator_workflow_path}"}</app-path>

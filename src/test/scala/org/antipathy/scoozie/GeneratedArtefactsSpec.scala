@@ -176,7 +176,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -365,7 +365,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -571,6 +571,45 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     val outputCoordinator = outputPath.path.toString / ArtefactWriter.coordinatorFileName
     val ouputWorkflow = outputPath.path.toString / ArtefactWriter.workflowFileName
     val ouputProperties = outputPath.path.toString / ArtefactWriter.propertiesFileName
+
+    outputCoordinator.lines.mkString(System.lineSeparator()) should be(
+      """<coordinator-app 
+        |name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+        |    <action>
+        |        <workflow>
+        |            <app-path>${someCoordinator_workflow_path}</app-path>
+        |            <configuration>
+        |                <property>
+        |                    <name>prop1</name>
+        |                    <value>${someCoordinator_property0}</value>
+        |                </property>
+        |                <property>
+        |                    <name>prop2</name>
+        |                    <value>${someCoordinator_property1}</value>
+        |                </property>
+        |                <property>
+        |                    <name>prop3</name>
+        |                    <value>${someCoordinator_property2}</value>
+        |                </property>
+        |                <property>
+        |                    <name>prop4</name>
+        |                    <value>${someCoordinator_property3}</value>
+        |                </property>
+        |            </configuration>
+        |        </workflow>
+        |        <sla:info>
+        |            <sla:nominal-time>${someCoordinator_sla_nominalTime}</sla:nominal-time>
+        |            <sla:should-start>${someCoordinator_sla_shouldStart}</sla:should-start>
+        |            <sla:should-end>${someCoordinator_sla_shouldStart}</sla:should-end>
+        |            <sla:max-duration>${someCoordinator_sla_maxDuration}</sla:max-duration>
+        |            <sla:alert-events>${someCoordinator_sla_alertEvents}</sla:alert-events>
+        |            <sla:alert-contact>${someCoordinator_sla_alertContacts}</sla:alert-contact>
+        |            <sla:notification-msg>${someCoordinator_sla_notificationMsg}</sla:notification-msg>
+        |            <sla:upstream-apps>${someCoordinator_sla_upstreamApps}</sla:upstream-apps>
+        |        </sla:info>
+        |    </action>
+        |</coordinator-app>""".stripMargin
+    )
 
     ouputWorkflow.lines.mkString(System.lineSeparator()) should be(
       """<workflow-app name="someworkflow" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:workflow:0.5">
@@ -901,6 +940,14 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |someCoordinator_property1="value2"
         |someCoordinator_property2="value3"
         |someCoordinator_property3="value4"
+        |someCoordinator_sla_alertContacts=a@a.com,b@b.com
+        |someCoordinator_sla_alertEvents=start_miss,end_miss,duration_miss
+        |someCoordinator_sla_maxDuration=120 * MINUTES
+        |someCoordinator_sla_nominalTime=nominalTime
+        |someCoordinator_sla_notificationMsg=someworkflow is breaching SLA
+        |someCoordinator_sla_shouldEnd=120 * MINUTES
+        |someCoordinator_sla_shouldStart=10 * MINUTES
+        |someCoordinator_sla_upstreamApps=app1,app2
         |someCoordinator_start=someStart
         |someCoordinator_timezone=someTimezone
         |someCoordinator_workflow_path=somepath

@@ -155,7 +155,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
         frequency="${ExampleCoOrdinator_frequency}"
         start="${ExampleCoOrdinator_start}" end="${ExampleCoOrdinator_end}"
         timezone="${ExampleCoOrdinator_timezone}"
-        xmlns="uri:oozie:coordinator:0.4">
+        xmlns="uri:oozie:coordinator:0.4" xmlns:sla="uri:oozie:sla:0.2">
           <action>
             <workflow>
               <app-path>{"${ExampleCoOrdinator_workflow_path}"}</app-path>

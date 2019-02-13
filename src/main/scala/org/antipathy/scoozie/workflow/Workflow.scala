@@ -137,8 +137,16 @@ case class Workflow(override val name: String,
     }
 }
 
+/**
+  * Companion object
+  */
 object Workflow {
 
+  /**
+    *  Build a workflow from the passed in config
+    * @param config the config to build from
+    * @return a workflow
+    */
   def apply(config: Config): Workflow =
     MonadBuilder.tryOperation[Workflow] { () =>
       val workflowConfig = config.getConfig(HoconConstants.workflow)

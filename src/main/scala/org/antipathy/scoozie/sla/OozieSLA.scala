@@ -111,8 +111,7 @@ object OozieSLA {
                  .map(SLAAlert.fromName),
                alertContacts = ConfigurationBuilder.optionalStringCollection(config, HoconConstants.alertContacts),
                notificationMsg = ConfigurationBuilder.optionalString(config, HoconConstants.notificationMsg),
-               upstreamApps = ConfigurationBuilder.optionalStringCollection(config, HoconConstants.upstreamApps),
-      )
+               upstreamApps = ConfigurationBuilder.optionalStringCollection(config, HoconConstants.upstreamApps))
     } { e: Throwable =>
       new InvalidConfigurationException(s"${e.getMessage} in SLA contstruction for $ownerName", e)
     }

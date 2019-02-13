@@ -86,6 +86,7 @@ object Scoozie {
     * @param timezone the CoOrdinator time-zone
     * @param workflow the workflow to run
     * @param configuration configuration for the workflow
+    * @param slaOption Optional SLA for this coordinator
     */
   def coordinator(name: String,
                   frequency: String,
@@ -93,8 +94,9 @@ object Scoozie {
                   end: String,
                   timezone: String,
                   workflow: Workflow,
-                  configuration: ActionConfiguration): Coordinator =
-    Coordinator(name, frequency, start, end, timezone, workflow, configuration)
+                  configuration: ActionConfiguration,
+                  slaOption: Option[OozieSLA] = None): Coordinator =
+    Coordinator(name, frequency, start, end, timezone, workflow, configuration, slaOption)
 
   /**
     * Build an Oozie workflow (and optional coordinator) from the config file at the specified path
