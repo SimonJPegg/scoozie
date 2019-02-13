@@ -18,10 +18,9 @@ object SLABuilder {
   def addSLA(nodeWithConfig: NodeWithConfig): NodeWithConfig = nodeWithConfig.node.action match {
     case _ @(_: Fork | _: Decision | _: End | _: Kill | _: Start | _: Join) => nodeWithConfig
     case _ =>
-      if (nodeWithConfig.config.hasPath(HoconConstants.sla)) {
-        val sla = buildSLA(nodeWithConfig.config.getConfig(HoconConstants.sla), nodeWithConfig.node.name)
+      buildSLA(nodeWithConfig.config, nodeWithConfig.node.name).map { sla =>
         nodeWithConfig.copy(node = nodeWithConfig.node.withSLA(sla))
-      } else nodeWithConfig
+      }.getOrElse(nodeWithConfig)
   }
 
   /**
@@ -30,5 +29,8 @@ object SLABuilder {
     * @param ownerName The name of the SLA's owning object
     * @return an SLA
     */
-  def buildSLA(config: Config, ownerName: String): OozieSLA = OozieSLA(config, ownerName)
+  def buildSLA(config: Config, ownerName: String): Option[OozieSLA] =
+    if (config.hasPath(HoconConstants.sla)) {
+      Some(OozieSLA(config.getConfig(HoconConstants.sla), ownerName))
+    } else None
 }

@@ -4,6 +4,7 @@ import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.configuration._
+import org.antipathy.scoozie.sla.OozieSLA
 import org.scalatest.{FlatSpec, Matchers}
 
 import scala.collection.immutable._
@@ -93,7 +94,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
                             yarnConfig = yarnConfig)
 
     scala.xml.Utility.trim(workflow.toXML) should be(
-      scala.xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
+      scala.xml.Utility
+        .trim(<workflow-app xmlns="uri:oozie:workflow:0.5" xmlns:sla="uri:oozie:sla:0.2" name="sampleWorkflow">
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -274,7 +276,8 @@ class WorkflowSpec extends FlatSpec with Matchers {
                             yarnConfig = yarnConfig)
 
     scala.xml.Utility.trim(workflow.toXML) should be(
-      scala.xml.Utility.trim(<workflow-app xmlns="uri:oozie:workflow:0.4" name="sampleWorkflow">
+      scala.xml.Utility
+        .trim(<workflow-app xmlns="uri:oozie:workflow:0.5" xmlns:sla="uri:oozie:sla:0.2" name="sampleWorkflow">
           <global>
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
@@ -359,6 +362,196 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                        |nameNode=nameNode
                                        |sampleWorkflow_credentialProperty0=value
                                        |sampleWorkflow_jobXml=/path/to/job.xml
+                                       |shellAction_scriptLocation=/path/to/script.sh
+                                       |shellAction_scriptName=script.sh
+                                       |sparkAction_jobXml=/path/to/spark/settings
+                                       |sparkAction_mainClass=org.antipathy.Main
+                                       |sparkAction_sparkJar=/path/to/jar
+                                       |sparkAction_sparkJobName=JobName
+                                       |sparkAction_sparkMasterURL=masterURL
+                                       |sparkAction_sparkMode=mode
+                                       |sparkAction_sparkOptions=spark options""".stripMargin)
+  }
+
+  it should "generate valid XML with an SLA" in {
+
+    implicit val credentialsOption: Option[Credentials] = Some(
+      Credentials(
+        Credential(name = "hive-credentials",
+                   credentialsType = "hive",
+                   properties = Seq(Property(name = "name", value = "value")))
+      )
+    )
+
+    val yarnConfig =
+      YarnConfig(jobTracker = "jobTracker", nameNode = "nameNode")
+
+    val kill = Kill("workflow failed")
+
+    val emailAction = EmailAction(name = "emailAction",
+                                  to = Seq("a@a.com", "b@b.com"),
+                                  cc = Seq.empty,
+                                  subject = "message subject",
+                                  body = "message body",
+                                  contentTypeOption = None)
+      .okTo(kill)
+      .errorTo(kill)
+
+    val shellAction = ShellAction(name = "shellAction",
+                                  scriptName = "script.sh",
+                                  scriptLocation = "/path/to/script.sh",
+                                  commandLineArgs = Seq(),
+                                  envVars = Seq(),
+                                  files = Seq(),
+                                  captureOutput = true,
+                                  jobXmlOption = None,
+                                  prepareOption = None,
+                                  configuration = Scoozie.Configuration.emptyConfig,
+                                  yarnConfig = yarnConfig)
+      .okTo(End())
+      .errorTo(emailAction)
+
+    val sparkAction = SparkAction(name = "sparkAction",
+                                  sparkMasterURL = "masterURL",
+                                  sparkMode = "mode",
+                                  sparkJobName = "JobName",
+                                  mainClass = "org.antipathy.Main",
+                                  sparkJar = "/path/to/jar",
+                                  sparkOptions = "spark options",
+                                  commandLineArgs = Seq(),
+                                  files = Seq(),
+                                  jobXmlOption = Some("/path/to/spark/settings"),
+                                  prepareOption = None,
+                                  configuration = Scoozie.Configuration.emptyConfig,
+                                  yarnConfig = yarnConfig)
+      .okTo(shellAction)
+      .errorTo(emailAction)
+
+    val hiveAction = HiveAction(name = "hiveAction",
+                                jobXmlOption = Some("/path/to/settings.xml"),
+                                files = Seq(),
+                                scriptName = "someScript.hql",
+                                scriptLocation = "/path/to/someScript.hql",
+                                parameters = Seq(),
+                                prepareOption = None,
+                                configuration = Scoozie.Configuration.emptyConfig,
+                                yarnConfig = yarnConfig)
+      .okTo(shellAction)
+      .errorTo(emailAction)
+
+    val decision =
+      Decision("doAThing", sparkAction, Switch(hiveAction, "somePredicate"), Switch(emailAction, "somePredicate"))
+
+    val sla = OozieSLA(nominalTime = "nominal_time",
+                       shouldStart = Some("10 * MINUTES"),
+                       shouldEnd = Some("30 * MINUTES"),
+                       maxDuration = Some("30 * MINUTES"))
+
+    val workflow = Workflow(name = "sampleWorkflow",
+                            path = "",
+                            transitions = Start().okTo(decision),
+                            jobXmlOption = Some("/path/to/job.xml"),
+                            configuration = Scoozie.Configuration.emptyConfig,
+                            yarnConfig = yarnConfig,
+                            slaOption = Some(sla))
+
+    scala.xml.Utility.trim(workflow.toXML) should be(
+      scala.xml.Utility
+        .trim(<workflow-app xmlns="uri:oozie:workflow:0.5" xmlns:sla="uri:oozie:sla:0.2" name="sampleWorkflow">
+        <global>
+          <job-tracker>{"${jobTracker}"}</job-tracker>
+          <name-node>{"${nameNode}"}</name-node>
+          <job-xml>{"${sampleWorkflow_jobXml}"}</job-xml>
+        </global>
+        <credentials>
+          <credential name="hive-credentials" type="hive">
+            <property>
+              <name>name</name>
+              <value>{"${sampleWorkflow_credentialProperty0}"}</value>
+            </property>
+          </credential>
+        </credentials>
+        <start to="doAThing" />
+        <decision name="doAThing">
+          <switch>
+            <case to="hiveAction">{"${somePredicate}"}</case>
+            <case to="emailAction">{"${somePredicate}"}</case>
+            <default to="sparkAction" />
+          </switch>
+        </decision>
+        <action name="hiveAction" cred="hive-credentials">
+          <hive xmlns="uri:oozie:hive-action:0.2">
+            <job-tracker>{"${jobTracker}"}</job-tracker>
+            <name-node>{"${nameNode}"}</name-node>
+            <job-xml>{"${hiveAction_jobXml}"}</job-xml>
+            <script>{"${hiveAction_scriptName}"}</script>
+            <file>{"${hiveAction_scriptLocation}"}</file>
+          </hive>
+          <ok to="shellAction" />
+          <error to="emailAction" />
+        </action>
+        <action name="emailAction">
+          <email xmlns="uri:oozie:email-action:0.1">
+            <to>{"${emailAction_to}"}</to>
+            <subject>{"${emailAction_subject}"}</subject>
+            <body>{"${emailAction_body}"}</body>
+          </email>
+          <ok to="kill" />
+          <error to="kill" />
+        </action>
+        <action name="sparkAction" cred="hive-credentials">
+          <spark xmlns="uri:oozie:spark-action:1.0">
+            <job-tracker>{"${jobTracker}"}</job-tracker>
+            <name-node>{"${nameNode}"}</name-node>
+            <job-xml>{"${sparkAction_jobXml}"}</job-xml>
+            <master>{"${sparkAction_sparkMasterURL}"}</master>
+            <mode>{"${sparkAction_sparkMode}"}</mode>
+            <name>{"${sparkAction_sparkJobName}"}</name>
+            <class>{"${sparkAction_mainClass}"}</class>
+            <jar>{"${sparkAction_sparkJar}"}</jar>
+            <spark-opts>{"${sparkAction_sparkOptions}"}</spark-opts>
+          </spark>
+          <ok to="shellAction" />
+          <error to="emailAction" />
+        </action>
+        <action name="shellAction" cred="hive-credentials">
+          <shell xmlns="uri:oozie:shell-action:0.1">
+            <job-tracker>{"${jobTracker}"}</job-tracker>
+            <name-node>{"${nameNode}"}</name-node>
+            <exec>{"${shellAction_scriptName}"}</exec>
+            <file>{"${shellAction_scriptLocation}#${shellAction_scriptName}"}</file>
+            <capture-output />
+          </shell>
+          <ok to="end" />
+          <error to="emailAction" />
+        </action>
+        <kill name="kill">
+          <message>workflow failed</message>
+        </kill>
+        <end name="end" />
+        <sla:info>
+          <sla:nominal-time>{"${sampleWorkflow_sla_nominalTime}"}</sla:nominal-time>
+          <sla:should-start>{"${sampleWorkflow_sla_shouldStart}"}</sla:should-start>
+          <sla:should-end>{"${sampleWorkflow_sla_shouldStart}"}</sla:should-end>
+          <sla:max-duration>{"${sampleWorkflow_sla_maxDuration}"}</sla:max-duration>
+        </sla:info>
+      </workflow-app>)
+    )
+
+    workflow.jobProperties should be("""emailAction_body=message body
+                                       |emailAction_subject=message subject
+                                       |emailAction_to=a@a.com,b@b.com
+                                       |hiveAction_jobXml=/path/to/settings.xml
+                                       |hiveAction_scriptLocation=/path/to/someScript.hql
+                                       |hiveAction_scriptName=someScript.hql
+                                       |jobTracker=jobTracker
+                                       |nameNode=nameNode
+                                       |sampleWorkflow_credentialProperty0=value
+                                       |sampleWorkflow_jobXml=/path/to/job.xml
+                                       |sampleWorkflow_sla_maxDuration=30 * MINUTES
+                                       |sampleWorkflow_sla_nominalTime=nominal_time
+                                       |sampleWorkflow_sla_shouldEnd=30 * MINUTES
+                                       |sampleWorkflow_sla_shouldStart=10 * MINUTES
                                        |shellAction_scriptLocation=/path/to/script.sh
                                        |shellAction_scriptName=script.sh
                                        |sparkAction_jobXml=/path/to/spark/settings

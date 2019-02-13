@@ -80,7 +80,7 @@ object SshAction {
                 command = config.getString(HoconConstants.command),
                 captureOutput = ConfigurationBuilder.optionalBoolean(config, HoconConstants.captureOutput),
                 args = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*))
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${config.getString(HoconConstants.name)}", e)
     }
 }

@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration, _}
 import org.antipathy.scoozie.coordinator.Coordinator
+import org.antipathy.scoozie.sla.OozieSLA
 import org.antipathy.scoozie.workflow.Workflow
 
 /**
@@ -65,14 +66,16 @@ object Scoozie {
     * @param credentialsOption optional credentials for this workflow
     * @param configuration configuration for this workflow
     * @param yarnConfig The yarn configuration for this workflow
+    * @param slaOption Optional SLA for this workflow
     */
   def workflow(name: String,
                path: String,
                transitions: Node,
                jobXmlOption: Option[String],
                configuration: ActionConfiguration,
-               yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Workflow =
-    Workflow(name, path, transitions, jobXmlOption, configuration, yarnConfig)
+               yarnConfig: YarnConfig,
+               slaOption: Option[OozieSLA] = None)(implicit credentialsOption: Option[Credentials]): Workflow =
+    Workflow(name, path, transitions, jobXmlOption, configuration, yarnConfig, slaOption)
 
   /**
     * Oozie coOrdinator definition

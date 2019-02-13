@@ -19,8 +19,8 @@ trait HasSLA extends Nameable {
   protected val slaOptionMapped: Option[OozieSLA] = slaOptionAndProps.map(_.mappedType)
 
   /**
-    * Render the XML for this prepare step
+    * Render the XML for this SLA
     */
-  protected def prepareXML: Elem = slaOptionMapped.map(_.toXML).orNull
+  protected def slaXML: Elem = slaOptionMapped.map(_.toXML).orNull
 }
 // $COVERAGE-ON$

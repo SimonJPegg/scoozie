@@ -95,7 +95,7 @@ object EmailAction {
                   subject = config.getString(HoconConstants.subject),
                   body = config.getString(HoconConstants.body),
                   contentTypeOption = ConfigurationBuilder.optionalString(config, HoconConstants.contentType))
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${config.getString(HoconConstants.name)}", e)
     }
 }

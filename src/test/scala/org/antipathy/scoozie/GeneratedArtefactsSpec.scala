@@ -881,6 +881,16 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <message>workflow is kill</message>
         |    </kill>
         |    <end name="end"/>
+        |    <sla:info>
+        |        <sla:nominal-time>${someworkflow_sla_nominalTime}</sla:nominal-time>
+        |        <sla:should-start>${someworkflow_sla_shouldStart}</sla:should-start>
+        |        <sla:should-end>${someworkflow_sla_shouldStart}</sla:should-end>
+        |        <sla:max-duration>${someworkflow_sla_maxDuration}</sla:max-duration>
+        |        <sla:alert-events>${someworkflow_sla_alertEvents}</sla:alert-events>
+        |        <sla:alert-contact>${someworkflow_sla_alertContacts}</sla:alert-contact>
+        |        <sla:notification-msg>${someworkflow_sla_notificationMsg}</sla:notification-msg>
+        |        <sla:upstream-apps>${someworkflow_sla_upstreamApps}</sla:upstream-apps>
+        |    </sla:info>
         |</workflow-app>""".stripMargin
     )
 
@@ -982,6 +992,14 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |someworkflow_property1="value2"
         |someworkflow_property2="value3"
         |someworkflow_property3="value4"
+        |someworkflow_sla_alertContacts=a@a.com,b@b.com
+        |someworkflow_sla_alertEvents=start_miss,end_miss,duration_miss
+        |someworkflow_sla_maxDuration=120 * MINUTES
+        |someworkflow_sla_nominalTime=nominalTime
+        |someworkflow_sla_notificationMsg=someworkflow is breaching SLA
+        |someworkflow_sla_shouldEnd=120 * MINUTES
+        |someworkflow_sla_shouldStart=10 * MINUTES
+        |someworkflow_sla_upstreamApps=app1,app2
         |sparkAction_jobXml=someSettings
         |sparkAction_mainClass=somemainclass
         |sparkAction_prepare_delete="deletePath"

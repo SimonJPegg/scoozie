@@ -84,8 +84,8 @@ private[scoozie] object TransitionBuilder {
     val decisionName = currentNode.action.name
     val defaultName = MonadBuilder.tryOperation[String] { () =>
       currentConfig.getString(HoconConstants.default)
-    } { _: String =>
-      new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"No default specified for decision '$decisionName'", e)
     }
     val defaultNode =
       nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)) match {
@@ -159,8 +159,8 @@ private[scoozie] object TransitionBuilder {
                             transitionFunction: Node => Node): Node = {
     val nextNodeName = MonadBuilder.tryOperation { () =>
       currentConfig.getString(transitionType)
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${currentConfig.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${currentConfig.getString(HoconConstants.name)}", e)
     }
 
     val nextNodeWithConfig = MonadBuilder.valueOrException { () =>
@@ -182,7 +182,7 @@ private[scoozie] object TransitionBuilder {
   private def getType(config: Config): String =
     MonadBuilder.tryOperation[String] { () =>
       config.getString(HoconConstants.typ).toLowerCase
-    } { _: String =>
-      new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}", e)
     }
 }

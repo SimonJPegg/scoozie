@@ -90,7 +90,7 @@ private[scoozie] object ConfigurationBuilder {
   private def configStringValue(config: Config, path: String): String =
     MonadBuilder.tryOperation[String] { () =>
       config.getString(path)
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${HoconConstants.credentials}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${HoconConstants.credentials}", e)
     }
 }

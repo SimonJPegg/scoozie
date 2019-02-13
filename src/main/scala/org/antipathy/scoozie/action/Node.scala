@@ -96,7 +96,7 @@ private[scoozie] case class Node(action: Action,
       {action.toXML}
       <ok to= {successTransition.map(_.action.name).orNull} />
       <error to = {failureTransition.map(_.action.name).orNull}/>
-      {slaOptionMapped.map(_.toXML).orNull}
+      {slaXML}
     </action>
   }
 

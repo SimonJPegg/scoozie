@@ -113,7 +113,7 @@ object OozieSLA {
                notificationMsg = ConfigurationBuilder.optionalString(config, HoconConstants.notificationMsg),
                upstreamApps = ConfigurationBuilder.optionalStringCollection(config, HoconConstants.upstreamApps),
       )
-    } { s: String =>
-      new InvalidConfigurationException(s"$s in SLA contstruction for $ownerName")
+    } { e: Throwable =>
+      new InvalidConfigurationException(s"${e.getMessage} in SLA contstruction for $ownerName", e)
     }
 }
