@@ -41,7 +41,7 @@ workflow {
     name: "someCredentials"
     type: "credentialsType"
     configuration: {
-      credentials1:"value1", //additional properties to include with credentials
+      credentials1:"value1", //optional additional properties to include with credentials
       credentials2:"value2",
       credentials3:"value3",
       credentials4:"value4"
@@ -124,7 +124,7 @@ workflow {
       type:"end"
     }
   ]
-  configuration: { //workflow additional properties
+  configuration: { //optional workflow additional properties
     workflow1:"value1",
     workflow2:"value2",
     workflow3:"value3",
@@ -134,6 +134,17 @@ workflow {
     name-node: "someNameNode"
     job-tracker: "someJobTracker"
   }
+  
+  sla: {
+     nominal-time: "nominalTime" //optional
+     should-start: "10 * MINUTES" //optional
+     should-end: "30 * MINUTES" //optional
+     max-duration: "30 * MINUTES" //optional
+     alert-events: ["start_miss","end_miss","duration_miss"] //optional
+     alert-contacts: ["a@a.com", "b@b.com"] //optional
+     notification-message: ${workflow.name} "is breaching SLA" //optional
+     upstream-applications: ["app1", "app2"] //optional
+   }
 }
 ```
 
@@ -153,6 +164,16 @@ coordinator: {
     prop3: value3
     prop4: value4
   }
+  sla: {
+   nominal-time: "nominalTime"
+   should-start: "10 * MINUTES" //optional
+   should-end: "30 * MINUTES" //optional
+   max-duration: "30 * MINUTES" //optional
+   alert-events: ["start_miss","end_miss","duration_miss"] //optional
+   alert-contacts: ["a@a.com", "b@b.com"] //optional
+   notification-message: ${coordinator.name} "is breaching SLA" //optional
+   upstream-applications: ["app1", "app2"] //optional
+ }
 }
 ```
 
@@ -187,9 +208,11 @@ validate {
 }
 ```
 
+An example Hocon file can be seen [here](./src/test/resources/conf/slas.conf) or [here](./src/test/resources/conf/workflowAndCoordinator.conf)
+
 ### Available actions
 
-The actions listed below are currently available via the hocon API.  Unless otherwise specified all properties are required.
+The actions listed below are currently available via the Hocon API.  Unless otherwise specified all properties are required.
 
 Most actions allow specifying a `prepare` and a `configuration` property, these are optional, but should be specified in a key value format, e.g:
 
@@ -253,6 +276,23 @@ Join:
 }
 ```
 #### Action nodes
+
+Action nodes also take an optional `sla` key, the format for these keys is:
+
+```hocon
+sla: {
+  nominal-time: ""
+  should-start: ""
+  should-end: ""
+  max-duration: ""
+  alert-events: []  // allowed values are "start_miss", "end_miss","duration_miss"
+  alert-contacts: []
+  notification-message: ""
+  upstream-applications: []
+}
+```
+
+available actions are:
 
 DistCP:
 ```hocon

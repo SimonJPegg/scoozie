@@ -17,19 +17,28 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   private val yarnConfig = Scoozie.Configuration.yarnConfig(jobTracker, nameNode)
   private val kill = Scoozie.Actions.kill("Workflow failed")
 
-  private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
-                                                  sparkMasterURL = "masterURL",
-                                                  sparkMode = "mode",
-                                                  sparkJobName = "JobName",
-                                                  mainClass = "org.antipathy.Main",
-                                                  sparkJar = "/path/to/jar",
-                                                  sparkOptions = "spark options",
-                                                  commandLineArgs = Seq(),
-                                                  files = Seq(),
-                                                  jobXmlOption = Some("/path/to/spark/settings"),
-                                                  prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfig,
-                                                  yarnConfig = yarnConfig)
+  val sparkSLA = Scoozie.SLA.create(nominalTime = "nominal_time",
+                                    shouldStart = Some("10 * MINUTES"),
+                                    shouldEnd = Some("30 * MINUTES"),
+                                    maxDuration = Some("30 * MINUTES"),
+                                    alertEvents = Scoozie.SLA.Alerts.all,
+                                    alertContacts = Seq("some@one.com"))
+
+  private val sparkAction = Scoozie.Actions
+    .spark(name = "doASparkThing",
+           jobXmlOption = Some("/path/to/job/xml"),
+           sparkMasterURL = "masterURL",
+           sparkMode = "mode",
+           sparkJobName = "JobName",
+           mainClass = "org.antipathy.Main",
+           sparkJar = "/path/to/jar",
+           sparkOptions = "spark options",
+           commandLineArgs = Seq(),
+           files = Seq(),
+           prepareOption = None,
+           configuration = Scoozie.Configuration.emptyConfig,
+           yarnConfig = yarnConfig)
+    .withSLA(sparkSLA)
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
                                                   to = Seq("a@a.com", "b@b.com"),
