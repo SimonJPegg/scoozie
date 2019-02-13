@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.api
 
 import org.antipathy.scoozie.action.filesystem.{Delete, MakeDir}
@@ -33,3 +34,4 @@ object Prepare {
   def prepare(actions: Seq[PrepareFSAction]): Option[ActionPrepare] =
     Some(ActionPrepare(actions))
 }
+// $COVERAGE-ON$

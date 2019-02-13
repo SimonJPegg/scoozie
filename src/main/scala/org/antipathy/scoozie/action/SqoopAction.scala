@@ -100,7 +100,7 @@ object SqoopAction {
       SqoopAction(name = config.getString(HoconConstants.name),
                   command = ConfigurationBuilder.optionalString(config, HoconConstants.command),
                   args =
-                    if (config.hasPath(HoconConstants.command))
+                    if (!config.hasPath(HoconConstants.command))
                       Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*)
                     else Seq(),
                   files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
@@ -108,7 +108,7 @@ object SqoopAction {
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,
                   prepareOption = PrepareBuilder.build(config))
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${config.getString(HoconConstants.name)}", e)
     }
 }

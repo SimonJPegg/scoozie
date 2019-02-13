@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.api
 
 import org.antipathy.scoozie.action.filesystem._
@@ -45,3 +46,4 @@ object FileSystem {
     */
   def touchz(path: String): Touchz = Touchz(path)
 }
+// $COVERAGE-ON$

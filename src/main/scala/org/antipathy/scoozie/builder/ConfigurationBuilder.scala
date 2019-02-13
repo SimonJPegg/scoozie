@@ -6,6 +6,7 @@ import org.antipathy.scoozie.configuration.{Configuration, Credential, Credentia
 import org.antipathy.scoozie.exception.ConfigurationMissingException
 
 import scala.collection.JavaConverters._
+import scala.collection.immutable.Seq
 
 /**
   *  Object for building configuration objects from Hocon
@@ -33,6 +34,17 @@ private[scoozie] object ConfigurationBuilder {
     if (config.hasPath(name)) {
       config.getBoolean(name)
     } else false
+
+  /**
+    * Get the value at the specified path from the passed in config
+    * @param config the config to get the value from
+    * @param name the name of the key to get
+    * @return a string collection
+    */
+  def optionalStringCollection(config: Config, name: String): Seq[String] =
+    if (config.hasPath(name)) {
+      Seq(config.getStringList(name).asScala: _*)
+    } else Seq.empty[String]
 
   /**
     * Build a configuration object from the passed in config file
@@ -78,7 +90,7 @@ private[scoozie] object ConfigurationBuilder {
   private def configStringValue(config: Config, path: String): String =
     MonadBuilder.tryOperation[String] { () =>
       config.getString(path)
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${HoconConstants.credentials}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${HoconConstants.credentials}", e)
     }
 }

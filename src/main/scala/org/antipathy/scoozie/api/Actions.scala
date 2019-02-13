@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.api
 
 import org.antipathy.scoozie.action._
@@ -342,3 +343,4 @@ object Actions {
     */
   def switch(node: Node, predicate: String): Switch = Switch(node, predicate)
 }
+// $COVERAGE-ON$

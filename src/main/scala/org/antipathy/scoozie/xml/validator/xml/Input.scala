@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.xml.validator.xml
 
 import java.io.{BufferedInputStream, InputStream, Reader}
@@ -60,3 +61,4 @@ private[scoozie] class Input(var publicId: String, var systemId: String, val inp
 
   override def setSystemId(systemId: String): Unit = this.systemId = systemId
 }
+// $COVERAGE-ON$

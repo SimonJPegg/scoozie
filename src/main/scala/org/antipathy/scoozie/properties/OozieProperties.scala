@@ -5,25 +5,12 @@ import scala.collection.immutable.{Map, Seq}
 /**
   * base trait for getting Oozie properties
   */
-private[scoozie] trait OozieProperties {
+private[scoozie] trait OozieProperties extends PropertyFormatter {
 
   /**
     * Get the Oozie properties for this object
     */
   def properties: Map[String, String]
-
-  /**
-    * expected predicate pattern for oozie switches
-    */
-  private val Pattern = """[${].*[}]""".r
-
-  /**
-    * format predicates to expected pattern
-    */
-  protected def formatProperty(property: String): String = property match {
-    case Pattern() => property
-    case _         => "${" + property + "}"
-  }
 
   /**
     * Convert a sequence of property values to a map of KV pairs
@@ -38,10 +25,32 @@ private[scoozie] trait OozieProperties {
         Map(formatProperty(s"${actionName}_$propName$index") -> param)
     }.toMap
 
+  /**
+    * Convert an optional property to a map of KV pairs
+    * @param actionName The name of the action to insert into the property name
+    * @param propName The name of the property
+    * @param option the optional value to convert
+    */
   protected def buildStringOptionProperty(actionName: String,
                                           propName: String,
-                                          option: Option[String]): Map[_ <: String, String] = option match {
+                                          option: Option[String]): Map[String, String] = option match {
     case Some(p) => Map(formatProperty(s"${actionName}_$propName") -> p)
     case None    => Map()
   }
+
+  /**
+    *  Convert a sequence of properties to a single (comma separated) value  and map to a KV pair
+    * @param actionName The name of the action to insert into the property name
+    * @param propName The name of the property
+    * @param valueSequence The property values
+    */
+  protected def buildSequenceToSingleValueProperty(actionName: String,
+                                                   propName: String,
+                                                   valueSequence: Seq[String]): Map[String, String] =
+    valueSequence match {
+      case Nil => Map()
+      case values =>
+        val singleVal = values.mkString(",")
+        Map(formatProperty(s"${actionName}_$propName") -> singleVal)
+    }
 }

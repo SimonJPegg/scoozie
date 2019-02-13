@@ -8,7 +8,7 @@ import org.antipathy.scoozie.xml.formatter.OozieXmlFormatter
   */
 private[scoozie] object Formatting {
 
-  private val formatter: OozieXmlFormatter = new OozieXmlFormatter(80, 4)
+  private val formatter: OozieXmlFormatter = new OozieXmlFormatter(120, 4)
 
   /**
     * Method for formatting XML nodes

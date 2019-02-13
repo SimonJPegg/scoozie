@@ -6,6 +6,7 @@ import com.typesafe.config.ConfigFactory
 import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.configuration.{Configuration => ActionConfiguration, _}
 import org.antipathy.scoozie.coordinator.Coordinator
+import org.antipathy.scoozie.sla.OozieSLA
 import org.antipathy.scoozie.workflow.Workflow
 
 /**
@@ -47,6 +48,11 @@ object Scoozie {
   val Prepare: api.Prepare.type = api.Prepare
 
   /**
+    * Methods for creating SLAs
+    */
+  val SLA: api.SLA.type = api.SLA
+
+  /**
     * Methods for testing Oozie workflows
     */
   val Test: api.Test.type = api.Test
@@ -60,14 +66,16 @@ object Scoozie {
     * @param credentialsOption optional credentials for this workflow
     * @param configuration configuration for this workflow
     * @param yarnConfig The yarn configuration for this workflow
+    * @param slaOption Optional SLA for this workflow
     */
   def workflow(name: String,
                path: String,
                transitions: Node,
                jobXmlOption: Option[String],
                configuration: ActionConfiguration,
-               yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials]): Workflow =
-    Workflow(name, path, transitions, jobXmlOption, configuration, yarnConfig)
+               yarnConfig: YarnConfig,
+               slaOption: Option[OozieSLA] = None)(implicit credentialsOption: Option[Credentials]): Workflow =
+    Workflow(name, path, transitions, jobXmlOption, configuration, yarnConfig, slaOption)
 
   /**
     * Oozie coOrdinator definition
@@ -78,6 +86,7 @@ object Scoozie {
     * @param timezone the CoOrdinator time-zone
     * @param workflow the workflow to run
     * @param configuration configuration for the workflow
+    * @param slaOption Optional SLA for this coordinator
     */
   def coordinator(name: String,
                   frequency: String,
@@ -85,8 +94,9 @@ object Scoozie {
                   end: String,
                   timezone: String,
                   workflow: Workflow,
-                  configuration: ActionConfiguration): Coordinator =
-    Coordinator(name, frequency, start, end, timezone, workflow, configuration)
+                  configuration: ActionConfiguration,
+                  slaOption: Option[OozieSLA] = None): Coordinator =
+    Coordinator(name, frequency, start, end, timezone, workflow, configuration, slaOption)
 
   /**
     * Build an Oozie workflow (and optional coordinator) from the config file at the specified path
@@ -94,7 +104,8 @@ object Scoozie {
     * @param configPath the path to build the artefacts from
     * @return a GeneratedArtefacts object containing a workflow, optional coordinator and job properties
     */
-  def fromConfig(configPath: Path): GeneratedArtefacts = GeneratedArtefacts(ConfigFactory.parseFile(configPath.toFile))
+  def fromConfig(configPath: Path): GeneratedArtefacts =
+    GeneratedArtefacts(ConfigFactory.parseFile(configPath.toFile).resolve())
 
   private[scoozie] val Null: Null = null
 }

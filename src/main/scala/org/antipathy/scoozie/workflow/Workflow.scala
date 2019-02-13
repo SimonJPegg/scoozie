@@ -1,18 +1,24 @@
 package org.antipathy.scoozie.workflow
 
+import com.typesafe.config.Config
 import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action._
 import org.antipathy.scoozie.action.control._
-import org.antipathy.scoozie.action.{Nameable, Node, SubWorkflowAction}
+import org.antipathy.scoozie.builder._
 import org.antipathy.scoozie.configuration._
+import org.antipathy.scoozie.exception.InvalidConfigurationException
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
+import org.antipathy.scoozie.sla.{HasSLA, OozieSLA}
 import org.antipathy.scoozie.xml.XmlSerializable
 
+import scala.collection.JavaConverters._
 import scala.collection.immutable._
 import scala.language.existentials
 import scala.xml.Elem
 
 /**
   * Oozie workflow definition
+  *
   * @param name the name of the workflow
   * @param path The path to this workflow
   * @param transitions the actions within the workflow
@@ -20,20 +26,22 @@ import scala.xml.Elem
   * @param credentialsOption optional credentials for this workflow
   * @param configuration configuration for this workflow
   * @param yarnConfig The yarn configuration for this workflow
+  * @param slaOption Optional SLA for this workflow
   */
 case class Workflow(override val name: String,
                     path: String,
                     transitions: Node,
                     jobXmlOption: Option[String],
                     configuration: Configuration,
-                    yarnConfig: YarnConfig)(implicit credentialsOption: Option[Credentials])
+                    yarnConfig: YarnConfig,
+                    slaOption: Option[OozieSLA] = None)(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
     with Nameable
     with OozieProperties
-    with JobProperties {
-
-  private val jobXmlProperty =
-    buildStringOptionProperty(name, "jobXml", jobXmlOption)
+    with JobProperties
+    with HasJobXml
+    with HasConfig
+    with HasSLA {
 
   private val (mappedCredentials, mappedCredProps) =
     credentialsOption.map(_.withActionProperties(name)) match {
@@ -42,24 +50,16 @@ case class Workflow(override val name: String,
         (Credentials(Credential("", "", Seq())), Map())
     }
 
-  private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
-
   /**
     * The XML for this node
     */
   override def toXML: Elem =
-    <workflow-app name={name} xmlns="uri:oozie:workflow:0.5">
+    <workflow-app name={name} xmlns="uri:oozie:workflow:0.5" xmlns:sla="uri:oozie:sla:0.2">
       <global>
         {yarnConfig.jobTrackerXML}
         {yarnConfig.nameNodeXML}
-        {if (jobXmlOption.isDefined) {
-          <job-xml>{jobXmlProperty.keys}</job-xml>
-          }
-        }
-        {if (mappedConfig.configProperties.nonEmpty) {
-            mappedConfig.toXML
-          }
-        }
+        {jobXml}
+        {configXML}
       </global>
       {if (credentialsOption.isDefined) {
           mappedCredentials.toXML
@@ -67,6 +67,7 @@ case class Workflow(override val name: String,
       }
       {buildWorkflowXML(transitions)}
       {End().toXML}
+      {slaXML}
     </workflow-app>
 
   /**
@@ -108,7 +109,7 @@ case class Workflow(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions) ++ jobXmlProperty
+    mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions) ++ jobXmlProperty ++ slaProperties
 
   override def jobProperties: String = {
     val pattern = "\\w+".r
@@ -133,5 +134,42 @@ case class Workflow(override val name: String,
                         propagateConfiguration = propagateConfiguration,
                         configuration = this.configuration,
                         yarnConfig = yarnConfig)
+    }
+}
+
+/**
+  * Companion object
+  */
+object Workflow {
+
+  /**
+    *  Build a workflow from the passed in config
+    * @param config the config to build from
+    * @return a workflow
+    */
+  def apply(config: Config): Workflow =
+    MonadBuilder.tryOperation[Workflow] { () =>
+      val workflowConfig = config.getConfig(HoconConstants.workflow)
+
+      implicit val credentials: Option[Credentials] =
+        ConfigurationBuilder.buildCredentials(workflowConfig)
+
+      val yarnConfig =
+        YarnConfig(workflowConfig.getString(s"${HoconConstants.yarnConfig}.${HoconConstants.nameNode}"),
+                   workflowConfig.getString(s"${HoconConstants.yarnConfig}.${HoconConstants.jobTracker}"))
+
+      val workFlowName = workflowConfig.getString(HoconConstants.name)
+
+      Workflow(name = workFlowName,
+               path = workflowConfig.getString(HoconConstants.path),
+               transitions =
+                 TransitionBuilder.build(Seq(workflowConfig.getConfigList(HoconConstants.transitions).asScala: _*),
+                                         yarnConfig),
+               jobXmlOption = ConfigurationBuilder.optionalString(workflowConfig, HoconConstants.jobXml),
+               configuration = ConfigurationBuilder.buildConfiguration(workflowConfig),
+               yarnConfig,
+               slaOption = SLABuilder.buildSLA(workflowConfig, workFlowName))
+    } { e: Throwable =>
+      new InvalidConfigurationException(s"${e.getMessage} in workflow", e)
     }
 }

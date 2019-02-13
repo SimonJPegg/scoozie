@@ -9,7 +9,7 @@ class DeleteSpec extends FlatSpec with Matchers {
   it should "generate valid XML" in {
     val result = Delete("/Some/Path").toXML
 
-    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<delete path="/Some/Path" />))
+    scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<delete path="${/Some/Path}" />))
   }
 
 }

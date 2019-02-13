@@ -15,12 +15,12 @@ private[scoozie] object MonadBuilder {
     * @tparam T the Type of object returned
     * @return the result of a successful operation
     */
-  def tryOperation[T](operation: () => T)(errorFunction: String => RuntimeException): T =
+  def tryOperation[T](operation: () => T)(errorFunction: Throwable => Throwable): T =
     Try {
       operation()
     } match {
       case Success(value)     => value
-      case Failure(exception) => throw errorFunction(exception.getMessage)
+      case Failure(exception) => throw errorFunction(exception)
     }
 
   /**

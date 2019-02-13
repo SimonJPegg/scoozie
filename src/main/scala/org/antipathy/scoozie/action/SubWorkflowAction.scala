@@ -78,7 +78,7 @@ object SubWorkflowAction {
                         propagateConfiguration = config.hasPath(HoconConstants.propagateConfiguration),
                         configuration = ConfigurationBuilder.buildConfiguration(config),
                         yarnConfig = yarnConfig)
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${config.getString(HoconConstants.name)}", e)
     }
 }

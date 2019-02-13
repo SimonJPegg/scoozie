@@ -101,8 +101,8 @@ object FsAction {
                actions = buildFSSteps(config.getConfigList(HoconConstants.steps)),
                jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                configuration = ConfigurationBuilder.buildConfiguration(config))
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${config.getString(HoconConstants.name)}", e)
     }
 
   /**

@@ -5,6 +5,7 @@ import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.exception.TransitionException
 import org.antipathy.scoozie.properties.OozieProperties
+import org.antipathy.scoozie.sla.{HasSLA, OozieSLA}
 import org.antipathy.scoozie.xml.XmlSerializable
 
 import scala.collection.immutable.Map
@@ -18,14 +19,14 @@ import scala.xml.Elem
   * @param failureTransition the node to tranistion to on failure
   * @param credentialsOption optional credentials for the nodes
   */
-private[scoozie] case class Node(
-    action: Action,
-    successTransition: Option[Node] = None,
-    failureTransition: Option[Node] = None
-)(implicit credentialsOption: Option[Credentials])
+private[scoozie] case class Node(action: Action,
+                                 successTransition: Option[Node] = None,
+                                 failureTransition: Option[Node] = None,
+                                 slaOption: Option[OozieSLA] = None)(implicit credentialsOption: Option[Credentials])
     extends XmlSerializable
     with OozieProperties
-    with Nameable {
+    with Nameable
+    with HasSLA {
 
   /**
     * The node to transition to on success
@@ -41,6 +42,17 @@ private[scoozie] case class Node(
   def errorTo(node: Node): Node = this.action match {
     case _ @(_: Fork | _: Decision | _: End | _: Kill | _: Start | _: Join) => this
     case _                                                                  => this.copy(failureTransition = Some(node))
+  }
+
+  /**
+    *  Add an SLA to the action within this node.
+    * @param oozieSLA The SLA to add
+    * @return a node with an SLA.
+    */
+  def withSLA(oozieSLA: OozieSLA): Node = this.action match {
+    case _ @(_: Fork | _: Decision | _: End | _: Kill | _: Start | _: Join) => this
+    case _ =>
+      this.copy(slaOption = Some(oozieSLA))
   }
 
   /**
@@ -84,13 +96,14 @@ private[scoozie] case class Node(
       {action.toXML}
       <ok to= {successTransition.map(_.action.name).orNull} />
       <error to = {failureTransition.map(_.action.name).orNull}/>
+      {slaXML}
     </action>
   }
 
   /**
     * Get the Oozie properties for this object
     */
-  override def properties: Map[String, String] = action.properties
+  override def properties: Map[String, String] = action.properties ++ slaProperties
 
   /**
     * The name of the object

@@ -9,8 +9,8 @@ class MonadBuilderSpec extends FlatSpec with Matchers {
   it should "return the value of a function when the function completes" in {
     MonadBuilder.tryOperation { () =>
       "StringValue"
-    } { _: String =>
-      new RuntimeException("hmmm")
+    } { e: Throwable =>
+      new RuntimeException("hmmm", e)
     } should be("StringValue")
   }
 
@@ -18,8 +18,8 @@ class MonadBuilderSpec extends FlatSpec with Matchers {
     an[RuntimeException] should be thrownBy {
       MonadBuilder.tryOperation { () =>
         throw new RuntimeException("I did it on purpose")
-      } { _: String =>
-        new RuntimeException("hmmm")
+      } { e: Throwable =>
+        new RuntimeException("hmmm", e)
       }
     }
   }

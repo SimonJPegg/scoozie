@@ -115,52 +115,69 @@ In addition to generating workflows and coordinators, Scoozie will generate thei
 The code below shows a worked example of a Scoozie client:
 
 ```scala
+import org.antipathy.scoozie.configuration.Credentials
+import org.antipathy.scoozie.coordinator.Coordinator
+import org.antipathy.scoozie.workflow.Workflow
+import scala.collection.immutable.{Map, Seq}
+
+
 class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
     extends ScoozieWorkflow
     with ScoozieCoordinator {
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
-  
-  private val yarnConfig = Scoozie.Configuration.yarnConfiguration(jobTracker, nameNode)
+  private val yarnConfig = Scoozie.Configuration.yarnConfig(jobTracker, nameNode)
   private val kill = Scoozie.Actions.kill("Workflow failed")
 
-  private val sparkAction = Scoozie.Actions.spark(name = "doASparkThing",
-                                                  sparkSettings = "/path/to/spark/settings",
-                                                  sparkMasterURL = "masterURL",
-                                                  sparkMode = "mode",
-                                                  sparkJobName = "JobName",
-                                                  mainClass = "org.antipathy.Main",
-                                                  sparkJar = "/path/to/jar",
-                                                  sparkOptions = "spark options",
-                                                  commandLineArgs = Seq(),
-                                                  files = Seq(),
-                                                  prepareOption = None,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
-                                                  yarnConfig = yarnConfig)
+  val sparkSLA = Scoozie.SLA.create(nominalTime = "nominal_time",
+                                    shouldStart = Some("10 * MINUTES"),
+                                    shouldEnd = Some("30 * MINUTES"),
+                                    maxDuration = Some("30 * MINUTES"),
+                                    alertEvents = Scoozie.SLA.Alerts.all,
+                                    alertContacts = Seq("some@one.com"))
+
+  private val sparkAction = Scoozie.Actions
+    .spark(name = "doASparkThing",
+           jobXmlOption = Some("/path/to/job/xml"),
+           sparkMasterURL = "masterURL",
+           sparkMode = "mode",
+           sparkJobName = "JobName",
+           mainClass = "org.antipathy.Main",
+           sparkJar = "/path/to/jar",
+           sparkOptions = "spark options",
+           commandLineArgs = Seq(),
+           files = Seq(),
+           prepareOption = None,
+           configuration = Scoozie.Configuration.emptyConfig,
+           yarnConfig = yarnConfig)
+    .withSLA(sparkSLA)
 
   private val emailAction = Scoozie.Actions.email(name = "alertFailure",
                                                   to = Seq("a@a.com", "b@b.com"),
+                                                  cc = Seq.empty,
                                                   subject = "message subject",
                                                   body = "message body")
 
   private val shellAction = Scoozie.Actions.shell(name = "doAShellThing",
-                                                  prepareOption = None,
                                                   scriptName = "script.sh",
                                                   scriptLocation = "/path/to/script.sh",
                                                   commandLineArgs = Seq(),
                                                   envVars = Seq(),
                                                   files = Seq(),
                                                   captureOutput = true,
-                                                  configuration = Scoozie.Configuration.emptyConfiguration,
+                                                  jobXmlOption = None,
+                                                  prepareOption = None,
+                                                  configuration = Scoozie.Configuration.emptyConfig,
                                                   yarnConfig = yarnConfig)
 
   private val hiveAction = Scoozie.Actions.hive(name = "doAHiveThing",
-                                                hiveSettingsXML = "/path/to/settings.xml",
                                                 scriptName = "someScript.hql",
                                                 scriptLocation = "/path/to/someScript.hql",
                                                 parameters = Seq(),
+                                                jobXmlOption = Some("/path/to/settings.xml"),
+                                                files = Seq(),
                                                 prepareOption = None,
-                                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                                configuration = Scoozie.Configuration.emptyConfig,
                                                 yarnConfig = yarnConfig)
 
   private val javaAction = Scoozie.Actions.java(name = "doAJavaThing",
@@ -169,10 +186,11 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                 javaOptions = "java options",
                                                 commandLineArgs = Seq(),
                                                 captureOutput = false,
+                                                jobXmlOption = None,
                                                 files = Seq(),
                                                 prepareOption =
                                                   Scoozie.Prepare.prepare(Seq(Scoozie.Prepare.delete("/some/path"))),
-                                                configuration = Scoozie.Configuration.emptyConfiguration,
+                                                configuration = Scoozie.Configuration.emptyConfig,
                                                 yarnConfig = yarnConfig)
 
   private val start = Scoozie.Actions.start
@@ -190,12 +208,13 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
   }
 
   override val workflow: Workflow = Scoozie.workflow(name = "ExampleWorkflow",
-                                                     path = "/path/to/workflow.xml", //in HDFS
+                                                     path = "/path/to/workflow.xml",
                                                      transitions = transitions,
-                                                     configuration = Scoozie.Configuration.emptyConfiguration,
+                                                     jobXmlOption = None,
+                                                     configuration = Scoozie.Configuration.emptyConfig,
                                                      yarnConfig = yarnConfig)
 
-  override val coordinator: Coordinator = Scoozie.coordinator(name = "exampleCoordinator",
+  override val coordinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator",
                                                               frequency = "startFreq",
                                                               start = "start",
                                                               end = "end",
@@ -204,6 +223,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                               configuration =
                                                                 Scoozie.Configuration.configuration(yarnProperties))
 }
+
 ```
 
 The artifacts can be generated from this class via the following methods:
@@ -217,13 +237,22 @@ testJob.saveCoordinator("/some/path/")
  testJob.saveWorkflow("/some/path/")
 ```
  
- As mentioned above, this would save both the xml and the required properties to the specified location.  THe properties generated from this example would be:
+ As mentioned above, this would save both the xml and the required properties to the specified location.  
+ 
+ The properties generated from this example would be:
  
 ```$xslt
+ExampleCoOrdinator_end=end
+ExampleCoOrdinator_frequency=startFreq
+ExampleCoOrdinator_property0=value1
+ExampleCoOrdinator_property1=value2
+ExampleCoOrdinator_start=start
+ExampleCoOrdinator_timezone=timeZome
+ExampleCoOrdinator_workflow_path=/path/to/workflow.xml
 alertFailure_body=message body
 alertFailure_subject=message subject
 alertFailure_to=a@a.com,b@b.com
-doAHiveThing_hiveSettingsXML=/path/to/settings.xml
+doAHiveThing_jobXml=/path/to/settings.xml
 doAHiveThing_scriptLocation=/path/to/someScript.hql
 doAHiveThing_scriptName=someScript.hql
 doAJavaThing_javaJar=/path/to/jar
@@ -232,15 +261,19 @@ doAJavaThing_mainClass=org.antipathy.Main
 doAJavaThing_prepare_delete=/some/path
 doAShellThing_scriptLocation=/path/to/script.sh
 doAShellThing_scriptName=script.sh
+doASparkThing_jobXml=/path/to/job/xml
 doASparkThing_mainClass=org.antipathy.Main
+doASparkThing_sla_alertContacts=some@one.com
+doASparkThing_sla_alertEvents=start_miss,end_miss,duration_miss
+doASparkThing_sla_maxDuration=30 * MINUTES
+doASparkThing_sla_nominalTime=nominal_time
+doASparkThing_sla_shouldEnd=30 * MINUTES
+doASparkThing_sla_shouldStart=10 * MINUTES
 doASparkThing_sparkJar=/path/to/jar
 doASparkThing_sparkJobName=JobName
 doASparkThing_sparkMasterURL=masterURL
 doASparkThing_sparkMode=mode
 doASparkThing_sparkOptions=spark options
-doASparkThing_sparkSettings=/path/to/spark/settings
-exampleCoordinator_property0=value1
-exampleCoordinator_property1=value2
 jobTracker=yarn
 nameNode=nameservice1
 ```

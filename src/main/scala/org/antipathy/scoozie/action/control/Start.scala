@@ -24,11 +24,12 @@ final class Start extends Action {
     * The name of this element
     */
   override def name: String = "start"
-
+  // $COVERAGE-OFF$
   /**
     * The XML for this node
     */
   override def toXML: Elem = <unused />
+  // $COVERAGE-ON$
 }
 
 object Start {

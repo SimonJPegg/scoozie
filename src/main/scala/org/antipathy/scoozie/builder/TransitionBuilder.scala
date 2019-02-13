@@ -46,7 +46,7 @@ private[scoozie] object TransitionBuilder {
         NodeWithConfig(Decision(config.getString(HoconConstants.name), End(), Seq.empty), config)
       case (unknown, _) =>
         throw new UnknownActionException(s"action type $unknown is invalid")
-    }: _*)
+    }: _*).map(SLABuilder.addSLA)
 
     val startNode = MonadBuilder.valueOrException[NodeWithConfig] { () =>
       actions.find(_.node.action.name.equalsIgnoreCase(HoconConstants.start))
@@ -80,12 +80,12 @@ private[scoozie] object TransitionBuilder {
   /**
     *  (re)build a decision node with the correct transitions.
     */
-  private def buildDecision(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config) = {
+  private def buildDecision(nodes: Seq[NodeWithConfig], currentNode: Node, currentConfig: Config): Node = {
     val decisionName = currentNode.action.name
     val defaultName = MonadBuilder.tryOperation[String] { () =>
       currentConfig.getString(HoconConstants.default)
-    } { _: String =>
-      new ConfigurationMissingException(s"No default specified for decision '$decisionName'")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"No default specified for decision '$decisionName'", e)
     }
     val defaultNode =
       nodes.find(nodeWithConfig => nodeWithConfig.node.action.name.equalsIgnoreCase(defaultName)) match {
@@ -159,8 +159,8 @@ private[scoozie] object TransitionBuilder {
                             transitionFunction: Node => Node): Node = {
     val nextNodeName = MonadBuilder.tryOperation { () =>
       currentConfig.getString(transitionType)
-    } { s: String =>
-      new ConfigurationMissingException(s"$s in ${currentConfig.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new ConfigurationMissingException(s"${e.getMessage} in ${currentConfig.getString(HoconConstants.name)}", e)
     }
 
     val nextNodeWithConfig = MonadBuilder.valueOrException { () =>
@@ -182,7 +182,7 @@ private[scoozie] object TransitionBuilder {
   private def getType(config: Config): String =
     MonadBuilder.tryOperation[String] { () =>
       config.getString(HoconConstants.typ).toLowerCase
-    } { _: String =>
-      new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}")
+    } { e: Throwable =>
+      new UnknownActionException(s"no action type specified for ${config.getString(HoconConstants.name)}", e)
     }
 }

@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.xml.validator.schema
 
 import org.antipathy.scoozie.xml.validator.xml.Input
@@ -28,3 +29,4 @@ private[scoozie] class ResourceResolver extends LSResourceResolver {
     new Input(publicId, nonNullSystemId, resourceAsStream)
   }
 }
+// $COVERAGE-ON$

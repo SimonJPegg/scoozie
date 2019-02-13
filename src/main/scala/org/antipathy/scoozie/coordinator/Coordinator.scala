@@ -1,8 +1,12 @@
 package org.antipathy.scoozie.coordinator
 
-import org.antipathy.scoozie.action.Nameable
+import com.typesafe.config.Config
+import org.antipathy.scoozie.action.{HasConfig, Nameable}
+import org.antipathy.scoozie.builder._
 import org.antipathy.scoozie.configuration.Configuration
+import org.antipathy.scoozie.exception.InvalidConfigurationException
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
+import org.antipathy.scoozie.sla.{HasSLA, OozieSLA}
 import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.xml.XmlSerializable
 
@@ -19,6 +23,7 @@ import scala.xml.Elem
   * @param timezone the CoOrdinator time-zone
   * @param workflow the workflow to run
   * @param configuration configuration for the workflow
+  * @param slaOption Optional SLA for this coordinator
   */
 case class Coordinator(override val name: String,
                        frequency: String,
@@ -26,15 +31,16 @@ case class Coordinator(override val name: String,
                        end: String,
                        timezone: String,
                        workflow: Workflow,
-                       configuration: Configuration)
+                       configuration: Configuration,
+                       slaOption: Option[OozieSLA] = None)
     extends XmlSerializable
     with Nameable
     with OozieProperties
-    with JobProperties {
+    with JobProperties
+    with HasConfig
+    with HasSLA {
 
   //private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
-
-  private val mappedConfigAndproperties = configuration.withActionProperties(name)
 
   private val frequencyProperty = formatProperty(s"${name}_frequency")
   private val startProperty = formatProperty(s"${name}_start")
@@ -51,7 +57,8 @@ case class Coordinator(override val name: String,
         endProperty -> end,
         timezoneProperty -> timezone,
         workflowPathProperty -> workflow.path) ++
-    mappedConfigAndproperties.properties
+    mappedProperties ++
+    slaProperties
 
   /**
     * Get the job properties
@@ -72,16 +79,40 @@ case class Coordinator(override val name: String,
                      start={startProperty}
                      end={endProperty}
                      timezone={timezoneProperty}
-                     xmlns="uri:oozie:coordinator:0.4">
+                     xmlns="uri:oozie:coordinator:0.4" xmlns:sla="uri:oozie:sla:0.2">
       <action>
         <workflow>
           <app-path>{workflowPathProperty}</app-path>
-          {if (mappedConfigAndproperties.mappedType.configProperties.nonEmpty) {
-            mappedConfigAndproperties.mappedType.toXML
-            }
-          }
+          {configXML}
         </workflow>
+        {slaXML}
       </action>
     </coordinator-app>
+}
 
+/**
+  * Companion object
+  */
+object Coordinator {
+
+  /**
+    *  Build a Coordinator from the passed in config
+    * @param config the config to build from
+    * @return a Coordinator
+    */
+  def apply(config: Config): Coordinator =
+    MonadBuilder.tryOperation { () =>
+      val coordinatorConfig = config.getConfig(HoconConstants.coordinator)
+      val coordinatorName = coordinatorConfig.getString(HoconConstants.name)
+      Coordinator(name = coordinatorName,
+                  frequency = coordinatorConfig.getString(HoconConstants.frequency),
+                  start = coordinatorConfig.getString(HoconConstants.start),
+                  end = coordinatorConfig.getString(HoconConstants.end),
+                  timezone = coordinatorConfig.getString(HoconConstants.timezone),
+                  workflow = WorkflowBuilder.build(config),
+                  configuration = ConfigurationBuilder.buildConfiguration(coordinatorConfig),
+                  slaOption = SLABuilder.buildSLA(coordinatorConfig, coordinatorName))
+    } { e: Throwable =>
+      new InvalidConfigurationException(s"${e.getMessage} in coordinator", e)
+    }
 }

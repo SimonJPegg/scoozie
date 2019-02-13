@@ -1,3 +1,4 @@
+// $COVERAGE-OFF$
 package org.antipathy.scoozie.xml.validator.xml
 
 import java.io.IOException
@@ -19,3 +20,4 @@ private[scoozie] class NoXMLEntityResolver extends XMLEntityResolver {
       "set to true."
     )
 }
+// $COVERAGE-ON$
