@@ -55,7 +55,7 @@ final class JavaAction(override val name: String,
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    configurationProperties.properties ++ jobXmlProperty
+    mappedProperties ++ jobXmlProperty
 
   /**
     * The XML namespace for an action element

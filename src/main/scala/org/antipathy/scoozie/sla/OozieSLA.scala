@@ -50,7 +50,6 @@ case class OozieSLA(nominalTime: String,
     with OozieProperties
     with Nameable {
 
-  private val nominalTimeProperty = buildStringOptionProperty(name, "nominalTime", Some(nominalTime))
   private val shouldStartProperty = buildStringOptionProperty(name, "shouldStart", shouldStart)
   private val shouldEndProperty = buildStringOptionProperty(name, "shouldEnd", shouldEnd)
   private val maxDurationProperty = buildStringOptionProperty(name, "maxDuration", maxDuration)
@@ -74,7 +73,6 @@ case class OozieSLA(nominalTime: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    nominalTimeProperty ++
     shouldStartProperty ++
     shouldEndProperty ++
     maxDurationProperty ++
@@ -87,7 +85,7 @@ case class OozieSLA(nominalTime: String,
     * The XML for this node
     */
   override def toXML: Elem = <sla:info>
-    {nominalTimeProperty.keys.map(k => <sla:nominal-time>{formatProperty(k)}</sla:nominal-time>)}
+    <sla:nominal-time>{formatProperty(nominalTime)}</sla:nominal-time>
     {shouldStartProperty.keys.map(k => <sla:should-start>{formatProperty(k)}</sla:should-start>)}
     {shouldStartProperty.keys.map(k => <sla:should-end>{formatProperty(k)}</sla:should-end>)}
     {maxDurationProperty.keys.map(k => <sla:max-duration>{formatProperty(k)}</sla:max-duration>)}

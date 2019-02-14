@@ -18,7 +18,10 @@ trait ScoozieCoordinator extends JobProperties {
   /**
     * Get the job properties for this coordinator and its workflow
     */
-  override def jobProperties: String = coordinator.jobProperties + System.lineSeparator() + workflow.jobProperties
+  override def jobProperties: String =
+    coordinator.jobProperties + System.lineSeparator() +
+    workflow.jobProperties.replace("oozie.wf.application.path", "#oozie.wf.application.path") +
+    System.lineSeparator()
 
   /**
     * Writes this coordinator, workflow and properties to the specified folder.

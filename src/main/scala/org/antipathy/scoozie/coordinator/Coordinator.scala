@@ -5,6 +5,7 @@ import org.antipathy.scoozie.action.{HasConfig, Nameable}
 import org.antipathy.scoozie.builder._
 import org.antipathy.scoozie.configuration.Configuration
 import org.antipathy.scoozie.exception.InvalidConfigurationException
+import org.antipathy.scoozie.io.ArtefactWriter
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.sla.{HasSLA, OozieSLA}
 import org.antipathy.scoozie.workflow.Workflow
@@ -17,6 +18,7 @@ import scala.xml.Elem
 /**
   * Oozie coOrdinator definition
   * @param name the CoOrdinator name
+  * @param path the HDFS path of the coordinator
   * @param frequency the CoOrdinator frequency
   * @param start the CoOrdinator start time
   * @param end the CoOrdinator end time
@@ -26,6 +28,7 @@ import scala.xml.Elem
   * @param slaOption Optional SLA for this coordinator
   */
 case class Coordinator(override val name: String,
+                       path: String,
                        frequency: String,
                        start: String,
                        end: String,
@@ -35,14 +38,11 @@ case class Coordinator(override val name: String,
                        slaOption: Option[OozieSLA] = None)
     extends XmlSerializable
     with Nameable
+    with HasConfig
     with OozieProperties
     with JobProperties
-    with HasConfig
     with HasSLA {
 
-  //private val ActionProperties(mappedConfig, mappedProperties) = configuration.withActionProperties(name)
-
-  private val frequencyProperty = formatProperty(s"${name}_frequency")
   private val startProperty = formatProperty(s"${name}_start")
   private val endProperty = formatProperty(s"${name}_end")
   private val timezoneProperty = formatProperty(s"${name}_timezone")
@@ -52,12 +52,8 @@ case class Coordinator(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(frequencyProperty -> frequency,
-        startProperty -> start,
-        endProperty -> end,
-        timezoneProperty -> timezone,
-        workflowPathProperty -> workflow.path) ++
-    mappedProperties ++
+    Map(startProperty -> start, endProperty -> end, timezoneProperty -> timezone, workflowPathProperty -> workflow.path) ++
+    actionConfig.properties ++
     slaProperties
 
   /**
@@ -67,7 +63,8 @@ case class Coordinator(override val name: String,
     val pattern = "\\w+".r
     properties.flatMap {
       case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
-    }.toSet.toSeq.sorted.mkString(System.lineSeparator())
+    }.toSet.toSeq.sorted.mkString(System.lineSeparator()) + System.lineSeparator() +
+    s"oozie.coord.application.path=$path/${ArtefactWriter.coordinatorFileName}"
   }
 
   /**
@@ -75,7 +72,7 @@ case class Coordinator(override val name: String,
     */
   override def toXML: Elem =
     <coordinator-app name={name}
-                     frequency={frequencyProperty}
+                     frequency={formatProperty(frequency)}
                      start={startProperty}
                      end={endProperty}
                      timezone={timezoneProperty}
@@ -105,6 +102,7 @@ object Coordinator {
       val coordinatorConfig = config.getConfig(HoconConstants.coordinator)
       val coordinatorName = coordinatorConfig.getString(HoconConstants.name)
       Coordinator(name = coordinatorName,
+                  path = coordinatorConfig.getString(HoconConstants.path),
                   frequency = coordinatorConfig.getString(HoconConstants.frequency),
                   start = coordinatorConfig.getString(HoconConstants.start),
                   end = coordinatorConfig.getString(HoconConstants.end),

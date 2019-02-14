@@ -233,25 +233,27 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |hiveAction_jobXml=settings
                                      |hiveAction_scriptLocation=/some/location
                                      |hiveAction_scriptName=script.hql
-                                     |jobTracker=someNameNode
-                                     |nameNode=someJobTracker
+                                     |jobTracker=someJobTracker
+                                     |nameNode=someNameNode
                                      |shellAction_scriptLocation=/some/location
                                      |shellAction_scriptName=script.sh
-                                     |someworkflow_credentialProperty0="value1"
-                                     |someworkflow_credentialProperty1="value2"
-                                     |someworkflow_credentialProperty2="value3"
-                                     |someworkflow_credentialProperty3="value4"
-                                     |someworkflow_property0="value1"
-                                     |someworkflow_property1="value2"
-                                     |someworkflow_property2="value3"
-                                     |someworkflow_property3="value4"
+                                     |someworkflow_credentialProperty0=value1
+                                     |someworkflow_credentialProperty1=value2
+                                     |someworkflow_credentialProperty2=value3
+                                     |someworkflow_credentialProperty3=value4
+                                     |someworkflow_property0=value1
+                                     |someworkflow_property1=value2
+                                     |someworkflow_property2=value3
+                                     |someworkflow_property3=value4
                                      |sparkAction_jobXml=someSettings
                                      |sparkAction_mainClass=somemainclass
                                      |sparkAction_sparkJar=spark.jar
                                      |sparkAction_sparkJobName=Jobname
                                      |sparkAction_sparkMasterURL=masterurl
                                      |sparkAction_sparkMode=mode
-                                     |sparkAction_sparkOptions=spark-options""".stripMargin)
+                                     |sparkAction_sparkOptions=spark-options
+                                     |oozie.use.system.libpath=true
+                                     |oozie.wf.application.path=somepath/workflow.xml""".stripMargin)
 
     Scoozie.Test.validate(result)
   }
@@ -486,27 +488,29 @@ class WorkflowBuilderSpec extends FlatSpec with Matchers {
                                      |hiveAction_jobXml=settings
                                      |hiveAction_scriptLocation=/some/location
                                      |hiveAction_scriptName=script.hql
-                                     |jobTracker=someNameNode
-                                     |nameNode=someJobTracker
+                                     |jobTracker=someJobTracker
+                                     |nameNode=someNameNode
                                      |shellAction_scriptLocation=/some/location
                                      |shellAction_scriptName=script.sh
-                                     |someworkflow_credentialProperty0="value1"
-                                     |someworkflow_credentialProperty1="value2"
-                                     |someworkflow_credentialProperty2="value3"
-                                     |someworkflow_credentialProperty3="value4"
-                                     |someworkflow_property0="value1"
-                                     |someworkflow_property1="value2"
-                                     |someworkflow_property2="value3"
-                                     |someworkflow_property3="value4"
+                                     |someworkflow_credentialProperty0=value1
+                                     |someworkflow_credentialProperty1=value2
+                                     |someworkflow_credentialProperty2=value3
+                                     |someworkflow_credentialProperty3=value4
+                                     |someworkflow_property0=value1
+                                     |someworkflow_property1=value2
+                                     |someworkflow_property2=value3
+                                     |someworkflow_property3=value4
                                      |sparkAction_jobXml=someSettings
                                      |sparkAction_mainClass=somemainclass
-                                     |sparkAction_prepare_delete="deletePath"
-                                     |sparkAction_prepare_makedir="makePath"
+                                     |sparkAction_prepare_delete=deletePath
+                                     |sparkAction_prepare_makedir=makePath
                                      |sparkAction_sparkJar=spark.jar
                                      |sparkAction_sparkJobName=Jobname
                                      |sparkAction_sparkMasterURL=masterurl
                                      |sparkAction_sparkMode=mode
-                                     |sparkAction_sparkOptions=spark-options""".stripMargin)
+                                     |sparkAction_sparkOptions=spark-options
+                                     |oozie.use.system.libpath=true
+                                     |oozie.wf.application.path=somepath/workflow.xml""".stripMargin)
 
     Scoozie.Test.validate(result)
   }

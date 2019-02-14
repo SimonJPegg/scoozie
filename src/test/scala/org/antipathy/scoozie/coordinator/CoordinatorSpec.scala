@@ -24,6 +24,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                             yarnConfig = YarnConfig(jobTracker = "", nameNode = ""))
 
     val result = Coordinator(name = "SomeCoOrd",
+                             path = "somePath",
                              frequency = "${coord:days(1)}",
                              start = "2009-01-02T08:00Z",
                              end = "2009-01-04T08:00Z",
@@ -33,7 +34,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<coordinator-app
         name="SomeCoOrd"
-        frequency="${SomeCoOrd_frequency}"
+        frequency="${coord:days(1)}"
         start="${SomeCoOrd_start}"
         end="${SomeCoOrd_end}"
         timezone="${SomeCoOrd_timezone}"
@@ -50,6 +51,8 @@ class CoordinatorSpec extends FlatSpec with Matchers {
 
     implicit val credentialsOption: Option[Credentials] = None
 
+    val functionVal = "${coord:nominalTime()}"
+
     val workflow = Workflow(name = "sampleWorkflow",
                             path = "/path/to/workflow.xml",
                             transitions = Start(),
@@ -58,23 +61,25 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                             yarnConfig = YarnConfig(jobTracker = "jobTracker", nameNode = "Namenode"))
 
     val result = Coordinator(name = "SomeCoOrd",
+                             path = "somePath",
                              frequency = "${coord:days(1)}",
                              start = "2009-01-02T08:00Z",
                              end = "2009-01-04T08:00Z",
                              timezone = "America/Los_Angeles",
                              workflow = workflow,
-                             configuration = Configuration(Seq(Property("some", "value"))))
+                             configuration =
+                               Configuration(Seq(Property("some", "value"), Property("nominalTime", functionVal))))
 
     result.jobProperties should be("""SomeCoOrd_end=2009-01-04T08:00Z
-                                     |SomeCoOrd_frequency=${coord:days(1)}
                                      |SomeCoOrd_property0=value
                                      |SomeCoOrd_start=2009-01-02T08:00Z
                                      |SomeCoOrd_timezone=America/Los_Angeles
-                                     |SomeCoOrd_workflow_path=/path/to/workflow.xml""".stripMargin)
+                                     |SomeCoOrd_workflow_path=/path/to/workflow.xml
+                                     |oozie.coord.application.path=somePath/coordinator.xml""".stripMargin)
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app
       name="SomeCoOrd"
-      frequency="${SomeCoOrd_frequency}"
+      frequency="${coord:days(1)}"
       start="${SomeCoOrd_start}"
       end="${SomeCoOrd_end}"
       timezone="${SomeCoOrd_timezone}"
@@ -86,6 +91,10 @@ class CoordinatorSpec extends FlatSpec with Matchers {
               <property>
                 <name>some</name>
                 <value>{"${SomeCoOrd_property0}"}</value>
+              </property>
+              <property>
+                <name>nominalTime</name>
+                <value>{functionVal}</value>
               </property>
             </configuration>
           </workflow>

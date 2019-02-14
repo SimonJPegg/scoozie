@@ -41,7 +41,6 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Configuration(
@@ -159,7 +158,6 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Configuration(
@@ -224,7 +222,6 @@ class NodeSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq("one", "two", "three"),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Configuration(
@@ -290,7 +287,6 @@ class NodeSpec extends FlatSpec with Matchers {
                                        sparkJar = "/path/to/jar",
                                        sparkOptions = "spark options",
                                        commandLineArgs = Seq("one", "two", "three"),
-                                       files = Seq(),
                                        jobXmlOption = Some("/path/to/spark/settings"),
                                        prepareOption = None,
                                        configuration = Configuration(
@@ -344,7 +340,7 @@ class NodeSpec extends FlatSpec with Matchers {
       <ok to="email"/>
       <error to="email"/>
       <sla:info>
-        <sla:nominal-time>{"${SomeAction_sla_nominalTime}"}</sla:nominal-time>
+        <sla:nominal-time>{"${nominal_time}"}</sla:nominal-time>
         <sla:should-start>{"${SomeAction_sla_shouldStart}"}</sla:should-start>
         <sla:should-end>{"${SomeAction_sla_shouldStart}"}</sla:should-end>
         <sla:max-duration>{"${SomeAction_sla_maxDuration}"}</sla:max-duration>
@@ -366,7 +362,6 @@ class NodeSpec extends FlatSpec with Matchers {
           "${SomeAction_sparkOptions}" -> "spark options",
           "${SomeAction_sla_shouldEnd}" -> "30 * MINUTES",
           "${SomeAction_property0}" -> "SomeValue1",
-          "${SomeAction_sla_nominalTime}" -> "nominal_time",
           "${SomeAction_commandLineArg1}" -> "two",
           "${SomeAction_sparkJar}" -> "/path/to/jar")
     )

@@ -129,36 +129,36 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """errorEmail_body=yep
-        |errorEmail_subject=hello
-        |errorEmail_to=a@a.com
-        |hiveAction_jobXml=settings
-        |hiveAction_scriptLocation=/some/location
-        |hiveAction_scriptName=script.hql
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
-        |shellAction_scriptLocation=/some/location
-        |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_jobXml=/path/to/job.xml
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
-        |sparkAction_jobXml=someSettings
-        |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
-        |sparkAction_sparkJar=spark.jar
-        |sparkAction_sparkJobName=Jobname
-        |sparkAction_sparkMasterURL=masterurl
-        |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options""".stripMargin
-    )
+    ouputProperties.lines.mkString(System.lineSeparator()) should be("""errorEmail_body=yep
+                                                                       |errorEmail_subject=hello
+                                                                       |errorEmail_to=a@a.com
+                                                                       |hiveAction_jobXml=settings
+                                                                       |hiveAction_scriptLocation=/some/location
+                                                                       |hiveAction_scriptName=script.hql
+                                                                       |jobTracker=someJobTracker
+                                                                       |nameNode=someNameNode
+                                                                       |shellAction_scriptLocation=/some/location
+                                                                       |shellAction_scriptName=script.sh
+                                                                       |someworkflow_credentialProperty0=value1
+                                                                       |someworkflow_credentialProperty1=value2
+                                                                       |someworkflow_credentialProperty2=value3
+                                                                       |someworkflow_credentialProperty3=value4
+                                                                       |someworkflow_jobXml=/path/to/job.xml
+                                                                       |someworkflow_property0=value1
+                                                                       |someworkflow_property1=value2
+                                                                       |someworkflow_property2=value3
+                                                                       |someworkflow_property3=value4
+                                                                       |sparkAction_jobXml=someSettings
+                                                                       |sparkAction_mainClass=somemainclass
+                                                                       |sparkAction_prepare_delete=deletePath
+                                                                       |sparkAction_prepare_makedir=makePath
+                                                                       |sparkAction_sparkJar=spark.jar
+                                                                       |sparkAction_sparkJobName=Jobname
+                                                                       |sparkAction_sparkMasterURL=masterurl
+                                                                       |sparkAction_sparkMode=mode
+                                                                       |sparkAction_sparkOptions=spark-options
+                                                                       |oozie.use.system.libpath=true
+                                                                       |oozie.wf.application.path=somepath/workflow.xml""".stripMargin)
 
     outputPath.delete()
   }
@@ -176,7 +176,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -312,41 +312,43 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     )
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
       """someCoordinator_end=someEnd
-        |someCoordinator_frequency=someFreq
-        |someCoordinator_property0="value1"
-        |someCoordinator_property1="value2"
-        |someCoordinator_property2="value3"
-        |someCoordinator_property3="value4"
+        |someCoordinator_property0=value1
+        |someCoordinator_property1=value2
+        |someCoordinator_property2=value3
+        |someCoordinator_property3=value4
         |someCoordinator_start=someStart
         |someCoordinator_timezone=someTimezone
         |someCoordinator_workflow_path=somepath
+        |oozie.coord.application.path=somepath/coordinator.xml
         |errorEmail_body=yep
         |errorEmail_subject=hello
         |errorEmail_to=a@a.com
         |hiveAction_jobXml=settings
         |hiveAction_scriptLocation=/some/location
         |hiveAction_scriptName=script.hql
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
+        |jobTracker=someJobTracker
+        |nameNode=someNameNode
         |shellAction_scriptLocation=/some/location
         |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
+        |someworkflow_credentialProperty0=value1
+        |someworkflow_credentialProperty1=value2
+        |someworkflow_credentialProperty2=value3
+        |someworkflow_credentialProperty3=value4
+        |someworkflow_property0=value1
+        |someworkflow_property1=value2
+        |someworkflow_property2=value3
+        |someworkflow_property3=value4
         |sparkAction_jobXml=someSettings
         |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
+        |sparkAction_prepare_delete=deletePath
+        |sparkAction_prepare_makedir=makePath
         |sparkAction_sparkJar=spark.jar
         |sparkAction_sparkJobName=Jobname
         |sparkAction_sparkMasterURL=masterurl
         |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options""".stripMargin
+        |sparkAction_sparkOptions=spark-options
+        |oozie.use.system.libpath=true
+        |#oozie.wf.application.path=somepath/workflow.xml""".stripMargin
     )
 
     outputPath.delete()
@@ -365,7 +367,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -501,41 +503,43 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     )
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
       """someCoordinator_end=someEnd
-        |someCoordinator_frequency=someFreq
-        |someCoordinator_property0="value1"
-        |someCoordinator_property1="value2"
-        |someCoordinator_property2="value3"
-        |someCoordinator_property3="value4"
+        |someCoordinator_property0=value1
+        |someCoordinator_property1=value2
+        |someCoordinator_property2=value3
+        |someCoordinator_property3=value4
         |someCoordinator_start=someStart
         |someCoordinator_timezone=someTimezone
         |someCoordinator_workflow_path=somepath
+        |oozie.coord.application.path=somepath/coordinator.xml
         |errorEmail_body=yep
         |errorEmail_subject=hello
         |errorEmail_to=a@a.com
         |hiveAction_jobXml=settings
         |hiveAction_scriptLocation=/some/location
         |hiveAction_scriptName=script.hql
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
+        |jobTracker=someJobTracker
+        |nameNode=someNameNode
         |shellAction_scriptLocation=/some/location
         |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
+        |someworkflow_credentialProperty0=value1
+        |someworkflow_credentialProperty1=value2
+        |someworkflow_credentialProperty2=value3
+        |someworkflow_credentialProperty3=value4
+        |someworkflow_property0=value1
+        |someworkflow_property1=value2
+        |someworkflow_property2=value3
+        |someworkflow_property3=value4
         |sparkAction_jobXml=someSettings
         |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
+        |sparkAction_prepare_delete=deletePath
+        |sparkAction_prepare_makedir=makePath
         |sparkAction_sparkJar=spark.jar
         |sparkAction_sparkJobName=Jobname
         |sparkAction_sparkMasterURL=masterurl
         |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options""".stripMargin
+        |sparkAction_sparkOptions=spark-options
+        |oozie.use.system.libpath=true
+        |#oozie.wf.application.path=somepath/workflow.xml""".stripMargin
     )
 
     outputPath.delete()
@@ -574,7 +578,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       """<coordinator-app 
-        |name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+        |name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -598,7 +602,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |            </configuration>
         |        </workflow>
         |        <sla:info>
-        |            <sla:nominal-time>${someCoordinator_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${someCoordinator_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${someCoordinator_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${someCoordinator_sla_maxDuration}</sla:max-duration>
@@ -674,7 +678,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="shellAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${hiveAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${hiveAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${hiveAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${hiveAction_sla_maxDuration}</sla:max-duration>
@@ -703,7 +707,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="shellAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${sparkAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sparkAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${sparkAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${sparkAction_sla_maxDuration}</sla:max-duration>
@@ -723,7 +727,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="fsAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${shellAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${shellAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${shellAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${shellAction_sla_maxDuration}</sla:max-duration>
@@ -747,7 +751,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="distCPAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${fsAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${fsAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${fsAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${fsAction_sla_maxDuration}</sla:max-duration>
@@ -769,7 +773,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="javaAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${distCPAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${distCPAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${distCPAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${distCPAction_sla_maxDuration}</sla:max-duration>
@@ -793,7 +797,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="pigAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${javaAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${javaAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${javaAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${javaAction_sla_maxDuration}</sla:max-duration>
@@ -814,7 +818,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="sqoopFork"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${pigAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${pigAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${pigAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${pigAction_sla_maxDuration}</sla:max-duration>
@@ -837,7 +841,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="sqoopJoin"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${sqoopAction1_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sqoopAction1_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${sqoopAction1_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${sqoopAction1_sla_maxDuration}</sla:max-duration>
@@ -857,7 +861,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="sqoopJoin"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${sqoopAction2_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sqoopAction2_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${sqoopAction2_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${sqoopAction2_sla_maxDuration}</sla:max-duration>
@@ -879,7 +883,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="subworkflowAction"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${sshAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sshAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${sshAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${sshAction_sla_maxDuration}</sla:max-duration>
@@ -897,7 +901,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <ok to="end"/>
         |        <error to="errorEmail"/>
         |        <sla:info>
-        |            <sla:nominal-time>${subworkflowAction_sla_nominalTime}</sla:nominal-time>
+        |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${subworkflowAction_sla_shouldStart}</sla:should-start>
         |            <sla:should-end>${subworkflowAction_sla_shouldStart}</sla:should-end>
         |            <sla:max-duration>${subworkflowAction_sla_maxDuration}</sla:max-duration>
@@ -921,7 +925,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    </kill>
         |    <end name="end"/>
         |    <sla:info>
-        |        <sla:nominal-time>${someworkflow_sla_nominalTime}</sla:nominal-time>
+        |        <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |        <sla:should-start>${someworkflow_sla_shouldStart}</sla:should-start>
         |        <sla:should-end>${someworkflow_sla_shouldStart}</sla:should-end>
         |        <sla:max-duration>${someworkflow_sla_maxDuration}</sla:max-duration>
@@ -935,15 +939,13 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
       """someCoordinator_end=someEnd
-        |someCoordinator_frequency=someFreq
-        |someCoordinator_property0="value1"
-        |someCoordinator_property1="value2"
-        |someCoordinator_property2="value3"
-        |someCoordinator_property3="value4"
+        |someCoordinator_property0=value1
+        |someCoordinator_property1=value2
+        |someCoordinator_property2=value3
+        |someCoordinator_property3=value4
         |someCoordinator_sla_alertContacts=a@a.com,b@b.com
         |someCoordinator_sla_alertEvents=start_miss,end_miss,duration_miss
         |someCoordinator_sla_maxDuration=120 * MINUTES
-        |someCoordinator_sla_nominalTime=nominalTime
         |someCoordinator_sla_notificationMsg=someworkflow is breaching SLA
         |someCoordinator_sla_shouldEnd=120 * MINUTES
         |someCoordinator_sla_shouldStart=10 * MINUTES
@@ -951,6 +953,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |someCoordinator_start=someStart
         |someCoordinator_timezone=someTimezone
         |someCoordinator_workflow_path=somepath
+        |oozie.coord.application.path=somepath/coordinator.xml
         |distCPAction_arguments0=one
         |distCPAction_arguments1=two
         |distCPAction_arguments2=three
@@ -958,7 +961,6 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |distCPAction_sla_alertContacts=a@a.com,b@b.com
         |distCPAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |distCPAction_sla_maxDuration=30 * MINUTES
-        |distCPAction_sla_nominalTime=nominalTime
         |distCPAction_sla_notificationMsg=someworkflow is breaching SLA
         |distCPAction_sla_shouldEnd=30 * MINUTES
         |distCPAction_sla_shouldStart=10 * MINUTES
@@ -977,7 +979,6 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |fsAction_sla_alertContacts=a@a.com,b@b.com
         |fsAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |fsAction_sla_maxDuration=30 * MINUTES
-        |fsAction_sla_nominalTime=nominalTime
         |fsAction_sla_notificationMsg=someworkflow is breaching SLA
         |fsAction_sla_shouldEnd=30 * MINUTES
         |fsAction_sla_shouldStart=10 * MINUTES
@@ -989,7 +990,6 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |hiveAction_sla_alertContacts=a@a.com,b@b.com
         |hiveAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |hiveAction_sla_maxDuration=30 * MINUTES
-        |hiveAction_sla_nominalTime=nominalTime
         |hiveAction_sla_notificationMsg=someworkflow is breaching SLA
         |hiveAction_sla_shouldEnd=30 * MINUTES
         |hiveAction_sla_shouldStart=10 * MINUTES
@@ -1003,20 +1003,18 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |javaAction_sla_alertContacts=a@a.com,b@b.com
         |javaAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |javaAction_sla_maxDuration=30 * MINUTES
-        |javaAction_sla_nominalTime=nominalTime
         |javaAction_sla_notificationMsg=someworkflow is breaching SLA
         |javaAction_sla_shouldEnd=30 * MINUTES
         |javaAction_sla_shouldStart=10 * MINUTES
         |javaAction_sla_upstreamApps=app1,app2
-        |jobTracker=someNameNode
-        |nameNode=someJobTracker
+        |jobTracker=someJobTracker
+        |nameNode=someNameNode
         |pigAction_param0=one
         |pigAction_param1=two
         |pigAction_script=
         |pigAction_sla_alertContacts=a@a.com,b@b.com
         |pigAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |pigAction_sla_maxDuration=30 * MINUTES
-        |pigAction_sla_nominalTime=nominalTime
         |pigAction_sla_notificationMsg=someworkflow is breaching SLA
         |pigAction_sla_shouldEnd=30 * MINUTES
         |pigAction_sla_shouldStart=10 * MINUTES
@@ -1026,35 +1024,32 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |shellAction_sla_alertContacts=a@a.com,b@b.com
         |shellAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |shellAction_sla_maxDuration=30 * MINUTES
-        |shellAction_sla_nominalTime=nominalTime
         |shellAction_sla_notificationMsg=someworkflow is breaching SLA
         |shellAction_sla_shouldEnd=30 * MINUTES
         |shellAction_sla_shouldStart=10 * MINUTES
         |shellAction_sla_upstreamApps=app1,app2
-        |someworkflow_credentialProperty0="value1"
-        |someworkflow_credentialProperty1="value2"
-        |someworkflow_credentialProperty2="value3"
-        |someworkflow_credentialProperty3="value4"
-        |someworkflow_property0="value1"
-        |someworkflow_property1="value2"
-        |someworkflow_property2="value3"
-        |someworkflow_property3="value4"
+        |someworkflow_credentialProperty0=value1
+        |someworkflow_credentialProperty1=value2
+        |someworkflow_credentialProperty2=value3
+        |someworkflow_credentialProperty3=value4
+        |someworkflow_property0=value1
+        |someworkflow_property1=value2
+        |someworkflow_property2=value3
+        |someworkflow_property3=value4
         |someworkflow_sla_alertContacts=a@a.com,b@b.com
         |someworkflow_sla_alertEvents=start_miss,end_miss,duration_miss
         |someworkflow_sla_maxDuration=120 * MINUTES
-        |someworkflow_sla_nominalTime=nominalTime
         |someworkflow_sla_notificationMsg=someworkflow is breaching SLA
         |someworkflow_sla_shouldEnd=120 * MINUTES
         |someworkflow_sla_shouldStart=10 * MINUTES
         |someworkflow_sla_upstreamApps=app1,app2
         |sparkAction_jobXml=someSettings
         |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete="deletePath"
-        |sparkAction_prepare_makedir="makePath"
+        |sparkAction_prepare_delete=deletePath
+        |sparkAction_prepare_makedir=makePath
         |sparkAction_sla_alertContacts=a@a.com,b@b.com
         |sparkAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |sparkAction_sla_maxDuration=30 * MINUTES
-        |sparkAction_sla_nominalTime=nominalTime
         |sparkAction_sla_notificationMsg=someworkflow is breaching SLA
         |sparkAction_sla_shouldEnd=30 * MINUTES
         |sparkAction_sla_shouldStart=10 * MINUTES
@@ -1068,7 +1063,6 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |sqoopAction1_sla_alertContacts=a@a.com,b@b.com
         |sqoopAction1_sla_alertEvents=start_miss,end_miss,duration_miss
         |sqoopAction1_sla_maxDuration=30 * MINUTES
-        |sqoopAction1_sla_nominalTime=nominalTime
         |sqoopAction1_sla_notificationMsg=someworkflow is breaching SLA
         |sqoopAction1_sla_shouldEnd=30 * MINUTES
         |sqoopAction1_sla_shouldStart=10 * MINUTES
@@ -1078,7 +1072,6 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |sqoopAction2_sla_alertContacts=a@a.com,b@b.com
         |sqoopAction2_sla_alertEvents=start_miss,end_miss,duration_miss
         |sqoopAction2_sla_maxDuration=30 * MINUTES
-        |sqoopAction2_sla_nominalTime=nominalTime
         |sqoopAction2_sla_notificationMsg=someworkflow is breaching SLA
         |sqoopAction2_sla_shouldEnd=30 * MINUTES
         |sqoopAction2_sla_shouldStart=10 * MINUTES
@@ -1090,7 +1083,6 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |sshAction_sla_alertContacts=a@a.com,b@b.com
         |sshAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |sshAction_sla_maxDuration=30 * MINUTES
-        |sshAction_sla_nominalTime=nominalTime
         |sshAction_sla_notificationMsg=someworkflow is breaching SLA
         |sshAction_sla_shouldEnd=30 * MINUTES
         |sshAction_sla_shouldStart=10 * MINUTES
@@ -1099,12 +1091,13 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |subworkflowAction_sla_alertContacts=a@a.com,b@b.com
         |subworkflowAction_sla_alertEvents=start_miss,end_miss,duration_miss
         |subworkflowAction_sla_maxDuration=30 * MINUTES
-        |subworkflowAction_sla_nominalTime=nominalTime
         |subworkflowAction_sla_notificationMsg=someworkflow is breaching SLA
         |subworkflowAction_sla_shouldEnd=30 * MINUTES
         |subworkflowAction_sla_shouldStart=10 * MINUTES
-        |subworkflowAction_sla_upstreamApps=app1,app2""".stripMargin
+        |subworkflowAction_sla_upstreamApps=app1,app2
+        |oozie.use.system.libpath=true
+        |#oozie.wf.application.path=somepath/workflow.xml""".stripMargin
     )
-
+    outputPath.delete()
   }
 }

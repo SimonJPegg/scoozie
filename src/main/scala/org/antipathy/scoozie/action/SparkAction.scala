@@ -33,7 +33,6 @@ final class SparkAction(override val name: String,
                         sparkJar: String,
                         sparkOptions: String,
                         commandLineArgs: Seq[String],
-                        files: Seq[String],
                         override val jobXmlOption: Option[String],
                         override val prepareOption: Option[Prepare],
                         override val configuration: Configuration,
@@ -51,7 +50,6 @@ final class SparkAction(override val name: String,
   private val sparkOptionsProperty = formatProperty(s"${name}_sparkOptions")
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
-  private val filesProperties = buildSequenceProperties(name, "files", files)
 
   /**
     * The XML namespace for an action element
@@ -70,7 +68,6 @@ final class SparkAction(override val name: String,
         sparkOptionsProperty -> sparkOptions) ++
     commandLineArgsProperties ++
     prepareProperties ++
-    filesProperties ++
     mappedProperties ++
     jobXmlProperty
 
@@ -91,7 +88,6 @@ final class SparkAction(override val name: String,
       <jar>{sparkJarProperty}</jar>
       <spark-opts>{sparkOptionsProperty}</spark-opts>
       {commandLineArgsProperties.keys.map(Arg(_).toXML)}
-      {filesProperties.keys.map(File(_).toXML)}
     </spark>
 }
 
@@ -111,7 +107,6 @@ object SparkAction {
             sparkJar: String,
             sparkOptions: String,
             commandLineArgs: Seq[String],
-            files: Seq[String],
             jobXmlOption: Option[String],
             prepareOption: Option[Prepare],
             configuration: Configuration,
@@ -125,7 +120,6 @@ object SparkAction {
                       sparkJar,
                       sparkOptions,
                       commandLineArgs,
-                      files,
                       jobXmlOption,
                       prepareOption,
                       configuration,
@@ -145,7 +139,6 @@ object SparkAction {
                   sparkJar = config.getString(HoconConstants.sparkJar),
                   sparkOptions = config.getString(HoconConstants.sparkOptions),
                   commandLineArgs = Seq(config.getStringList(HoconConstants.commandLineArguments).asScala: _*),
-                  files = Seq(config.getStringList(HoconConstants.files).asScala: _*),
                   jobXmlOption = ConfigurationBuilder.optionalString(config, HoconConstants.jobXml),
                   configuration = ConfigurationBuilder.buildConfiguration(config),
                   yarnConfig = yarnConfig,

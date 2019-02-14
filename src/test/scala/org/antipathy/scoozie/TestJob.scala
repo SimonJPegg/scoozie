@@ -34,7 +34,6 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
            sparkJar = "/path/to/jar",
            sparkOptions = "spark options",
            commandLineArgs = Seq(),
-           files = Seq(),
            prepareOption = None,
            configuration = Scoozie.Configuration.emptyConfig,
            yarnConfig = yarnConfig)
@@ -103,6 +102,7 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                      yarnConfig = yarnConfig)
 
   override val coordinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator",
+                                                              path = "somePath",
                                                               frequency = "startFreq",
                                                               start = "start",
                                                               end = "end",

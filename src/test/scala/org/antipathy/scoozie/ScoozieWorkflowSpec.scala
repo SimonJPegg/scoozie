@@ -22,7 +22,7 @@ class ScoozieWorkflowSpec extends FlatSpec with Matchers {
     val workflowText = Scoozie.Formatting.format(testJob.workflow)
 
     ouputWorkflow.lines.mkString(System.lineSeparator()) should be(workflowText)
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(testJob.jobProperties)
+    ouputProperties.lines.mkString(System.lineSeparator()) + System.lineSeparator() should be(testJob.jobProperties)
 
     outputFolder.delete()
   }

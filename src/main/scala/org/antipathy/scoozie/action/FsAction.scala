@@ -60,7 +60,7 @@ class FsAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    jobXmlProperty ++ namedActionsAnProps.flatMap(_.properties).toMap ++ configurationProperties.properties
+    jobXmlProperty ++ namedActionsAnProps.flatMap(_.properties).toMap ++ mappedProperties
 
   /**
     * The XML for this node
