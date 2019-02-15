@@ -26,7 +26,7 @@ import scala.util._
 /**
   * Utility class to handle schema import and include statements
   */
-private[scoozie] class Input(var publicId: String, var systemId: String, val input: InputStream) extends LSInput {
+private[scoozie] class Input(val publicId: String, val systemId: String, val input: InputStream) extends LSInput {
   private val inputStream = new BufferedInputStream(input)
   private val UTF_8_ENCODING = "UTF-8"
 
@@ -48,7 +48,7 @@ private[scoozie] class Input(var publicId: String, var systemId: String, val inp
 
   override def getPublicId: String = publicId
 
-  override def setPublicId(publicId: String): Unit = this.publicId = publicId
+  override def setPublicId(publicId: String): Unit = {}
 
   override def getBaseURI: String = Scoozie.Null
 
@@ -74,6 +74,6 @@ private[scoozie] class Input(var publicId: String, var systemId: String, val inp
 
   override def getSystemId: String = systemId
 
-  override def setSystemId(systemId: String): Unit = this.systemId = systemId
+  override def setSystemId(systemId: String): Unit = {}
 }
 // $COVERAGE-ON$

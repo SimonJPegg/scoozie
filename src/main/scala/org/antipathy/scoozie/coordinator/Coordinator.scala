@@ -27,7 +27,6 @@ import org.antipathy.scoozie.workflow.Workflow
 import org.antipathy.scoozie.xml.XmlSerializable
 
 import scala.collection.immutable._
-import scala.language.existentials
 import scala.xml.Elem
 
 /**

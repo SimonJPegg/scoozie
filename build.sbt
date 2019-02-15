@@ -46,7 +46,9 @@ libraryDependencies ++= Seq(
 libraryDependencies ++= {
   CrossVersion.partialVersion(scalaVersion.value) match {
     case Some((2, scalaMajor)) if scalaMajor >= 11 =>
+      scalacOptions ++= Seq( "-Yrangepos", "-Ywarn-unused-import" )
       libraryDependencies.value ++ Seq(
+        compilerPlugin(scalafixSemanticdb),
         "org.scala-lang.modules" %% "scala-xml" % "1.1.1",
         "org.scala-lang.modules" %% "scala-parser-combinators" % "1.1.1",
         "org.scala-lang.modules" %% "scala-swing" % "2.0.3",
