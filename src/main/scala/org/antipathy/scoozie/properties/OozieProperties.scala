@@ -13,6 +13,19 @@ private[scoozie] trait OozieProperties extends PropertyFormatter {
   def properties: Map[String, String]
 
   /**
+    * Construct a map of property values to their substituted names
+    * @param propertyName the name of the substituted property
+    * @param propertyValue the value of the property
+    * @return A map of the value to the new name
+    */
+  def buildStringProperty(propertyName: String, propertyValue: String): Map[String, String] =
+    if (propertyValue.isEmpty) {
+      Map[String, String]()
+    } else {
+      Map(formatProperty(propertyName) -> propertyValue)
+    }
+
+  /**
     * Convert a sequence of property values to a map of KV pairs
     * @param actionName The name of the action to insert into the property name
     * @param valueSequence The property values

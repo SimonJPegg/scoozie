@@ -30,7 +30,7 @@ class DistCPAction(override val name: String,
     with HasConfig {
 
   private val argumentsProperties = buildSequenceProperties(name, "arguments", arguments)
-  private val javaOptionsProperty = formatProperty(s"${name}_javaOptions")
+  private val javaOptionsProperty = buildStringProperty(s"${name}_javaOptions", javaOptions)
 
   /**
     * The XML namespace for an action element
@@ -41,7 +41,7 @@ class DistCPAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override val properties: Map[String, String] =
-  Map(javaOptionsProperty -> javaOptions) ++
+  javaOptionsProperty ++
   argumentsProperties ++
   mappedProperties ++
   prepareProperties
@@ -55,10 +55,7 @@ class DistCPAction(override val name: String,
       {yarnConfig.nameNodeXML}
       {prepareXML}
       {configXML}
-      {if (!javaOptions.isEmpty) {
-          <java-opts>{javaOptionsProperty}</java-opts>
-        }
-      }
+      {javaOptionsProperty.keys.map(k => <java-opts>{k}</java-opts>)}
       {argumentsProperties.keys.map(Arg(_).toXML)}
     </distcp>
 }

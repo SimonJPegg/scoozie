@@ -32,12 +32,12 @@ object WorkflowFunctions {
   /**
     * returns the user name that started the current workflow job.
     */
-  val user: String = variablePrefix + "wf:user()}"
+  val user: String = variablePrefix + "wf:user(" + variablePostFix
 
   /**
     * returns the group/ACL for the current workflow job
     */
-  val group: String = variablePrefix + "wf:group()}"
+  val group: String = variablePrefix + "wf:group(" + variablePostFix
 
   /**
     * returns the callback URL for the current workflow action node, stateVar can be a valid exit
@@ -56,7 +56,7 @@ object WorkflowFunctions {
     * returns the name of the last workflow action node that exit with an ERROR exit state, or an empty string
     * if no a ction has exited with ERROR state in the current workflow job.
     */
-  val lastErrorNode: String = variablePrefix + "wf:lastErrorNode()}"
+  val lastErrorNode: String = variablePrefix + "wf:lastErrorNode(" + variablePostFix
 
   /**
     * returns the error code for the specified action node, or an empty string

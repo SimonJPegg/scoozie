@@ -18,11 +18,13 @@ trait HasConfig extends PropertyFormatter {
 
   def configuration: Configuration
 
+  //filter out any workflow or coordinator functions specified as a property
   protected val actionConfig: ActionProperties[Configuration] =
     Configuration(configuration.configProperties.filter { p =>
       !p.value.contains(coordFunctionPrefix) &&
       !p.value.contains(wfFunctionPrefix)
     }).withActionProperties(name)
+  //pass EL functions through to be rendered directly in the XML
   protected val asIsConfig: Seq[Property] =
     configuration.configProperties.filter { p =>
       p.value.contains(coordFunctionPrefix) ||

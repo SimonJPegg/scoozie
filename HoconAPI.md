@@ -276,6 +276,19 @@ Join:
     ok-to: ""
 }
 ```
+
+decision:
+```hocon
+{
+    name:""
+    type:"decision"
+    default: ""
+    switches: {
+      action1: ""  //any variables referenced in here may need to be
+      action2: "" // manually added to the job properties
+    }
+ }
+```
 #### Action nodes
 
 Action nodes also take an optional `sla` key, the format for these keys is:
