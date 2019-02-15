@@ -1,4 +1,19 @@
 // $COVERAGE-OFF$
+/**
+  *    Copyright (C) 2019 Antipathy.org <support@antipathy.org>
+  *
+  *    Licensed under the Apache License, Version 2.0 (the "License");
+  *    you may not use this file except in compliance with the License.
+  *    You may obtain a copy of the License at
+  *
+  *        http://www.apache.org/licenses/LICENSE-2.0
+  *
+  *    Unless required by applicable law or agreed to in writing, software
+  *    distributed under the License is distributed on an "AS IS" BASIS,
+  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  *    See the License for the specific language governing permissions and
+  *    limitations under the License.
+  */
 package org.antipathy.scoozie.xml.validator.xml
 
 import java.io.{BufferedInputStream, InputStream, Reader}
@@ -11,7 +26,7 @@ import scala.util._
 /**
   * Utility class to handle schema import and include statements
   */
-private[scoozie] class Input(var publicId: String, var systemId: String, val input: InputStream) extends LSInput {
+private[scoozie] class Input(val publicId: String, val systemId: String, val input: InputStream) extends LSInput {
   private val inputStream = new BufferedInputStream(input)
   private val UTF_8_ENCODING = "UTF-8"
 
@@ -33,7 +48,7 @@ private[scoozie] class Input(var publicId: String, var systemId: String, val inp
 
   override def getPublicId: String = publicId
 
-  override def setPublicId(publicId: String): Unit = this.publicId = publicId
+  override def setPublicId(publicId: String): Unit = {}
 
   override def getBaseURI: String = Scoozie.Null
 
@@ -59,6 +74,6 @@ private[scoozie] class Input(var publicId: String, var systemId: String, val inp
 
   override def getSystemId: String = systemId
 
-  override def setSystemId(systemId: String): Unit = this.systemId = systemId
+  override def setSystemId(systemId: String): Unit = {}
 }
 // $COVERAGE-ON$
