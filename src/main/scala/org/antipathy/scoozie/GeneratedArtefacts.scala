@@ -6,8 +6,10 @@ import com.typesafe.config.Config
 import org.antipathy.scoozie.builder.{CoordinatorBuilder, TransitionStringBuilder, WorkflowBuilder}
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.exception.TransitionException
-import org.antipathy.scoozie.io.ArtefactWriter
+import org.antipathy.scoozie.io.{Artefact, ArtefactWriter, ZipArtefactWriter}
 import org.antipathy.scoozie.workflow.Workflow
+
+import scala.collection.immutable.Seq
 
 /**
   * Container class for HOCON generated arefacts
@@ -15,7 +17,8 @@ import org.antipathy.scoozie.workflow.Workflow
 final class GeneratedArtefacts(workflow: Workflow,
                                coordinatorOption: Option[Coordinator],
                                validationStringOption: Option[String])
-    extends ArtefactWriter {
+    extends ArtefactWriter
+    with ZipArtefactWriter {
 
   /**
     * Validate the generated artefacts
@@ -39,19 +42,22 @@ final class GeneratedArtefacts(workflow: Workflow,
     * Save the generated artefacts to the specified path
     * @param outputPath the path to write to
     */
-  def saveToPath(outputPath: Path): Unit = {
+  def save(outputPath: Path, asZipFile: Boolean = false): Unit = {
     this.validate()
-    this.writeFile(outputPath.toString, ArtefactWriter.workflowFileName, Scoozie.Formatting.format(this.workflow))
-    if (coordinatorOption.isDefined) {
-      coordinatorOption.foreach { coordinator =>
-        this.writeFile(outputPath.toString, ArtefactWriter.coordinatorFileName, Scoozie.Formatting.format(coordinator))
-        this.writeFile(outputPath.toString,
-                       ArtefactWriter.propertiesFileName,
-                       coordinator.jobProperties + System.lineSeparator() +
-                       this.workflow.jobProperties.replace("oozie.wf.application.path", "#oozie.wf.application.path"))
-      }
+
+    val artefacts = coordinatorOption.map { c =>
+      Seq(Artefact(ArtefactWriter.coordinatorFileName, Scoozie.Formatting.format(c)),
+          Artefact(ArtefactWriter.propertiesFileName,
+                   c.jobProperties + System.lineSeparator() + this.workflow.jobProperties
+                     .replace("oozie.wf.application.path", "#oozie.wf.application.path")))
+    }.getOrElse(Seq(Artefact(ArtefactWriter.propertiesFileName, this.workflow.jobProperties))) ++ Seq(
+      Artefact(ArtefactWriter.workflowFileName, Scoozie.Formatting.format(this.workflow))
+    )
+
+    if (asZipFile) {
+      writeZipFile(outputPath, ArtefactWriter.zipArchive, artefacts)
     } else {
-      this.writeFile(outputPath.toString, ArtefactWriter.propertiesFileName, this.workflow.jobProperties)
+      artefacts.foreach(writeFile(outputPath, _))
     }
   }
 

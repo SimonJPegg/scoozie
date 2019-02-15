@@ -1,12 +1,13 @@
 package org.antipathy.scoozie.xml.formatter
 
-import org.scalatest.{FlatSpec, Matchers}
+import org.antipathy.scoozie.Scoozie
+import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.action.{EmailAction, HiveAction, ShellAction, SparkAction}
 import org.antipathy.scoozie.configuration.{Credential, Credentials, Property, YarnConfig}
-import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.workflow.Workflow
+import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
-import org.antipathy.scoozie.Scoozie
 
 class OozieXmlFormatterSpec extends FlatSpec with Matchers {
 

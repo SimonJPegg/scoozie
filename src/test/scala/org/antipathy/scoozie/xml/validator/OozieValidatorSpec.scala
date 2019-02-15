@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.xml.validator
 
 import java.io.File
+
 import org.scalatest.{FlatSpec, GivenWhenThen, Matchers}
 import org.xml.sax.SAXParseException
 

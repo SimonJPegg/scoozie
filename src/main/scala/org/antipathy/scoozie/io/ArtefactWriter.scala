@@ -1,6 +1,6 @@
 package org.antipathy.scoozie.io
 
-import java.nio.file.Paths
+import java.nio.file.{Path, Paths}
 
 import better.files._
 
@@ -13,16 +13,15 @@ private[scoozie] trait ArtefactWriter {
     * Write the passed in contents to the specified folder and file name
     *
     * @param outputFolder The folder to write to
-    * @param fileName the file name to write to
-    * @param contents the file contents to write
+    * @param artefact The artefact to write
     */
-  def writeFile(outputFolder: String, fileName: String, contents: String): Unit = {
-    val outputDir = File(Paths.get(outputFolder))
+  protected def writeFile(outputFolder: Path, artefact: Artefact): Unit = {
+    val outputDir = File(Paths.get(outputFolder.toString))
 
-    val outputFile = outputDir / fileName
+    val outputFile = outputDir / artefact.fileName
     outputFile.createIfNotExists(createParents = true)
 
-    outputFile.writeText(contents)
+    outputFile.writeText(artefact.fileContents)
   }
 }
 
@@ -30,4 +29,5 @@ private[scoozie] object ArtefactWriter {
   val workflowFileName = "workflow.xml"
   val coordinatorFileName = "coordinator.xml"
   val propertiesFileName = "job.properties"
+  val zipArchive = "artefacts.zip"
 }

@@ -1,8 +1,7 @@
-package org.antipathy.scoozie
+package org.antipathy.scoozie.traits
 
 import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.coordinator.Coordinator
-import org.antipathy.scoozie.traits.{ScoozieCoordinator, ScoozieWorkflow}
 import org.antipathy.scoozie.workflow.Workflow
 
 import scala.collection.immutable.{Map, Seq}
@@ -10,9 +9,10 @@ import scala.collection.immutable.{Map, Seq}
 /**
   * Test class for interface
   */
-class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
+class TestCoordinator(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
     extends ScoozieWorkflow
     with ScoozieCoordinator {
+  import org.antipathy.scoozie.Scoozie
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
   private val yarnConfig = Scoozie.Configuration.yarnConfig(jobTracker, nameNode)

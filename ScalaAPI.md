@@ -118,6 +118,7 @@ The code below shows a worked example of a Scoozie client:
 import org.antipathy.scoozie.configuration.Credentials
 import org.antipathy.scoozie.coordinator.Coordinator
 import org.antipathy.scoozie.workflow.Workflow
+import org.antipathy.scoozie.traits._
 import scala.collection.immutable.{Map, Seq}
 
 

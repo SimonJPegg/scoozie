@@ -3,6 +3,7 @@ package org.antipathy.scoozie.sla
 
 import org.antipathy.scoozie.action.Nameable
 import org.antipathy.scoozie.configuration.ActionProperties
+
 import scala.xml.Elem
 
 /**
