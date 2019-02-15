@@ -1,31 +1,32 @@
 // $COVERAGE-OFF$
 package org.antipathy.scoozie.action
 
-import org.antipathy.scoozie.configuration.{ActionProperties, Configuration}
-
-import scala.collection.immutable.Map
-import scala.xml.Elem
-import org.antipathy.scoozie.configuration.Property
+import org.antipathy.scoozie.configuration.{ActionProperties, Configuration, Property}
 import org.antipathy.scoozie.properties.PropertyFormatter
+
+import scala.collection.immutable._
+import scala.xml.Elem
 
 /**
   * Trait for building config properties
   */
 trait HasConfig extends PropertyFormatter {
   this: Nameable =>
-  import scala.collection.immutable
+
+  private val coordFunctionPrefix: String = "coord:"
+  private val wfFunctionPrefix: String = "wf:"
 
   def configuration: Configuration
 
   protected val actionConfig: ActionProperties[Configuration] =
     Configuration(configuration.configProperties.filter { p =>
-      !p.value.contains("coord:") &&
-      !p.value.contains("wf:")
+      !p.value.contains(coordFunctionPrefix) &&
+      !p.value.contains(wfFunctionPrefix)
     }).withActionProperties(name)
-  protected val asIsConfig: immutable.Seq[Property] =
+  protected val asIsConfig: Seq[Property] =
     configuration.configProperties.filter { p =>
-      p.value.contains("coord:") ||
-      p.value.contains("wf:")
+      p.value.contains(coordFunctionPrefix) ||
+      p.value.contains(wfFunctionPrefix)
     }.map(p => Property(p.name, formatProperty(p.value.replace("\"", ""))))
 
   //map configuration to action name
