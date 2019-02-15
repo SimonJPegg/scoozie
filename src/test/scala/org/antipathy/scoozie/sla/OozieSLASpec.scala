@@ -1,6 +1,7 @@
 package org.antipathy.scoozie.sla
 
 import org.scalatest.{FlatSpec, Matchers}
+
 import scala.collection.immutable._
 
 class OozieSLASpec extends FlatSpec with Matchers {

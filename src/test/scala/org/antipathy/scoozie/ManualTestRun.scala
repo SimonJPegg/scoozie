@@ -1,8 +1,7 @@
 package org.antipathy.scoozie
 
-import org.scalatest.{FlatSpec, Matchers}
 import better.files.File
-import com.typesafe.config.ConfigFactory
+import org.scalatest.{FlatSpec, Matchers}
 
 class ManualTestRun extends FlatSpec with Matchers {
 
@@ -14,12 +13,10 @@ class ManualTestRun extends FlatSpec with Matchers {
     val configPath = itInputPath / "it.conf"
     val outputPath = File("src/test/resources/output/manualTest/")
 
-    val testConfig = ConfigFactory.parseFile(configPath.path.toFile).resolve()
-
     outputPath.createIfNotExists(asDirectory = true)
 
     val artefacts = Scoozie.fromConfig(configPath.path)
     itInputPath.list.foreach(file => file.copyTo(outputPath / file.name, overwrite = true))
-    artefacts.saveToPath(outputPath.path)
+    artefacts.save(outputPath.path)
   }
 }

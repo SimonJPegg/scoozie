@@ -39,7 +39,8 @@ libraryDependencies ++= Seq(
   "commons-io" % "commons-io" % "2.6" % "compile",
   "xerces" % "xercesImpl" % "2.11.0" % "compile",
   "org.scalatest" %% "scalatest" % "3.0.5" % "test",
-  "com.typesafe" % "config" % "1.3.3"
+  "com.typesafe" % "config" % "1.3.3",
+  "org.zeroturnaround" % "zt-zip" % "1.13"
 )
 
 libraryDependencies ++= {

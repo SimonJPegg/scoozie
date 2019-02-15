@@ -1,8 +1,7 @@
-package org.antipathy.scoozie
+package org.antipathy.scoozie.traits
 
+import org.antipathy.scoozie.Scoozie
 import org.antipathy.scoozie.configuration.Credentials
-import org.antipathy.scoozie.coordinator.Coordinator
-import org.antipathy.scoozie.traits.{ScoozieCoordinator, ScoozieWorkflow}
 import org.antipathy.scoozie.workflow.Workflow
 
 import scala.collection.immutable.{Map, Seq}
@@ -10,9 +9,7 @@ import scala.collection.immutable.{Map, Seq}
 /**
   * Test class for interface
   */
-class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, String])
-    extends ScoozieWorkflow
-    with ScoozieCoordinator {
+class TestWorkflow(jobTracker: String, nameNode: String, yarnProperties: Map[String, String]) extends ScoozieWorkflow {
 
   private implicit val credentials: Option[Credentials] = Scoozie.Configuration.emptyCredentials
   private val yarnConfig = Scoozie.Configuration.yarnConfig(jobTracker, nameNode)
@@ -101,14 +98,4 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
                                                      jobXmlOption = None,
                                                      configuration = Scoozie.Configuration.emptyConfig,
                                                      yarnConfig = yarnConfig)
-
-  override val coordinator: Coordinator = Scoozie.coordinator(name = "ExampleCoOrdinator",
-                                                              path = "somePath",
-                                                              frequency = "startFreq",
-                                                              start = "start",
-                                                              end = "end",
-                                                              timezone = "timeZome",
-                                                              workflow = workflow,
-                                                              configuration =
-                                                                Scoozie.Configuration.configuration(yarnProperties))
 }
