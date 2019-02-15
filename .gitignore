@@ -8,10 +8,6 @@
 modules.xml
 out/
 src/test/resources/output
-
-
-
-
 myproject/target
 project/project/target
 project/target
