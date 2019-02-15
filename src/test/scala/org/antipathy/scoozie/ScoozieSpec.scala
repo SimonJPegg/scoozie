@@ -51,7 +51,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
             <ok to="mainFork" />
             <error to="alertFailure" />
             <sla:info>
-              <sla:nominal-time>{"${doASparkThing_sla_nominalTime}"}</sla:nominal-time>
+              <sla:nominal-time>{"${nominal_time}"}</sla:nominal-time>
               <sla:should-start>{"${doASparkThing_sla_shouldStart}"}</sla:should-start>
               <sla:should-end>{"${doASparkThing_sla_shouldStart}"}</sla:should-end>
               <sla:max-duration>{"${doASparkThing_sla_maxDuration}"}</sla:max-duration>
@@ -106,12 +106,12 @@ class ScoozieSpec extends FlatSpec with Matchers {
     )
 
     testWorkflow.jobProperties should be("""ExampleCoOrdinator_end=end
-                                           |ExampleCoOrdinator_frequency=startFreq
                                            |ExampleCoOrdinator_property0=value1
                                            |ExampleCoOrdinator_property1=value2
                                            |ExampleCoOrdinator_start=start
                                            |ExampleCoOrdinator_timezone=timeZome
                                            |ExampleCoOrdinator_workflow_path=/path/to/workflow.xml
+                                           |oozie.coord.application.path=somePath/coordinator.xml
                                            |alertFailure_body=message body
                                            |alertFailure_subject=message subject
                                            |alertFailure_to=a@a.com,b@b.com
@@ -129,7 +129,6 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                            |doASparkThing_sla_alertContacts=some@one.com
                                            |doASparkThing_sla_alertEvents=start_miss,end_miss,duration_miss
                                            |doASparkThing_sla_maxDuration=30 * MINUTES
-                                           |doASparkThing_sla_nominalTime=nominal_time
                                            |doASparkThing_sla_shouldEnd=30 * MINUTES
                                            |doASparkThing_sla_shouldStart=10 * MINUTES
                                            |doASparkThing_sparkJar=/path/to/jar
@@ -138,7 +137,10 @@ class ScoozieSpec extends FlatSpec with Matchers {
                                            |doASparkThing_sparkMode=mode
                                            |doASparkThing_sparkOptions=spark options
                                            |jobTracker=yarn
-                                           |nameNode=nameservice1""".stripMargin)
+                                           |nameNode=nameservice1
+                                           |oozie.use.system.libpath=true
+                                           |#oozie.wf.application.path=/path/to/workflow.xml/workflow.xml
+                                           |""".stripMargin)
   }
 
   it should "allow validation of an oozie workflow" in {
@@ -166,7 +168,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
     val testWorkflow = new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
     Utility.trim(testWorkflow.coordinator.toXML) should be(Utility.trim(<coordinator-app
         name="ExampleCoOrdinator"
-        frequency="${ExampleCoOrdinator_frequency}"
+        frequency="${startFreq}"
         start="${ExampleCoOrdinator_start}" end="${ExampleCoOrdinator_end}"
         timezone="${ExampleCoOrdinator_timezone}"
         xmlns="uri:oozie:coordinator:0.4" xmlns:sla="uri:oozie:sla:0.2">

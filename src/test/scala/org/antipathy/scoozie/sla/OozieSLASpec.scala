@@ -20,7 +20,7 @@ class OozieSLASpec extends FlatSpec with Matchers {
                           upstreamApps = Seq("app1", "app2")).withActionName(actionName).mappedType
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<sla:info>
-        <sla:nominal-time>{"${someAction_sla_nominalTime}"}</sla:nominal-time>
+        <sla:nominal-time>{"${nominal_time}"}</sla:nominal-time>
         <sla:should-start>{"${someAction_sla_shouldStart}"}</sla:should-start>
         <sla:should-end>{"${someAction_sla_shouldStart}"}</sla:should-end>
         <sla:max-duration>{"${someAction_sla_maxDuration}"}</sla:max-duration>
@@ -37,7 +37,6 @@ class OozieSLASpec extends FlatSpec with Matchers {
           "${someAction_sla_upstreamApps}" -> "app1,app2",
           "${someAction_sla_alertEvents}" -> "start_miss,end_miss,duration_miss",
           "${someAction_sla_alertContacts}" -> "a@a.com,b@b.com",
-          "${someAction_sla_nominalTime}" -> "nominal_time",
           "${someAction_sla_shouldStart}" -> "10 * MINUTES")
     )
   }

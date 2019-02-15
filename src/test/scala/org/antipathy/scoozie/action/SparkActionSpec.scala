@@ -22,7 +22,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkJar = "/path/to/jar",
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
-                             files = Seq(),
                              jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfig,
@@ -62,7 +61,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkJar = "/path/to/jar",
                              sparkOptions = "spark options",
                              commandLineArgs = Seq("one", "two", "three"),
-                             files = Seq(),
                              jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Scoozie.Configuration.emptyConfig,
@@ -108,7 +106,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkJar = "/path/to/jar",
                              sparkOptions = "spark options",
                              commandLineArgs = Seq(),
-                             files = Seq(),
                              jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Configuration(
@@ -162,7 +159,6 @@ class SparkActionSpec extends FlatSpec with Matchers {
                              sparkJar = "/path/to/jar",
                              sparkOptions = "spark options",
                              commandLineArgs = Seq("one", "two", "three"),
-                             files = Seq(),
                              jobXmlOption = Some("/path/to/spark/settings"),
                              prepareOption = None,
                              configuration = Configuration(

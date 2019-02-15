@@ -22,15 +22,20 @@ case class Prepare(actions: Seq[PrepareFSAction]) extends XmlSerializable {
     val mappedProps = actions.map {
       case d: Delete =>
         val p = Prepare.varPrefix + s"${actionName}_prepare_delete" + Prepare.varPostfix
-        ActionProperties[PrepareFSAction](Delete(p), Map(p -> d.path))
+        ActionProperties[PrepareFSAction](Delete(p), Map(p -> removeQuotes(d.path)))
       case m: MakeDir =>
         val p = Prepare.varPrefix + s"${actionName}_prepare_makedir" + Prepare.varPostfix
-        ActionProperties[PrepareFSAction](MakeDir(p), Map(p -> m.path))
+        ActionProperties[PrepareFSAction](MakeDir(p), Map(p -> removeQuotes(m.path)))
       case unknown =>
         throw new IllegalArgumentException(s"${unknown.getClass.getSimpleName} is not a valid prepare step")
     }
     ActionProperties(this.copy(mappedProps.map(_.mappedType)), mappedProps.flatMap(_.properties).toMap)
   }
+
+  /**
+    * remove any quotes in the passed in string
+    */
+  private def removeQuotes(s: String) = s.replace("\"", "")
 
   /**
     * The XML for this node

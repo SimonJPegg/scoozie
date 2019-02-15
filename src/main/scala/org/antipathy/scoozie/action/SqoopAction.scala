@@ -44,7 +44,7 @@ class SqoopAction(override val name: String,
   override def properties: Map[String, String] =
     argsProperties ++
     filesProperties ++
-    configurationProperties.properties ++
+    mappedProperties ++
     prepareProperties ++
     jobXmlProperty ++
     commandProperty

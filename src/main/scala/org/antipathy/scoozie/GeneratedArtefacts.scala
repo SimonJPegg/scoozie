@@ -47,7 +47,8 @@ final class GeneratedArtefacts(workflow: Workflow,
         this.writeFile(outputPath.toString, ArtefactWriter.coordinatorFileName, Scoozie.Formatting.format(coordinator))
         this.writeFile(outputPath.toString,
                        ArtefactWriter.propertiesFileName,
-                       coordinator.jobProperties + System.lineSeparator() + this.workflow.jobProperties)
+                       coordinator.jobProperties + System.lineSeparator() +
+                       this.workflow.jobProperties.replace("oozie.wf.application.path", "#oozie.wf.application.path"))
       }
     } else {
       this.writeFile(outputPath.toString, ArtefactWriter.propertiesFileName, this.workflow.jobProperties)

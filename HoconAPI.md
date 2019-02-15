@@ -36,7 +36,7 @@ See below for an example workflow defined in Hocon.
 ```hocon
 workflow {
   name: "someworkflow"
-  path: "somepath"
+  path: "/path/to/workflow.xml" //in HDFS
   credentials {
     name: "someCredentials"
     type: "credentialsType"
@@ -154,6 +154,7 @@ Example co-ordinator:
 ```hocon
 coordinator: {
   name: "someCoordinator"
+  path: "/path/to/coordinator.xml" //in HDFS
   frequency: "someFreq"
   start: "someStart"
   end: "someEnd"
@@ -274,6 +275,19 @@ Join:
     type:"join"
     ok-to: ""
 }
+```
+
+decision:
+```hocon
+{
+    name:""
+    type:"decision"
+    default: ""
+    switches: {
+      action1: ""  //any variables referenced in here may need to be
+      action2: "" // manually added to the job properties
+    }
+ }
 ```
 #### Action nodes
 
@@ -419,7 +433,6 @@ Spark:
   spark-jar: ""
   spark-options: ""
   command-line-arguments: []
-  files: []
   job-xml: "" 
   configuration: {}
   prepare: {}

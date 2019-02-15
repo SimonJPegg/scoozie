@@ -112,6 +112,7 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
                                              |
                                              |coordinator: {
                                              | name: "someCoordinator"
+                                             | path : "somePath"
                                              | frequency: "someFreq"
                                              | start: "someStart"
                                              | end: "someEnd"
@@ -137,7 +138,7 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
     result.workflow.path should be("somepath")
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app name="someCoordinator"
-                       frequency={"${someCoordinator_frequency}"}
+                       frequency={"${someFreq}"}
                        start={"${someCoordinator_start}"}
                        end={"${someCoordinator_end}"}
                        timezone={"${someCoordinator_timezone}"}
@@ -168,14 +169,14 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
       </coordinator-app>))
 
     result.jobProperties should be("""someCoordinator_end=someEnd
-                                     |someCoordinator_frequency=someFreq
-                                     |someCoordinator_property0="value1"
-                                     |someCoordinator_property1="value2"
-                                     |someCoordinator_property2="value3"
-                                     |someCoordinator_property3="value4"
+                                     |someCoordinator_property0=value1
+                                     |someCoordinator_property1=value2
+                                     |someCoordinator_property2=value3
+                                     |someCoordinator_property3=value4
                                      |someCoordinator_start=someStart
                                      |someCoordinator_timezone=someTimezone
-                                     |someCoordinator_workflow_path=somepath""".stripMargin)
+                                     |someCoordinator_workflow_path=somepath
+                                     |oozie.coord.application.path=somePath/coordinator.xml""".stripMargin)
 
     Scoozie.Test.validate(result)
   }

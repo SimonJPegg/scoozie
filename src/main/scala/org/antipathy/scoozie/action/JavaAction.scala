@@ -42,7 +42,7 @@ final class JavaAction(override val name: String,
 
   private val mainClassProperty = formatProperty(s"${name}_mainClass")
   private val javaJarProperty = formatProperty(s"${name}_javaJar")
-  private val javaOptionsProperty = formatProperty(s"${name}_javaOptions")
+  private val javaOptionsProperty = buildStringProperty(s"${name}_javaOptions", javaOptions)
   private val commandLineArgsProperties =
     buildSequenceProperties(name, "commandLineArg", commandLineArgs)
   private val filesProperties = buildSequenceProperties(name, "files", files)
@@ -51,11 +51,11 @@ final class JavaAction(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(mainClassProperty -> mainClass, javaJarProperty -> javaJar, javaOptionsProperty -> javaOptions) ++
+    Map(mainClassProperty -> mainClass, javaJarProperty -> javaJar) ++ javaOptionsProperty ++
     commandLineArgsProperties ++
     prepareProperties ++
     filesProperties ++
-    configurationProperties.properties ++ jobXmlProperty
+    mappedProperties ++ jobXmlProperty
 
   /**
     * The XML namespace for an action element
@@ -73,7 +73,7 @@ final class JavaAction(override val name: String,
         {jobXml}
         {configXML}
         <main-class>{mainClassProperty}</main-class>
-        <java-opts>{javaOptionsProperty}</java-opts>
+        {javaOptionsProperty.keys.map(k => <java-opts>{k}</java-opts>)}
         {commandLineArgsProperties.keys.map(Arg(_).toXML)}
         {filesProperties.keys.map(File(_).toXML)}
         <file>{javaJarProperty}</file>

@@ -61,7 +61,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfig,
@@ -196,7 +195,9 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                        |sparkAction_sparkJobName=JobName
                                        |sparkAction_sparkMasterURL=masterURL
                                        |sparkAction_sparkMode=mode
-                                       |sparkAction_sparkOptions=spark options""".stripMargin)
+                                       |sparkAction_sparkOptions=spark options
+                                       |oozie.use.system.libpath=true
+                                       |oozie.wf.application.path=/workflow.xml""".stripMargin)
 
   }
 
@@ -245,7 +246,6 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfig,
@@ -370,7 +370,9 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                        |sparkAction_sparkJobName=JobName
                                        |sparkAction_sparkMasterURL=masterURL
                                        |sparkAction_sparkMode=mode
-                                       |sparkAction_sparkOptions=spark options""".stripMargin)
+                                       |sparkAction_sparkOptions=spark options
+                                       |oozie.use.system.libpath=true
+                                       |oozie.wf.application.path=/workflow.xml""".stripMargin)
   }
 
   it should "generate valid XML with an SLA" in {
@@ -419,10 +421,11 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
-                                  configuration = Scoozie.Configuration.emptyConfig,
+                                  configuration = Scoozie.Configuration.configuration(
+                                    Seq(Property("someProperty", "somevalue"), Property("workflowId", "${wf:id()}"))
+                                  ),
                                   yarnConfig = yarnConfig)
       .okTo(shellAction)
       .errorTo(emailAction)
@@ -442,7 +445,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
     val decision =
       Decision("doAThing", sparkAction, Switch(hiveAction, "somePredicate"), Switch(emailAction, "somePredicate"))
 
-    val sla = OozieSLA(nominalTime = "nominal_time",
+    val sla = OozieSLA(nominalTime = "${coord:nominal_time()}",
                        shouldStart = Some("10 * MINUTES"),
                        shouldEnd = Some("30 * MINUTES"),
                        maxDuration = Some("30 * MINUTES"))
@@ -504,6 +507,16 @@ class WorkflowSpec extends FlatSpec with Matchers {
             <job-tracker>{"${jobTracker}"}</job-tracker>
             <name-node>{"${nameNode}"}</name-node>
             <job-xml>{"${sparkAction_jobXml}"}</job-xml>
+            <configuration>
+              <property>
+                <name>someProperty</name>
+                <value>{"${sparkAction_property0}"}</value>
+              </property>
+              <property>
+                <name>workflowId</name>
+                <value>{"${wf:id()}"}</value>
+              </property>
+            </configuration>
             <master>{"${sparkAction_sparkMasterURL}"}</master>
             <mode>{"${sparkAction_sparkMode}"}</mode>
             <name>{"${sparkAction_sparkJobName}"}</name>
@@ -530,7 +543,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
         </kill>
         <end name="end" />
         <sla:info>
-          <sla:nominal-time>{"${sampleWorkflow_sla_nominalTime}"}</sla:nominal-time>
+          <sla:nominal-time>{"${coord:nominal_time()}"}</sla:nominal-time>
           <sla:should-start>{"${sampleWorkflow_sla_shouldStart}"}</sla:should-start>
           <sla:should-end>{"${sampleWorkflow_sla_shouldStart}"}</sla:should-end>
           <sla:max-duration>{"${sampleWorkflow_sla_maxDuration}"}</sla:max-duration>
@@ -549,18 +562,20 @@ class WorkflowSpec extends FlatSpec with Matchers {
                                        |sampleWorkflow_credentialProperty0=value
                                        |sampleWorkflow_jobXml=/path/to/job.xml
                                        |sampleWorkflow_sla_maxDuration=30 * MINUTES
-                                       |sampleWorkflow_sla_nominalTime=nominal_time
                                        |sampleWorkflow_sla_shouldEnd=30 * MINUTES
                                        |sampleWorkflow_sla_shouldStart=10 * MINUTES
                                        |shellAction_scriptLocation=/path/to/script.sh
                                        |shellAction_scriptName=script.sh
                                        |sparkAction_jobXml=/path/to/spark/settings
                                        |sparkAction_mainClass=org.antipathy.Main
+                                       |sparkAction_property0=somevalue
                                        |sparkAction_sparkJar=/path/to/jar
                                        |sparkAction_sparkJobName=JobName
                                        |sparkAction_sparkMasterURL=masterURL
                                        |sparkAction_sparkMode=mode
-                                       |sparkAction_sparkOptions=spark options""".stripMargin)
+                                       |sparkAction_sparkOptions=spark options
+                                       |oozie.use.system.libpath=true
+                                       |oozie.wf.application.path=/workflow.xml""".stripMargin)
   }
 
 }

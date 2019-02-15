@@ -25,7 +25,7 @@ class ScoozieCoordinatorSpec extends FlatSpec with Matchers {
 
     ouputCoordinator.lines.mkString(System.lineSeparator()) + System.lineSeparator() should be(coordinatorText)
     ouputWorkflow.lines.mkString(System.lineSeparator()) should be(workflowText)
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(testJob.jobProperties)
+    ouputProperties.lines.mkString(System.lineSeparator()) + System.lineSeparator() should be(testJob.jobProperties)
 
     outputFolder.delete()
   }

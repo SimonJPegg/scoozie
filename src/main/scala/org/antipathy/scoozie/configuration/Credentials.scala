@@ -22,7 +22,7 @@ case class Credentials(credential: Credential) extends XmlSerializable with Oozi
     val mappedProps = credential.properties.sortBy(_.name).zipWithIndex.map {
       case (Property(name, value), index) =>
         val p = formatProperty(s"${actionName}_credentialProperty$index")
-        ActionProperties[Property](Property(name, p), Map(p -> value))
+        ActionProperties[Property](Property(name, p), Map(p -> value.replace("\"", "")))
       case _ =>
         throw new ConfigurationMissingException("Unknown error occurred. Please raise an issue with the developer")
     }

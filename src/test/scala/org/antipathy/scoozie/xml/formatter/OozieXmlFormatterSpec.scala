@@ -60,7 +60,6 @@ class OozieXmlFormatterSpec extends FlatSpec with Matchers {
                                   sparkJar = "/path/to/jar",
                                   sparkOptions = "spark options",
                                   commandLineArgs = Seq(),
-                                  files = Seq(),
                                   jobXmlOption = Some("/path/to/spark/settings"),
                                   prepareOption = None,
                                   configuration = Scoozie.Configuration.emptyConfig,

@@ -49,7 +49,7 @@ final class HiveAction(override val name: String,
     jobXmlProperty ++
     yarnConfig.properties ++
     Map(scriptNameProperty -> scriptName, scriptLocationProperty -> scriptLocation) ++
-    prepareProperties ++ parametersProperties ++ configurationProperties.properties ++ filesProperties
+    prepareProperties ++ parametersProperties ++ mappedProperties ++ filesProperties
 
   /**
     * The XML namespace for an action element

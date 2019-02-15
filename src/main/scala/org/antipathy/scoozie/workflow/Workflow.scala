@@ -7,6 +7,7 @@ import org.antipathy.scoozie.action.control._
 import org.antipathy.scoozie.builder._
 import org.antipathy.scoozie.configuration._
 import org.antipathy.scoozie.exception.InvalidConfigurationException
+import org.antipathy.scoozie.io.ArtefactWriter
 import org.antipathy.scoozie.properties.{JobProperties, OozieProperties}
 import org.antipathy.scoozie.sla.{HasSLA, OozieSLA}
 import org.antipathy.scoozie.xml.XmlSerializable
@@ -42,6 +43,8 @@ case class Workflow(override val name: String,
     with HasJobXml
     with HasConfig
     with HasSLA {
+
+  private val shareLib: String = "oozie.use.system.libpath=true"
 
   private val (mappedCredentials, mappedCredProps) =
     credentialsOption.map(_.withActionProperties(name)) match {
@@ -116,7 +119,8 @@ case class Workflow(override val name: String,
     properties.flatMap {
       case (pName, pValue) => pattern.findFirstIn(pName).map(p => s"$p=$pValue")
     }.toSet.toSeq.sorted.mkString(System.lineSeparator())
-  }
+  } ++ System.lineSeparator() + shareLib ++ System.lineSeparator() +
+  s"oozie.wf.application.path=$path/${ArtefactWriter.workflowFileName}"
 
   /**
     * Convert this workflow into a subworkflow
@@ -155,8 +159,8 @@ object Workflow {
         ConfigurationBuilder.buildCredentials(workflowConfig)
 
       val yarnConfig =
-        YarnConfig(workflowConfig.getString(s"${HoconConstants.yarnConfig}.${HoconConstants.nameNode}"),
-                   workflowConfig.getString(s"${HoconConstants.yarnConfig}.${HoconConstants.jobTracker}"))
+        YarnConfig(nameNode = workflowConfig.getString(s"${HoconConstants.yarnConfig}.${HoconConstants.nameNode}"),
+                   jobTracker = workflowConfig.getString(s"${HoconConstants.yarnConfig}.${HoconConstants.jobTracker}"))
 
       val workFlowName = workflowConfig.getString(HoconConstants.name)
 
