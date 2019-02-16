@@ -8,7 +8,7 @@ Scoozie provides a Hocon parser that allows the definition of Oozie artefacts vi
 import org.antipathy.scoozie.Scoozie
 
 val artefacts = Scoozie.fromConfig(Paths.get("/path/to/some.conf"))
-artefacts.saveToPath(Paths.get("/some/output/directory/"))
+artefacts.save(Paths.get("/some/output/directory/"))
 ```
 
 Depending on the content of the configuration, this will output the following files:

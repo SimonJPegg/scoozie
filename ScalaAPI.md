@@ -227,24 +227,18 @@ class TestJob(jobTracker: String, nameNode: String, yarnProperties: Map[String, 
 
 ```
 
-The artifacts can be generated from this class via the following methods:
+The artifacts can be generated from this class via the following method:
 
 ```scala
-testJob.saveCoordinator("/some/path/")
+testJob.save("/some/path/", asZipFile=false) //note: no file names
 ```
- or
+
+As mentioned above, this would save both the xml and the required properties to the specified location.  
  
-```scala
- testJob.saveWorkflow("/some/path/")
-```
- 
- As mentioned above, this would save both the xml and the required properties to the specified location.  
- 
- The properties generated from this example would be:
+The properties generated from this example would be:
  
 ```$xslt
 ExampleCoOrdinator_end=end
-ExampleCoOrdinator_frequency=startFreq
 ExampleCoOrdinator_property0=value1
 ExampleCoOrdinator_property1=value2
 ExampleCoOrdinator_start=start
