@@ -94,7 +94,8 @@ releaseProcess := Seq[ReleaseStep](
 
 releaseCrossBuild := true
 
-coverageEnabled := true
+coverageEnabled in (Test, compile) := true
+coverageEnabled in (Compile, compile) := false
 coverageMinimum := 70
 coverageFailOnMinimum := true
 
