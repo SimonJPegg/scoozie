@@ -102,7 +102,7 @@ case class OozieSLA(nominalTime: String,
   override def toXML: Elem = <sla:info>
     <sla:nominal-time>{formatProperty(nominalTime)}</sla:nominal-time>
     {shouldStartProperty.keys.map(k => <sla:should-start>{formatProperty(k)}</sla:should-start>)}
-    {shouldStartProperty.keys.map(k => <sla:should-end>{formatProperty(k)}</sla:should-end>)}
+    {shouldEndProperty.keys.map(k => <sla:should-end>{formatProperty(k)}</sla:should-end>)}
     {maxDurationProperty.keys.map(k => <sla:max-duration>{formatProperty(k)}</sla:max-duration>)}
     {alertEventsProperty.keys.map(k => <sla:alert-events>{formatProperty(k)}</sla:alert-events>)}
     {alertContactsProperty.keys.map(k => <sla:alert-contact>{formatProperty(k)}</sla:alert-contact>)}
