@@ -560,7 +560,7 @@ class WorkflowSpec extends FlatSpec with Matchers {
         <sla:info>
           <sla:nominal-time>{"${coord:nominal_time()}"}</sla:nominal-time>
           <sla:should-start>{"${sampleWorkflow_sla_shouldStart}"}</sla:should-start>
-          <sla:should-end>{"${sampleWorkflow_sla_shouldStart}"}</sla:should-end>
+          <sla:should-end>{"${sampleWorkflow_sla_shouldEnd}"}</sla:should-end>
           <sla:max-duration>{"${sampleWorkflow_sla_maxDuration}"}</sla:max-duration>
         </sla:info>
       </workflow-app>)

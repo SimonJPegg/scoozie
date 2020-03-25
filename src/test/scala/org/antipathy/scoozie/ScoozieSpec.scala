@@ -68,7 +68,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
             <sla:info>
               <sla:nominal-time>{"${nominal_time}"}</sla:nominal-time>
               <sla:should-start>{"${doASparkThing_sla_shouldStart}"}</sla:should-start>
-              <sla:should-end>{"${doASparkThing_sla_shouldStart}"}</sla:should-end>
+              <sla:should-end>{"${doASparkThing_sla_shouldEnd}"}</sla:should-end>
               <sla:max-duration>{"${doASparkThing_sla_maxDuration}"}</sla:max-duration>
               <sla:alert-events>{"${doASparkThing_sla_alertEvents}"}</sla:alert-events>
               <sla:alert-contact>{"${doASparkThing_sla_alertContacts}"}</sla:alert-contact>

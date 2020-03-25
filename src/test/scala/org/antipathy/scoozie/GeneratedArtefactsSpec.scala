@@ -624,7 +624,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${someCoordinator_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${someCoordinator_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${someCoordinator_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${someCoordinator_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${someCoordinator_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${someCoordinator_sla_alertContacts}</sla:alert-contact>
@@ -700,7 +700,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${hiveAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${hiveAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${hiveAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${hiveAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${hiveAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${hiveAction_sla_alertContacts}</sla:alert-contact>
@@ -729,7 +729,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sparkAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${sparkAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${sparkAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${sparkAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${sparkAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${sparkAction_sla_alertContacts}</sla:alert-contact>
@@ -749,7 +749,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${shellAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${shellAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${shellAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${shellAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${shellAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${shellAction_sla_alertContacts}</sla:alert-contact>
@@ -773,7 +773,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${fsAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${fsAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${fsAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${fsAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${fsAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${fsAction_sla_alertContacts}</sla:alert-contact>
@@ -795,7 +795,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${distCPAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${distCPAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${distCPAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${distCPAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${distCPAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${distCPAction_sla_alertContacts}</sla:alert-contact>
@@ -819,7 +819,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${javaAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${javaAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${javaAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${javaAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${javaAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${javaAction_sla_alertContacts}</sla:alert-contact>
@@ -840,7 +840,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${pigAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${pigAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${pigAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${pigAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${pigAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${pigAction_sla_alertContacts}</sla:alert-contact>
@@ -863,7 +863,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sqoopAction1_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${sqoopAction1_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${sqoopAction1_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${sqoopAction1_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${sqoopAction1_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${sqoopAction1_sla_alertContacts}</sla:alert-contact>
@@ -883,7 +883,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sqoopAction2_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${sqoopAction2_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${sqoopAction2_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${sqoopAction2_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${sqoopAction2_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${sqoopAction2_sla_alertContacts}</sla:alert-contact>
@@ -905,7 +905,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${sshAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${sshAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${sshAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${sshAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${sshAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${sshAction_sla_alertContacts}</sla:alert-contact>
@@ -923,7 +923,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |        <sla:info>
         |            <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |            <sla:should-start>${subworkflowAction_sla_shouldStart}</sla:should-start>
-        |            <sla:should-end>${subworkflowAction_sla_shouldStart}</sla:should-end>
+        |            <sla:should-end>${subworkflowAction_sla_shouldEnd}</sla:should-end>
         |            <sla:max-duration>${subworkflowAction_sla_maxDuration}</sla:max-duration>
         |            <sla:alert-events>${subworkflowAction_sla_alertEvents}</sla:alert-events>
         |            <sla:alert-contact>${subworkflowAction_sla_alertContacts}</sla:alert-contact>
@@ -947,7 +947,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <sla:info>
         |        <sla:nominal-time>${nominalTime}</sla:nominal-time>
         |        <sla:should-start>${someworkflow_sla_shouldStart}</sla:should-start>
-        |        <sla:should-end>${someworkflow_sla_shouldStart}</sla:should-end>
+        |        <sla:should-end>${someworkflow_sla_shouldEnd}</sla:should-end>
         |        <sla:max-duration>${someworkflow_sla_maxDuration}</sla:max-duration>
         |        <sla:alert-events>${someworkflow_sla_alertEvents}</sla:alert-events>
         |        <sla:alert-contact>${someworkflow_sla_alertContacts}</sla:alert-contact>

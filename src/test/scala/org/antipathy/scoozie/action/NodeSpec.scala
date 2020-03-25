@@ -357,7 +357,7 @@ class NodeSpec extends FlatSpec with Matchers {
       <sla:info>
         <sla:nominal-time>{"${nominal_time}"}</sla:nominal-time>
         <sla:should-start>{"${SomeAction_sla_shouldStart}"}</sla:should-start>
-        <sla:should-end>{"${SomeAction_sla_shouldStart}"}</sla:should-end>
+        <sla:should-end>{"${SomeAction_sla_shouldEnd}"}</sla:should-end>
         <sla:max-duration>{"${SomeAction_sla_maxDuration}"}</sla:max-duration>
       </sla:info>
     </action>)

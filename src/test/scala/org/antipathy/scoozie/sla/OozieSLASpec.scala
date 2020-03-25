@@ -38,7 +38,7 @@ class OozieSLASpec extends FlatSpec with Matchers {
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<sla:info>
         <sla:nominal-time>{"${nominal_time}"}</sla:nominal-time>
         <sla:should-start>{"${someAction_sla_shouldStart}"}</sla:should-start>
-        <sla:should-end>{"${someAction_sla_shouldStart}"}</sla:should-end>
+        <sla:should-end>{"${someAction_sla_shouldEnd}"}</sla:should-end>
         <sla:max-duration>{"${someAction_sla_maxDuration}"}</sla:max-duration>
         <sla:alert-events>{"${someAction_sla_alertEvents}"}</sla:alert-events>
         <sla:alert-contact>{"${someAction_sla_alertContacts}"}</sla:alert-contact>
