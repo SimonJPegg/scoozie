@@ -127,7 +127,7 @@ case class Workflow(override val name: String,
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions) ++ jobXmlProperty ++ slaProperties
+    mappedCredProps ++ mappedProperties ++ buildWorkflowProperties(transitions) ++ jobXmlProperty ++ slaProperties ++ yarnConfig.properties
 
   override def jobProperties: String = {
     val pattern = "\\w+".r
