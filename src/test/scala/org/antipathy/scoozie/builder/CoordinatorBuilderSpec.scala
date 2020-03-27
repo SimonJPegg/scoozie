@@ -184,6 +184,7 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
       </coordinator-app>))
 
     result.jobProperties should be("""someCoordinator_end=someEnd
+                                     |someCoordinator_frequency=someFreq
                                      |someCoordinator_property0=value1
                                      |someCoordinator_property1=value2
                                      |someCoordinator_property2=value3

@@ -61,12 +61,17 @@ case class Coordinator(override val name: String,
   private val endProperty = formatProperty(s"${name}_end")
   private val timezoneProperty = formatProperty(s"${name}_timezone")
   private val workflowPathProperty = formatProperty(s"${name}_workflow_path")
+  private val frequencyProperty = formatProperty(s"${name}_frequency")
 
   /**
     * Get the Oozie properties for this object
     */
   override def properties: Map[String, String] =
-    Map(startProperty -> start, endProperty -> end, timezoneProperty -> timezone, workflowPathProperty -> workflow.path) ++
+    Map(frequencyProperty -> frequency,
+        startProperty -> start,
+        endProperty -> end,
+        timezoneProperty -> timezone,
+        workflowPathProperty -> workflow.path) ++
     actionConfig.properties ++
     slaProperties
 

@@ -86,6 +86,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
                                Configuration(Seq(Property("some", "value"), Property("nominalTime", functionVal))))
 
     result.jobProperties should be("""SomeCoOrd_end=2009-01-04T08:00Z
+                                     |SomeCoOrd_frequency=${coord:days(1)}
                                      |SomeCoOrd_property0=value
                                      |SomeCoOrd_start=2009-01-02T08:00Z
                                      |SomeCoOrd_timezone=America/Los_Angeles

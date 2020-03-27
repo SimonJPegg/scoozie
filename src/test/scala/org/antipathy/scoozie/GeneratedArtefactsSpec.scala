@@ -332,6 +332,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     )
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
       """someCoordinator_end=someEnd
+        |someCoordinator_frequency=someFreq
         |someCoordinator_property0=value1
         |someCoordinator_property1=value2
         |someCoordinator_property2=value3
@@ -523,6 +524,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
     )
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
       """someCoordinator_end=someEnd
+        |someCoordinator_frequency=someFreq
         |someCoordinator_property0=value1
         |someCoordinator_property1=value2
         |someCoordinator_property2=value3
@@ -959,6 +961,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     ouputProperties.lines.mkString(System.lineSeparator()) should be(
       """someCoordinator_end=someEnd
+        |someCoordinator_frequency=someFreq
         |someCoordinator_property0=value1
         |someCoordinator_property1=value2
         |someCoordinator_property2=value3
@@ -1434,6 +1437,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |</workflow-app>""".stripMargin
     )
     ouputProperties should be("""someCoordinator_end=someEnd
+                                |someCoordinator_frequency=someFreq
                                 |someCoordinator_property0=value1
                                 |someCoordinator_property1=value2
                                 |someCoordinator_property2=value3

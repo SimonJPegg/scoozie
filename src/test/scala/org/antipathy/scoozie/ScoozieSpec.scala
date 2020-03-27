@@ -121,6 +121,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
     )
 
     testWorkflow.jobProperties should be("""ExampleCoOrdinator_end=end
+                                           |ExampleCoOrdinator_frequency=startFreq
                                            |ExampleCoOrdinator_property0=value1
                                            |ExampleCoOrdinator_property1=value2
                                            |ExampleCoOrdinator_start=start
