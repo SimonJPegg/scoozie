@@ -91,7 +91,7 @@ case class Coordinator(override val name: String,
     */
   override def toXML: Elem =
     <coordinator-app name={name}
-                     frequency={formatProperty(frequency)}
+                     frequency={frequencyProperty}
                      start={startProperty}
                      end={endProperty}
                      timezone={timezoneProperty}

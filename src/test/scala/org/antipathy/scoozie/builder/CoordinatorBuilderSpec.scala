@@ -153,7 +153,7 @@ class CoordinatorBuilderSpec extends FlatSpec with Matchers {
     result.workflow.path should be("somepath")
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app name="someCoordinator"
-                       frequency={"${someFreq}"}
+                       frequency={"${someCoordinator_frequency}"}
                        start={"${someCoordinator_start}"}
                        end={"${someCoordinator_end}"}
                        timezone={"${someCoordinator_timezone}"}

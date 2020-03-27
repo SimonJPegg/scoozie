@@ -147,38 +147,36 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
         |    <end name="end"/>
         |</workflow-app>""".stripMargin
     )
-    ouputProperties.lines.mkString(System.lineSeparator()) should be(
-      """errorEmail_body=yep
-        |errorEmail_subject=hello
-        |errorEmail_to=a@a.com
-        |hiveAction_jobXml=settings
-        |hiveAction_scriptLocation=/some/location
-        |hiveAction_scriptName=script.hql
-        |jobTracker=someJobTracker
-        |nameNode=someNameNode
-        |shellAction_scriptLocation=/some/location
-        |shellAction_scriptName=script.sh
-        |someworkflow_credentialProperty0=value1
-        |someworkflow_credentialProperty1=value2
-        |someworkflow_credentialProperty2=value3
-        |someworkflow_credentialProperty3=value4
-        |someworkflow_jobXml=/path/to/job.xml
-        |someworkflow_property0=value1
-        |someworkflow_property1=value2
-        |someworkflow_property2=value3
-        |someworkflow_property3=value4
-        |sparkAction_jobXml=someSettings
-        |sparkAction_mainClass=somemainclass
-        |sparkAction_prepare_delete=deletePath
-        |sparkAction_prepare_makedir=makePath
-        |sparkAction_sparkJar=spark.jar
-        |sparkAction_sparkJobName=Jobname
-        |sparkAction_sparkMasterURL=masterurl
-        |sparkAction_sparkMode=mode
-        |sparkAction_sparkOptions=spark-options
-        |oozie.use.system.libpath=true
-        |oozie.wf.application.path=somepath/workflow.xml""".stripMargin
-    )
+    ouputProperties.lines.mkString(System.lineSeparator()) should be("""errorEmail_body=yep
+                                                                       |errorEmail_subject=hello
+                                                                       |errorEmail_to=a@a.com
+                                                                       |hiveAction_jobXml=settings
+                                                                       |hiveAction_scriptLocation=/some/location
+                                                                       |hiveAction_scriptName=script.hql
+                                                                       |jobTracker=someJobTracker
+                                                                       |nameNode=someNameNode
+                                                                       |shellAction_scriptLocation=/some/location
+                                                                       |shellAction_scriptName=script.sh
+                                                                       |someworkflow_credentialProperty0=value1
+                                                                       |someworkflow_credentialProperty1=value2
+                                                                       |someworkflow_credentialProperty2=value3
+                                                                       |someworkflow_credentialProperty3=value4
+                                                                       |someworkflow_jobXml=/path/to/job.xml
+                                                                       |someworkflow_property0=value1
+                                                                       |someworkflow_property1=value2
+                                                                       |someworkflow_property2=value3
+                                                                       |someworkflow_property3=value4
+                                                                       |sparkAction_jobXml=someSettings
+                                                                       |sparkAction_mainClass=somemainclass
+                                                                       |sparkAction_prepare_delete=deletePath
+                                                                       |sparkAction_prepare_makedir=makePath
+                                                                       |sparkAction_sparkJar=spark.jar
+                                                                       |sparkAction_sparkJobName=Jobname
+                                                                       |sparkAction_sparkMasterURL=masterurl
+                                                                       |sparkAction_sparkMode=mode
+                                                                       |sparkAction_sparkOptions=spark-options
+                                                                       |oozie.use.system.libpath=true
+                                                                       |oozie.wf.application.path=somepath/workflow.xml""".stripMargin)
 
     outputPath.delete()
   }
@@ -196,7 +194,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -388,7 +386,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -600,7 +598,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator.lines.mkString(System.lineSeparator()) should be(
       """<coordinator-app 
-        |name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+        |name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>
@@ -1301,7 +1299,7 @@ class GeneratedArtefactsSpec extends FlatSpec with Matchers {
 
     outputCoordinator should be(
       "<coordinator-app \n" + //ffs
-      """name="someCoordinator" frequency="${someFreq}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
+      """name="someCoordinator" frequency="${someCoordinator_frequency}" start="${someCoordinator_start}" end="${someCoordinator_end}" timezone="${someCoordinator_timezone}" xmlns:sla="uri:oozie:sla:0.2" xmlns="uri:oozie:coordinator:0.4">
         |    <action>
         |        <workflow>
         |            <app-path>${someCoordinator_workflow_path}</app-path>

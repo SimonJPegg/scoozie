@@ -49,7 +49,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
 
     scala.xml.Utility.trim(result) should be(scala.xml.Utility.trim(<coordinator-app
         name="SomeCoOrd"
-        frequency="${coord:days(1)}"
+        frequency="${SomeCoOrd_frequency}"
         start="${SomeCoOrd_start}"
         end="${SomeCoOrd_end}"
         timezone="${SomeCoOrd_timezone}"
@@ -95,7 +95,7 @@ class CoordinatorSpec extends FlatSpec with Matchers {
 
     scala.xml.Utility.trim(result.toXML) should be(scala.xml.Utility.trim(<coordinator-app
       name="SomeCoOrd"
-      frequency="${coord:days(1)}"
+      frequency="${SomeCoOrd_frequency}"
       start="${SomeCoOrd_start}"
       end="${SomeCoOrd_end}"
       timezone="${SomeCoOrd_timezone}"

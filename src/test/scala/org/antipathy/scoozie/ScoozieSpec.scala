@@ -184,7 +184,7 @@ class ScoozieSpec extends FlatSpec with Matchers {
     val testWorkflow = new TestJob("yarn", "nameservice1", Map("prop1" -> "value1", "prop2" -> "value2"))
     Utility.trim(testWorkflow.coordinator.toXML) should be(Utility.trim(<coordinator-app
         name="ExampleCoOrdinator"
-        frequency="${startFreq}"
+        frequency="${ExampleCoOrdinator_frequency}"
         start="${ExampleCoOrdinator_start}" end="${ExampleCoOrdinator_end}"
         timezone="${ExampleCoOrdinator_timezone}"
         xmlns="uri:oozie:coordinator:0.4" xmlns:sla="uri:oozie:sla:0.2">
