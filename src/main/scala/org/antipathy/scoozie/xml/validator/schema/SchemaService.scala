@@ -102,6 +102,7 @@ object SchemaService {
                           "shell-action-0.2.xsd",
                           "email-action-0.2.xsd",
                           "hive-action-0.5.xsd",
+                          "hive2-action-0.1.xsd",
                           "sqoop-action-0.3.xsd",
                           "ssh-action-0.2.xsd",
                           "distcp-action-0.2.xsd",
