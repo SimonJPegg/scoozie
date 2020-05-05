@@ -26,11 +26,12 @@ import scala.collection.immutable._
 import scala.xml.Elem
 
 /**
-  * Oozie Hive action definition
+  * Oozie Hive2 action definition
   *
   * @param name the name of the action
   * @param scriptName the name of the hive script
   * @param scriptLocation the path to the hive script
+  * @param jdbcUrl the Jdbc url to connect to Hive2 server from Beeline, required
   * @param parameters a collection of parameters to the hive script
   * @param jobXmlOption optional job.xml path
   * @param files additional files to pass to job
