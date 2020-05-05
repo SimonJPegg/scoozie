@@ -127,6 +127,39 @@ object Actions {
                prepareOption)
 
   /**
+    * Oozie Hive action
+    * @param name the name of the action
+    * @param scriptName the name of the hive script
+    * @param scriptLocation the path to the hive script
+    * @param parameters a collection of parameters to the hive script
+    * @param jobXmlOption optional job.xml path
+    * @param files additional files to pass to job
+    * @param configuration additional config for this action
+    * @param yarnConfig Yarn configuration for this action
+    * @param prepareOption an optional prepare stage for the action
+    */
+  def hive2(name: String,
+            scriptName: String,
+            scriptLocation: String,
+            jdbcUrl: String,
+            parameters: Seq[String],
+            jobXmlOption: Option[String],
+            files: Seq[String],
+            configuration: Configuration,
+            yarnConfig: YarnConfig,
+            prepareOption: Option[ActionPrepare])(implicit credentialsOption: Option[Credentials]): Node =
+    Hive2Action(name,
+                scriptName,
+                scriptLocation,
+                jdbcUrl,
+                parameters,
+                jobXmlOption,
+                files,
+                configuration,
+                yarnConfig,
+                prepareOption)
+
+  /**
     * Oozie Java action
     * @param name the name of the action
     * @param mainClass the main class of the java job

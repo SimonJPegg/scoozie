@@ -52,6 +52,7 @@ object HoconConstants {
   val java: String = "java"
   val javaJar: String = "java-jar"
   val javaOptions: String = "java-options"
+  val jdbcUrl: String = "jdbc-url"
   val jobTracker: String = "job-tracker"
   val jobXml: String = "job-xml"
   val join: String = "join"
